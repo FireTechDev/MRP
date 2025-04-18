@@ -78,6 +78,7 @@
       border: none;
       cursor: pointer;
       transition: all 0.3s;
+      text-align: center;
     }
 
     button {
@@ -86,9 +87,8 @@
     }
 
     .toggle-btn {
-      background-color: #f8f9fa;
+      background-color: white;
       color: var(--primary-color);
-      text-align: left;
       border: 1px solid var(--primary-color);
     }
 
@@ -197,7 +197,7 @@
     .toggle-btn.selected, #toggleRouteBtn.active {
       background-color: var(--primary-color);
       color: white;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
 
     .toggle-icon {
@@ -368,6 +368,38 @@
       margin-top: -5px;
       margin-bottom: 5px;
       font-style: italic;
+    }
+
+    /* Style spécifique pour les boutons des sections victimes, je fais, je demande */
+    #victimsToggleContainer .toggle-btn,
+    #actionsContainer .toggle-btn,
+    #demandeActions .toggle-btn,
+    #prevoisActions .toggle-btn,
+    #natureInterventionContainer .toggle-btn {
+      background-color: white;
+      color: var(--primary-color);
+      border: 1px solid var(--primary-color);
+    }
+
+    #victimsToggleContainer .toggle-btn.selected,
+    #actionsContainer .toggle-btn.selected,
+    #demandeActions .toggle-btn.selected,
+    #prevoisActions .toggle-btn.selected,
+    #natureInterventionContainer .toggle-btn.selected {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    /* Style pour le bouton "Je prévois" */
+    #togglePrevoisBtn {
+      background-color: white;
+      color: var(--primary-color);
+      border: 1px solid var(--primary-color);
+    }
+
+    #togglePrevoisBtn.active {
+      background-color: var(--primary-color);
+      color: white;
     }
   </style>
 </head>
