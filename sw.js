@@ -1,5 +1,5 @@
 // Version de l'application
-const APP_VERSION = '1.0.0';
+const APP_VERSION = '1.0.1';
 
 const CACHE_NAME = 'mrp-cache-v1';
 const urlsToCache = [
