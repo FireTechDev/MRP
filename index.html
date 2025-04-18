@@ -327,6 +327,24 @@
       background: rgba(0, 123, 255, 0.05);
     }
 
+    .secondary-btn {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      background: white;
+      border: 1px solid var(--primary-color);
+      border-radius: var(--border-radius);
+      color: var(--primary-color);
+      font-size: var(--font-size);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+
+    .secondary-btn:hover {
+      background: rgba(0, 123, 255, 0.05);
+    }
+
     .gps-icon {
       margin-right: 5px;
     }
@@ -379,7 +397,7 @@
       <div class="form-group">
         <label for="groupeHoraireAuto">Groupe horaire</label>
         <input type="time" id="groupeHoraireAuto" name="groupeHoraireAuto" onchange="updateMessage()">
-        <button type="button" onclick="setCurrentTime()">Actualiser l'heure</button>
+        <button type="button" class="secondary-btn" onclick="setCurrentTime()">Actualiser l'heure</button>
       </div>
 
       <hr>
@@ -410,7 +428,7 @@
         <span id="gpsInfoCommune" class="gps-info hidden">Position approximative basée sur le GPS du navigateur.</span>
       </div>
 
-      <button type="button" id="toggleRouteBtn" onclick="toggleRouteInfo()">
+      <button type="button" id="toggleRouteBtn" class="toggle-btn" onclick="toggleRouteInfo()">
         Informations route
         <span class="toggle-icon">›</span>
       </button>
