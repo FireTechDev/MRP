@@ -213,21 +213,29 @@
       text-align: center;
       margin: 20px auto;
       max-width: 600px;
+      color: #666;
+      font-size: 14px;
     }
     
-    .update-btn {
-      background-color: #28a745;
-      color: white;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 16px;
-      transition: background-color 0.3s;
+    .offline-info {
+      margin-bottom: 5px;
     }
     
-    .update-btn:hover {
-      background-color: #218838;
+    .update-link {
+      color: #007BFF;
+      text-decoration: none;
+      font-size: 13px;
+    }
+    
+    .update-link:hover {
+      text-decoration: underline;
+    }
+    
+    .update-status {
+      margin-top: 5px;
+      color: #28a745;
+      font-size: 13px;
+      display: none;
     }
   </style>
 </head>
@@ -962,7 +970,9 @@
     </div>
   </div>
   <div class="update-container">
-    <button type="button" id="updateButton" class="update-btn" onclick="checkForUpdates()">Mettre à jour avec la dernière version</button>
+    <p class="offline-info"><i>L'application fonctionne, même hors ligne.</i></p>
+    <a href="#" id="updateLink" class="update-link" onclick="checkForUpdates(); return false;">Vérifier si l'app est à jour</a>
+    <p id="updateStatus" class="update-status"></p>
   </div>
 
   <script>
@@ -1815,6 +1825,45 @@
       // Si on est déjà sur l'étape "Je vois", mettre à jour la sélection
       if (currentStep === 2) {
         goToStep(2);
+      }
+    });
+
+    // Fonction pour vérifier les mises à jour
+    function checkForUpdates() {
+      const updateStatus = document.getElementById('updateStatus');
+      updateStatus.style.display = 'none';
+      
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistration().then(registration => {
+          if (registration) {
+            registration.update().then(() => {
+              updateStatus.textContent = 'Application à jour et disponible hors-ligne';
+              updateStatus.style.display = 'block';
+              setTimeout(() => {
+                updateStatus.style.display = 'none';
+              }, 3000);
+            }).catch(error => {
+              console.error('Erreur lors de la mise à jour:', error);
+              updateStatus.textContent = 'Erreur lors de la vérification';
+              updateStatus.style.color = '#dc3545';
+              updateStatus.style.display = 'block';
+              setTimeout(() => {
+                updateStatus.style.display = 'none';
+              }, 3000);
+            });
+          }
+        });
+      }
+    }
+
+    // Vérifier automatiquement les mises à jour au chargement de la page
+    window.addEventListener('load', () => {
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistration().then(registration => {
+          if (registration) {
+            registration.update();
+          }
+        });
       }
     });
   </script>
