@@ -237,6 +237,12 @@
       font-size: 13px;
       display: none;
     }
+    
+    .version-info {
+      color: #666;
+      font-size: 13px;
+      margin-left: 5px;
+    }
   </style>
 </head>
 <body>
@@ -970,7 +976,7 @@
     </div>
   </div>
   <div class="update-container">
-    <p class="offline-info"><i>L'application fonctionne, même hors ligne.</i></p>
+    <p class="offline-info"><i>L'application fonctionne même hors ligne.</i> <span class="version-info">Version : 1.0.0</span></p>
     <a href="#" id="updateLink" class="update-link" onclick="checkForUpdates(); return false;">Vérifier si l'app est à jour</a>
     <p id="updateStatus" class="update-status"></p>
   </div>
