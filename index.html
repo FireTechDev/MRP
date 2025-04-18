@@ -245,14 +245,11 @@
 
       <hr>
 
-      <label for="groupeHoraireAuto">Groupe horaire (récupéré automatiquement)</label>
-      <input type="text" id="groupeHoraireAuto" readonly>
-      <button type="button" onclick="setCurrentTime()">Actualiser le groupe horaire</button>
-
-      <div class="separator">ou</div>
-
-      <label for="groupeHoraireManuel">Saisir un groupe horaire</label>
-      <input type="time" id="groupeHoraireManuel" placeholder="hh:mm">
+      <div class="form-group">
+        <label for="groupeHoraireAuto">Groupe horaire</label>
+        <input type="time" id="groupeHoraireAuto" name="groupeHoraireAuto" onchange="updateMessage()">
+        <button type="button" onclick="setCurrentTime()">Actualiser l'heure actuelle</button>
+      </div>
 
       <hr>
       <button type="button" onclick="goToStep(1)">Suivant →</button>
@@ -261,10 +258,10 @@
     <!-- Étape 1 : Je suis -->
     <div id="step1" class="step hidden">
       <label for="adresseConfirmee">Adresse initiale confirmée / modifiée</label>
-      <select id="adresseConfirmee">
+      <select id="adresseConfirmee" name="adresseConfirmee" onchange="updateMessage()">
         <option value="">Choisir</option>
-        <option>Confirmée</option>
-        <option>Modifiée</option>
+        <option value="Confirmée">Confirmée</option>
+        <option value="Modifiée">Modifiée</option>
       </select>
 
       <button type="button" onclick="geolocalise()" class="gps-btn">
@@ -1019,7 +1016,11 @@
     }
 
     function setCurrentTime() {
-      document.querySelector("#groupeHoraireAuto").value = new Date().toLocaleTimeString();
+      const now = new Date();
+      const hours = now.getHours().toString().padStart(2, '0');
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      document.getElementById('groupeHoraireAuto').value = `${hours}:${minutes}`;
+      updateMessage();
     }
 
     function geolocalise() {
@@ -1306,7 +1307,6 @@
       // Intervention info
       if (getVal("interventionNumero")) msg += `Intervention numéro: ${getVal("interventionNumero")}\n`;
       if (getVal("groupeHoraireAuto")) msg += `Groupe horaire: ${getVal("groupeHoraireAuto")}\n`;
-      if (getVal("groupeHoraireManuel")) msg += `Groupe horaire: ${getVal("groupeHoraireManuel")}\n`;
       msg += "\n";
 
       // Location info
