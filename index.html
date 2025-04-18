@@ -1849,91 +1849,66 @@
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.getRegistration().then(registration => {
           if (registration) {
-            if (isIOS) {
-              // Sur iOS, on utilise une approche différente
-              updateStatus.textContent = 'Vérification des mises à jour...';
-              updateStatus.style.display = 'block';
-              
-              // Créer un timestamp unique pour le cache-busting
-              const timestamp = new Date().getTime();
-              
-              // Vérifier si le service worker est à jour
-              fetch(`/MRP/sw.js?v=${timestamp}`)
-                .then(response => {
-                  if (response.ok) {
-                    // Vérifier la version du service worker
-                    return response.text().then(swContent => {
-                      const versionMatch = swContent.match(/const APP_VERSION = ['"]([^'"]+)['"]/);
-                      const swVersion = versionMatch ? versionMatch[1] : null;
-                      
-                      if (swVersion && swVersion === APP_VERSION) {
-                        // Forcer le rechargement des ressources
-                        caches.keys().then(cacheNames => {
-                          cacheNames.forEach(cacheName => {
-                            caches.delete(cacheName);
-                          });
-                        });
-                        
-                        // Attendre 2 secondes avant de recharger pour que l'utilisateur voie le message
-                        setTimeout(() => {
-                          updateStatus.textContent = 'Application à jour et disponible hors-ligne';
-                          updateStatus.style.color = '#28a745'; // Vert pour le succès
-                        }, 2000);
-                      } else {
-                        throw new Error('Version non à jour');
-                      }
-                    });
-                  } else {
-                    throw new Error('Service worker non disponible');
-                  }
-                })
-                .catch(error => {
-                  console.error('Erreur lors de la vérification:', error);
-                  if (error.message === 'Version non à jour') {
-                    updateStatus.textContent = 'Une mise à jour est disponible. Veuillez recharger la page.';
-                    updateStatus.style.color = '#ffc107'; // Jaune pour avertissement
-                  } else {
-                    updateStatus.textContent = 'Erreur lors de la vérification';
-                    updateStatus.style.color = '#dc3545'; // Rouge pour erreur
-                  }
-                  updateStatus.style.display = 'block';
-                  setTimeout(() => {
-                    updateStatus.style.display = 'none';
-                  }, 3000);
-                });
-            } else {
-              // Sur les autres plateformes, on utilise la méthode standard
-              registration.update().then(() => {
-                // Vérifier la version après la mise à jour
-                fetch('/MRP/sw.js')
-                  .then(response => response.text())
-                  .then(swContent => {
+            // Créer un timestamp unique pour le cache-busting
+            const timestamp = new Date().getTime();
+            
+            // Vérifier la version actuelle du service worker
+            fetch(`/MRP/sw.js?v=${timestamp}`)
+              .then(response => {
+                if (response.ok) {
+                  return response.text().then(swContent => {
                     const versionMatch = swContent.match(/const APP_VERSION = ['"]([^'"]+)['"]/);
                     const swVersion = versionMatch ? versionMatch[1] : null;
                     
                     if (swVersion && swVersion === APP_VERSION) {
+                      // Version à jour
                       updateStatus.textContent = 'Application à jour et disponible hors-ligne';
-                      updateStatus.style.color = '#28a745'; // Vert pour le succès
+                      updateStatus.style.color = '#28a745';
                       updateStatus.style.display = 'block';
                     } else {
-                      throw new Error('Version non à jour');
+                      // Nouvelle version disponible
+                      updateStatus.textContent = 'Une mise à jour est disponible. Mise à jour en cours...';
+                      updateStatus.style.color = '#ffc107';
+                      updateStatus.style.display = 'block';
+                      
+                      // Vider le cache
+                      caches.keys().then(cacheNames => {
+                        return Promise.all(
+                          cacheNames.map(cacheName => caches.delete(cacheName))
+                        );
+                      }).then(() => {
+                        // Mettre à jour le service worker
+                        registration.update().then(() => {
+                          if (isIOS) {
+                            // Sur iOS, forcer le rechargement de la page
+                            updateStatus.textContent = 'Mise à jour terminée. Rechargement de l\'application...';
+                            setTimeout(() => {
+                              window.location.reload(true);
+                            }, 2000);
+                          } else {
+                            // Sur les autres plateformes, le service worker se mettra à jour automatiquement
+                            updateStatus.textContent = 'Mise à jour terminée. L\'application se mettra à jour automatiquement.';
+                            setTimeout(() => {
+                              updateStatus.style.display = 'none';
+                            }, 3000);
+                          }
+                        });
+                      });
                     }
                   });
-              }).catch(error => {
-                console.error('Erreur lors de la mise à jour:', error);
-                if (error.message === 'Version non à jour') {
-                  updateStatus.textContent = 'Une mise à jour est disponible. Veuillez recharger la page.';
-                  updateStatus.style.color = '#ffc107'; // Jaune pour avertissement
                 } else {
-                  updateStatus.textContent = 'Erreur lors de la vérification';
-                  updateStatus.style.color = '#dc3545'; // Rouge pour erreur
+                  throw new Error('Service worker non disponible');
                 }
+              })
+              .catch(error => {
+                console.error('Erreur lors de la vérification:', error);
+                updateStatus.textContent = 'Erreur lors de la vérification des mises à jour';
+                updateStatus.style.color = '#dc3545';
                 updateStatus.style.display = 'block';
                 setTimeout(() => {
                   updateStatus.style.display = 'none';
                 }, 3000);
               });
-            }
           }
         });
       }
@@ -1944,7 +1919,10 @@
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.getRegistration().then(registration => {
           if (registration) {
-            registration.update();
+            // Vérifier les mises à jour toutes les 5 minutes
+            setInterval(() => {
+              registration.update();
+            }, 5 * 60 * 1000);
           }
         });
       }
