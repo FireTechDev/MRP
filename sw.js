@@ -1,10 +1,10 @@
 const CACHE_NAME = 'mrp-cache-v1';
 const urlsToCache = [
-  '/MRP/',
-  '/MRP/index.html',
-  '/MRP/manifest.json',
-  '/MRP/icons/icon-192x192.png',
-  '/MRP/icons/icon-512x512.png'
+  '.',
+  'index.html',
+  'manifest.json',
+  'icons/icon-192x192.png',
+  'icons/icon-512x512.png'
 ];
 
 self.addEventListener('install', event => {
