@@ -1861,10 +1861,8 @@
                     // Attendre 2 secondes avant de recharger pour que l'utilisateur voie le message
                     setTimeout(() => {
                       updateStatus.textContent = 'Application à jour et disponible hors-ligne';
-                      // Attendre encore 1 seconde avant de recharger
-                      setTimeout(() => {
-                        window.location.reload(true);
-                      }, 1000);
+                      updateStatus.style.color = '#28a745'; // Vert pour le succès
+                      // Ne plus cacher le message après le délai
                     }, 2000);
                   } else {
                     throw new Error('Service worker non disponible');
@@ -1875,6 +1873,7 @@
                   updateStatus.textContent = 'Erreur lors de la vérification';
                   updateStatus.style.color = '#dc3545';
                   updateStatus.style.display = 'block';
+                  // Le message d'erreur disparaît toujours après 3 secondes
                   setTimeout(() => {
                     updateStatus.style.display = 'none';
                   }, 3000);
@@ -1883,15 +1882,15 @@
               // Sur les autres plateformes, on utilise la méthode standard
               registration.update().then(() => {
                 updateStatus.textContent = 'Application à jour et disponible hors-ligne';
+                updateStatus.style.color = '#28a745'; // Vert pour le succès
                 updateStatus.style.display = 'block';
-                setTimeout(() => {
-                  updateStatus.style.display = 'none';
-                }, 3000);
+                // Ne plus cacher le message après le délai
               }).catch(error => {
                 console.error('Erreur lors de la mise à jour:', error);
                 updateStatus.textContent = 'Erreur lors de la vérification';
                 updateStatus.style.color = '#dc3545';
                 updateStatus.style.display = 'block';
+                // Le message d'erreur disparaît toujours après 3 secondes
                 setTimeout(() => {
                   updateStatus.style.display = 'none';
                 }, 3000);
