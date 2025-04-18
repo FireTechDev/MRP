@@ -333,13 +333,13 @@
       </select>
 
       <label for="numeroRoute">Numéro de route</label>
-        <input type="text" id="numeroRoute" placeholder="Saisissez numéro de route">
+      <input type="text" id="numeroRoute" class="form-control" onkeypress="return event.charCode >= 48 && event.charCode <= 57" pattern="[0-9]*" placeholder="Saisissez numéro de route">
 
-        <label for="nomEchangeur">Nom de l'échangeur</label>
-        <input type="text" id="nomEchangeur" placeholder="Saisissez le nom de l'échangeur">
+      <label for="nomEchangeur">Nom de l'échangeur</label>
+      <input type="text" id="nomEchangeur" placeholder="Saisissez le nom de l'échangeur">
 
       <label for="pk">PK</label>
-      <input type="text" id="pk" placeholder="Saisissez numéro PK">
+      <input type="text" id="pk" class="form-control" onkeypress="return event.charCode >= 48 && event.charCode <= 57" pattern="[0-9]*" placeholder="Saisissez numéro PK">
 
       <label for="sens">Sens</label>
       <input type="text" id="sens" placeholder="Saisissez un sens">
