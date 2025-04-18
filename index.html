@@ -207,6 +207,28 @@
       from { opacity: 0; }
       to { opacity: 1; }
     }
+    
+    /* Update button styles */
+    .update-container {
+      text-align: center;
+      margin: 20px auto;
+      max-width: 600px;
+    }
+    
+    .update-btn {
+      background-color: #28a745;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s;
+    }
+    
+    .update-btn:hover {
+      background-color: #218838;
+    }
   </style>
 </head>
 <body>
@@ -938,6 +960,9 @@
       <button type="button" onclick="sendMail()">Envoyer par mail</button>
       <button type="button" class="reset-btn" onclick="resetForm()">Recommencer le message</button>
     </div>
+  </div>
+  <div class="update-container">
+    <button type="button" id="updateButton" class="update-btn" onclick="checkForUpdates()">Mettre à jour avec la dernière version</button>
   </div>
 
   <script>
