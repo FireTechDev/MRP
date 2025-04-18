@@ -261,8 +261,8 @@
 
     <!-- Étape 0 : Intervention -->
     <div id="step0" class="step active">
-      <label for="interventionNumero">Intervention numéro</label>
-      <input type="text" id="interventionNumero" placeholder="Intervention numéro">
+      <label for="interventionNumber">Intervention numéro</label>
+      <input type="text" id="interventionNumber" class="form-control" onkeypress="return event.charCode >= 48 && event.charCode <= 57" pattern="[0-9]*" onchange="updateMessage()">
 
       <label for="motifDepart">Motif de départ</label>
       <select id="motifDepart">
@@ -1346,7 +1346,7 @@
       let getVal = id => document.getElementById(id)?.value || "";
       
       // Intervention info
-      if (getVal("interventionNumero")) msg += `Intervention numéro: ${getVal("interventionNumero")}\n`;
+      if (getVal("interventionNumber")) msg += `Intervention numéro: ${getVal("interventionNumber")}\n`;
       if (getVal("groupeHoraireAuto")) msg += `Groupe horaire: ${getVal("groupeHoraireAuto")}\n`;
       msg += "\n";
 
