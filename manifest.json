@@ -2,6 +2,7 @@
   "name": "Message radio Pompier (PWA)",
   "short_name": "MRP",
   "description": "Application de message radio pour les pompiers",
+  "version": "1.0.4",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#f2f2f2",
