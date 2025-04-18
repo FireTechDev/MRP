@@ -1858,8 +1858,14 @@
                       });
                     });
                     
-                    // Recharger la page
-                    window.location.reload(true);
+                    // Attendre 2 secondes avant de recharger pour que l'utilisateur voie le message
+                    setTimeout(() => {
+                      updateStatus.textContent = 'Application à jour et disponible hors-ligne';
+                      // Attendre encore 1 seconde avant de recharger
+                      setTimeout(() => {
+                        window.location.reload(true);
+                      }, 1000);
+                    }, 2000);
                   } else {
                     throw new Error('Service worker non disponible');
                   }
