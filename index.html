@@ -86,9 +86,14 @@
     }
 
     .toggle-btn {
-      background-color: var(--secondary-color);
-      color: #000;
+      background-color: white;
+      color: var(--primary-color);
       text-align: left;
+      border: 1px solid var(--primary-color);
+    }
+
+    .toggle-btn:hover {
+      background: rgba(0, 123, 255, 0.05);
     }
 
     button:hover, .toggle-btn:hover {
@@ -191,7 +196,7 @@
     /* Toggle elements */
     .toggle-btn.selected, #toggleRouteBtn.active {
       background-color: var(--primary-color);
-      color: #fff;
+      color: white;
       box-shadow: 0 2px 5px rgba(0,0,0,0.4);
     }
 
