@@ -64,6 +64,16 @@
       margin: 0.5rem 0;
     }
 
+    h3 {
+      font-size: 1rem;
+      font-weight: 500;
+    }
+
+    h4 {
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
     /* Form elements */
     input, select, textarea, button, .toggle-btn {
       width: 100%;
@@ -401,6 +411,125 @@
       background-color: var(--primary-color);
       color: white;
     }
+
+    .copyright {
+      margin-top: 20px;
+      font-size: 12px;
+      color: #999;
+    }
+
+    /* Ajout des styles pour le nouveau compteur */
+    .vehicle-count {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .vehicle-count-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      margin-bottom: 10px;
+    }
+
+    .vehicle-count label {
+      margin: 0;
+      color: #333;
+      font-size: 18px;
+      font-weight: normal;
+    }
+
+    .vehicle-count .counter-container {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .vehicle-count-details {
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .vehicle-count-details input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .vehicle-count .counter-btn {
+      width: 44px;
+      height: 44px;
+      border: none;
+      background: #007BFF;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: all 0.2s ease;
+      padding: 0;
+      line-height: 1;
+    }
+
+    .vehicle-count .counter-btn:hover {
+      background: #0056b3;
+    }
+
+    .vehicle-count .counter-btn.minus {
+      background-color: #007BFF;
+    }
+
+    .vehicle-count .counter-btn.minus.disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
+    .vehicle-count .counter-btn.plus {
+      background-color: #007BFF;
+    }
+
+    .vehicle-count .counter-value {
+      font-size: 36px;
+      font-weight: bold;
+      color: #333;
+      border: none;
+      background: transparent;
+      width: auto;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+      min-width: 50px;
+    }
+
+    .vehicle-count .counter-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    #vehiculeLegerDetails,
+    #poidsLourdDetails,
+    #deuxRouesDetails,
+    #busDetails {
+      margin-top: 10px;
+      width: 100%;
+      clear: both;
+      display: block;
+    }
+
+    #vehiculeLegerDetails input,
+    #poidsLourdDetails input,
+    #deuxRouesDetails input,
+    #busDetails input {
+      width: 100%;
+      margin-top: 10px;
+      display: block;
+    }
   </style>
 </head>
 <body>
@@ -537,52 +666,60 @@
         
         <!-- Véhicule léger -->
         <div class="vehicle-count">
-          <label>Véhicule léger</label>
-          <div class="number-control">
-            <button type="button" onclick="decrementVehicle('vehiculeLeger')">-</button>
-            <input type="number" id="vehiculeLeger" value="0" readonly>
-            <button type="button" onclick="incrementVehicle('vehiculeLeger')">+</button>
+          <div class="vehicle-count-header">
+            <label>Véhicule léger</label>
+            <div class="counter-container">
+              <button type="button" class="counter-btn minus" onclick="decrementVehicle('vehiculeLeger')" id="vehiculeLegerMinus">−</button>
+              <span class="counter-value" id="vehiculeLeger">0</span>
+              <button type="button" class="counter-btn plus" onclick="incrementVehicle('vehiculeLeger')">+</button>
+            </div>
           </div>
-          <div id="vehiculeLegerDetails" class="hidden">
+          <div id="vehiculeLegerDetails" class="vehicle-count-details hidden">
             <input type="text" placeholder="Énergie.." id="vehiculeLegerPrecisions">
           </div>
         </div>
 
         <!-- Poids lourd -->
         <div class="vehicle-count">
-          <label>Poids lourd</label>
-          <div class="number-control">
-            <button type="button" onclick="decrementVehicle('poidsLourd')">-</button>
-            <input type="number" id="poidsLourd" value="0" readonly>
-            <button type="button" onclick="incrementVehicle('poidsLourd')">+</button>
+          <div class="vehicle-count-header">
+            <label>Poids lourd</label>
+            <div class="counter-container">
+              <button type="button" class="counter-btn minus" onclick="decrementVehicle('poidsLourd')" id="poidsLourdMinus">−</button>
+              <span class="counter-value" id="poidsLourd">0</span>
+              <button type="button" class="counter-btn plus" onclick="incrementVehicle('poidsLourd')">+</button>
+            </div>
           </div>
-          <div id="poidsLourdDetails" class="hidden">
+          <div id="poidsLourdDetails" class="vehicle-count-details hidden">
             <input type="text" placeholder="Nature du transport, code danger, code matière" id="poidsLourdPrecisions">
           </div>
         </div>
 
         <!-- Deux roues -->
         <div class="vehicle-count">
-          <label>Deux roues</label>
-          <div class="number-control">
-            <button type="button" onclick="decrementVehicle('deuxRoues')">-</button>
-            <input type="number" id="deuxRoues" value="0" readonly>
-            <button type="button" onclick="incrementVehicle('deuxRoues')">+</button>
+          <div class="vehicle-count-header">
+            <label>Deux roues</label>
+            <div class="counter-container">
+              <button type="button" class="counter-btn minus" onclick="decrementVehicle('deuxRoues')" id="deuxRouesMinus">−</button>
+              <span class="counter-value" id="deuxRoues">0</span>
+              <button type="button" class="counter-btn plus" onclick="incrementVehicle('deuxRoues')">+</button>
+            </div>
           </div>
-          <div id="deuxRouesDetails" class="hidden">
+          <div id="deuxRouesDetails" class="vehicle-count-details hidden">
             <input type="text" placeholder="Préciser nature, moto, scooter, trottinette.." id="deuxRouesPrecisions">
           </div>
         </div>
 
         <!-- Bus -->
         <div class="vehicle-count">
-          <label>Bus</label>
-          <div class="number-control">
-            <button type="button" onclick="decrementVehicle('bus')">-</button>
-            <input type="number" id="bus" value="0" readonly>
-            <button type="button" onclick="incrementVehicle('bus')">+</button>
+          <div class="vehicle-count-header">
+            <label>Bus</label>
+            <div class="counter-container">
+              <button type="button" class="counter-btn minus" onclick="decrementVehicle('bus')" id="busMinus">−</button>
+              <span class="counter-value" id="bus">0</span>
+              <button type="button" class="counter-btn plus" onclick="incrementVehicle('bus')">+</button>
+            </div>
           </div>
-          <div id="busDetails" class="hidden">
+          <div id="busDetails" class="vehicle-count-details hidden">
             <input type="text" placeholder="Préciser, bus scolaire, tourisme, nom société.." id="busPrecisions">
           </div>
         </div>
@@ -1136,6 +1273,7 @@
     <p class="offline-info"><i>L'application fonctionne même hors ligne.</i> <span class="version-info">Version : 1.0.8</span></p>
     <a href="#" id="updateLink" class="update-link" onclick="checkForUpdates(); return false;">Vérifier si l'app est à jour</a>
     <p id="updateStatus" class="update-status"></p>
+    <p class="copyright">© Tael PINAULT 2025</p>
   </div>
 
   <script>
@@ -1356,25 +1494,53 @@
     }
 
     function incrementVehicle(id) {
-      let input = document.getElementById(id);
-      input.value = (+input.value + 1);
+      let span = document.getElementById(id);
+      let value = parseInt(span.textContent) + 1;
+      span.textContent = value;
       updateVehicleDetails(id);
+      updateMinusButtonState(id);
     }
 
     function decrementVehicle(id) {
-      let input = document.getElementById(id);
-      if (+input.value > 0) {
-        input.value = (+input.value - 1);
+      let span = document.getElementById(id);
+      let value = parseInt(span.textContent);
+      if (value > 0) {
+        value--;
+        span.textContent = value;
         updateVehicleDetails(id);
+        updateMinusButtonState(id);
       }
     }
 
     function updateVehicleDetails(id) {
       let details = document.getElementById(id + "Details");
+      let value = parseInt(document.getElementById(id).textContent);
       if (details) {
-        details.classList.toggle("hidden", document.getElementById(id).value === "0");
+        if (value > 0) {
+          details.classList.remove("hidden");
+        } else {
+          details.classList.add("hidden");
+        }
       }
     }
+
+    function updateMinusButtonState(id) {
+      let minusBtn = document.getElementById(id + "Minus");
+      let value = parseInt(document.getElementById(id).textContent);
+      if (value === 0) {
+        minusBtn.classList.add("disabled");
+      } else {
+        minusBtn.classList.remove("disabled");
+      }
+    }
+
+    // Initialiser l'état des boutons au chargement
+    window.addEventListener('load', function() {
+      ['vehiculeLeger', 'poidsLourd', 'deuxRoues', 'bus'].forEach(id => {
+        updateMinusButtonState(id);
+        updateVehicleDetails(id);
+      });
+    });
 
     function toggleDetailsSupplementaires() {
       const details = document.getElementById("detailsSupplementaires");
@@ -2004,6 +2170,16 @@
     function checkForUpdates() {
       const updateStatus = document.getElementById('updateStatus');
       updateStatus.style.display = 'none';
+      
+      // Forcer le rafraîchissement de l'icône
+      const timestamp = new Date().getTime();
+      const iconLinks = document.querySelectorAll('link[rel="icon"], link[rel="apple-touch-icon"]');
+      iconLinks.forEach(link => {
+        const href = link.getAttribute('href');
+        if (href) {
+          link.setAttribute('href', `${href}?v=${timestamp}`);
+        }
+      });
       
       // Détecter si l'utilisateur est sur iOS
       const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
