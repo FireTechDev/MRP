@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Message radio Pompier (PWA) v1.0.4</title>
+  <title>Message radio Pompier (PWA) v1.0.5</title>
   <!-- PWA Meta Tags -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
@@ -103,22 +103,54 @@
       display: flex;
       justify-content: space-between;
       margin-bottom: 15px;
+      background: #f8f9fa;
+      padding: 8px;
+      border-radius: var(--border-radius);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
     .progress-step {
       flex: 1;
-      padding: 5px;
+      padding: 8px 4px;
       text-align: center;
-      font-size: 12px;
+      font-size: 14px;
+      font-weight: 500;
       border-bottom: 3px solid #ddd;
       cursor: pointer;
       white-space: normal;
       text-transform: lowercase;
+      color: #666;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .progress-step::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background: #ddd;
+      border-radius: 50%;
+      margin-bottom: 4px;
     }
 
     .progress-step.active {
       border-bottom-color: var(--primary-color);
+      color: var(--primary-color);
       font-weight: bold;
+    }
+
+    .progress-step.active::before {
+      background: var(--primary-color);
+    }
+
+    @media (max-width: 480px) {
+      .progress-step {
+        font-size: 12px;
+        padding: 6px 2px;
+      }
     }
 
     /* Controls */
@@ -251,7 +283,7 @@
     <h1>Message radio Pompier</h1>
     <!-- Barre de progression -->
     <div class="progress-bar">
-      <div class="progress-step active" data-step="0" onclick="goToStep(0)">intervention</div>
+      <div class="progress-step active" data-step="0" onclick="goToStep(0)">inter</div>
       <div class="progress-step" data-step="1" onclick="goToStep(1)">je suis</div>
       <div class="progress-step" data-step="2" onclick="goToStep(2)">je vois</div>
       <div class="progress-step" data-step="3" onclick="goToStep(3)">victimes</div>
@@ -977,7 +1009,7 @@
     </div>
   </div>
   <div class="update-container">
-    <p class="offline-info"><i>L'application fonctionne même hors ligne.</i> <span class="version-info">Version : 1.0.4</span></p>
+    <p class="offline-info"><i>L'application fonctionne même hors ligne.</i> <span class="version-info">Version : 1.0.5</span></p>
     <a href="#" id="updateLink" class="update-link" onclick="checkForUpdates(); return false;">Vérifier si l'app est à jour</a>
     <p id="updateStatus" class="update-status"></p>
   </div>
@@ -1836,7 +1868,7 @@
     });
 
     // Version de l'application
-    const APP_VERSION = '1.0.4';
+    const APP_VERSION = '1.0.5';
 
     // Fonction pour vérifier les mises à jour
     function checkForUpdates() {
