@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Message radio Pompier (PWA) v1.0.8</title>
+  <title>Message radio Pompier (PWA) v1.0.9</title>
   <!-- PWA Meta Tags -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
@@ -82,6 +82,7 @@
       box-sizing: border-box;
       font-size: var(--font-size);
       border-radius: 5px;
+      font-family: var(--font-family);
     }
 
     button, .toggle-btn {
@@ -237,6 +238,9 @@
       composes: info-text;
       margin-top: 15px;
       white-space: pre-wrap;
+      font-family: var(--font-family);
+      font-size: var(--font-size);
+      line-height: 1.5;
     }
 
     /* Responsive */
@@ -1012,61 +1016,101 @@
 
     <!-- Étape 3 : Victimes -->
     <div id="step3" class="step hidden">
-      <div id="victimsToggleContainer">
-        <button type="button" class="toggle-btn" onclick="selectVictimsToggle(true, this)">Oui</button>
-        <button type="button" class="toggle-btn" onclick="selectVictimsToggle(false, this)">Non</button>
-      </div>
-      <div id="victimsFields" class="hidden">
-        <label>Victimes</label>
-        <div class="number-control">
-          <button type="button" onclick="decrement('victimes')">-</button>
-          <input type="number" id="victimes" value="0" readonly>
-          <button type="button" onclick="increment('victimes')">+</button>
-        </div>
-        <label>Indemnes</label>
-        <div class="number-control">
-          <button type="button" onclick="decrement('indemnes')">-</button>
-          <input type="number" id="indemnes" value="0" readonly>
-          <button type="button" onclick="increment('indemnes')">+</button>
-        </div>
-        <label>UA</label>
-        <div class="number-control">
-          <button type="button" onclick="decrement('UA')">-</button>
-          <input type="number" id="UA" value="0" readonly>
-          <button type="button" onclick="increment('UA')">+</button>
-        </div>
-        <label>UR</label>
-        <div class="number-control">
-          <button type="button" onclick="decrement('UR')">-</button>
-          <input type="number" id="UR" value="0" readonly>
-          <button type="button" onclick="increment('UR')">+</button>
-        </div>
-        <label>DCD</label>
-        <div class="number-control">
-          <button type="button" onclick="decrement('DCD')">-</button>
-          <input type="number" id="DCD" value="0" readonly>
-          <button type="button" onclick="increment('DCD')">+</button>
+      <div id="victimsFields">
+        <!-- Victimes -->
+        <div class="vehicle-count">
+          <div class="vehicle-count-header">
+            <label>Victimes</label>
+            <div class="counter-container">
+              <button type="button" class="counter-btn minus" onclick="decrementVehicle('victimes')" id="victimesMinus">−</button>
+              <span class="counter-value" id="victimes">0</span>
+              <button type="button" class="counter-btn plus" onclick="incrementVehicle('victimes')">+</button>
+            </div>
+          </div>
         </div>
 
-        <label>Incarcérées</label>
-        <div class="number-control">
-          <button type="button" onclick="decrement('incarcerees')">-</button>
-          <input type="number" id="incarcerees" value="0" readonly>
-          <button type="button" onclick="increment('incarcerees')">+</button>
+        <!-- Indemnes -->
+        <div class="vehicle-count">
+          <div class="vehicle-count-header">
+            <label>Indemnes</label>
+            <div class="counter-container">
+              <button type="button" class="counter-btn minus" onclick="decrementVehicle('indemnes')" id="indemnesMinus">−</button>
+              <span class="counter-value" id="indemnes">0</span>
+              <button type="button" class="counter-btn plus" onclick="incrementVehicle('indemnes')">+</button>
+            </div>
+          </div>
         </div>
 
-        <label>Intoxiquées</label>
-        <div class="number-control">
-          <button type="button" onclick="decrement('intoxiquees')">-</button>
-          <input type="number" id="intoxiquees" value="0" readonly>
-          <button type="button" onclick="increment('intoxiquees')">+</button>
+        <!-- UA -->
+        <div class="vehicle-count">
+          <div class="vehicle-count-header">
+            <label>UA</label>
+            <div class="counter-container">
+              <button type="button" class="counter-btn minus" onclick="decrementVehicle('UA')" id="UAMinus">−</button>
+              <span class="counter-value" id="UA">0</span>
+              <button type="button" class="counter-btn plus" onclick="incrementVehicle('UA')">+</button>
+            </div>
+          </div>
         </div>
 
-        <label>Impliqués</label>
-        <div class="number-control">
-          <button type="button" onclick="decrement('impliques')">-</button>
-          <input type="number" id="impliques" value="0" readonly>
-          <button type="button" onclick="increment('impliques')">+</button>
+        <!-- UR -->
+        <div class="vehicle-count">
+          <div class="vehicle-count-header">
+            <label>UR</label>
+            <div class="counter-container">
+              <button type="button" class="counter-btn minus" onclick="decrementVehicle('UR')" id="URMinus">−</button>
+              <span class="counter-value" id="UR">0</span>
+              <button type="button" class="counter-btn plus" onclick="incrementVehicle('UR')">+</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- DCD -->
+        <div class="vehicle-count">
+          <div class="vehicle-count-header">
+            <label>DCD</label>
+            <div class="counter-container">
+              <button type="button" class="counter-btn minus" onclick="decrementVehicle('DCD')" id="DCDMinus">−</button>
+              <span class="counter-value" id="DCD">0</span>
+              <button type="button" class="counter-btn plus" onclick="incrementVehicle('DCD')">+</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Incarcérées -->
+        <div class="vehicle-count">
+          <div class="vehicle-count-header">
+            <label>Incarcérées</label>
+            <div class="counter-container">
+              <button type="button" class="counter-btn minus" onclick="decrementVehicle('incarcerees')" id="incarcereesMinus">−</button>
+              <span class="counter-value" id="incarcerees">0</span>
+              <button type="button" class="counter-btn plus" onclick="incrementVehicle('incarcerees')">+</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Intoxiquées -->
+        <div class="vehicle-count">
+          <div class="vehicle-count-header">
+            <label>Intoxiquées</label>
+            <div class="counter-container">
+              <button type="button" class="counter-btn minus" onclick="decrementVehicle('intoxiquees')" id="intoxiqueesMinus">−</button>
+              <span class="counter-value" id="intoxiquees">0</span>
+              <button type="button" class="counter-btn plus" onclick="incrementVehicle('intoxiquees')">+</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Impliqués -->
+        <div class="vehicle-count">
+          <div class="vehicle-count-header">
+            <label>Impliqués</label>
+            <div class="counter-container">
+              <button type="button" class="counter-btn minus" onclick="decrementVehicle('impliques')" id="impliquesMinus">−</button>
+              <span class="counter-value" id="impliques">0</span>
+              <button type="button" class="counter-btn plus" onclick="incrementVehicle('impliques')">+</button>
+            </div>
+          </div>
         </div>
 
         <label>Autres précisions sur victimes</label>
@@ -1270,7 +1314,7 @@
     </div>
   </div>
   <div class="update-container">
-    <p class="offline-info"><i>L'application fonctionne même hors ligne.</i> <span class="version-info">Version : 1.0.8</span></p>
+    <p class="offline-info"><i>L'application fonctionne même hors ligne.</i> <span class="version-info">Version : 1.0.9</span></p>
     <a href="#" id="updateLink" class="update-link" onclick="checkForUpdates(); return false;">Vérifier si l'app est à jour</a>
     <p id="updateStatus" class="update-status"></p>
     <p class="copyright">© Tael PINAULT 2025</p>
@@ -1340,6 +1384,11 @@
             }
             break;
         }
+      }
+
+      // Si on arrive à l'étape des victimes (step 3), activer automatiquement la section
+      if (step === 3) {
+        victimsSelected = true;
       }
       
       if (step === 5) updateSuggestions();
@@ -1536,7 +1585,7 @@
 
     // Initialiser l'état des boutons au chargement
     window.addEventListener('load', function() {
-      ['vehiculeLeger', 'poidsLourd', 'deuxRoues', 'bus'].forEach(id => {
+      ['vehiculeLeger', 'poidsLourd', 'deuxRoues', 'bus', 'victimes', 'indemnes', 'UA', 'UR', 'DCD', 'incarcerees', 'intoxiquees', 'impliques'].forEach(id => {
         updateMinusButtonState(id);
         updateVehicleDetails(id);
       });
@@ -2164,7 +2213,7 @@
     });
 
     // Version de l'application
-    const APP_VERSION = '1.0.8';
+    const APP_VERSION = '1.0.9';
 
     // Fonction pour vérifier les mises à jour
     function checkForUpdates() {
@@ -2272,6 +2321,15 @@
       btn.classList.add('selected');
       document.getElementById('adresseConfirmee').value = value;
       updateMessage();
+    }
+
+    function getVal(id) {
+      let el = document.getElementById(id);
+      if (!el) return "";
+      if (el.tagName === "SPAN" && el.classList.contains("counter-value")) {
+        return el.textContent;
+      }
+      return el.value;
     }
   </script>
   <script>
