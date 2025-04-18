@@ -1,5 +1,5 @@
 {
-  "name": "Message Radio Pompier",
+  "name": "Message radio Pompier (PWA)",
   "short_name": "MRP",
   "description": "Application de message radio pour les pompiers",
   "start_url": "/MRP/",

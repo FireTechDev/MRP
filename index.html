@@ -3,7 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Message radio Pompier V2.3</title>
+  <title>Message radio Pompier (PWA)</title>
+  <!-- PWA Meta Tags -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Message radio Pompier">
+  <link rel="apple-touch-icon" href="/MRP/icons/icon-192x192.png">
+  <link rel="apple-touch-icon" sizes="192x192" href="/MRP/icons/icon-192x192.png">
+  <link rel="apple-touch-icon" sizes="512x512" href="/MRP/icons/icon-512x512.png">
+  <link rel="manifest" href="/MRP/manifest.json">
+  <meta name="theme-color" content="#007BFF">
+  <meta name="apple-mobile-web-app-status-bar" content="#007BFF">
   <style>
     :root {
       --primary-color: #007BFF;
@@ -1779,6 +1789,20 @@
         goToStep(2);
       }
     });
+  </script>
+  <script>
+    // Enregistrement du Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/MRP/sw.js')
+          .then(registration => {
+            console.log('ServiceWorker registration successful');
+          })
+          .catch(err => {
+            console.log('ServiceWorker registration failed: ', err);
+          });
+      });
+    }
   </script>
 </body>
 </html>
