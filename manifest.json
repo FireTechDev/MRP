@@ -1,0 +1,21 @@
+{
+  "name": "Message Radio Pompier",
+  "short_name": "MRP",
+  "description": "Application de message radio pour les pompiers",
+  "start_url": "/MRP/",
+  "display": "standalone",
+  "background_color": "#f2f2f2",
+  "theme_color": "#007BFF",
+  "icons": [
+    {
+      "src": "/MRP/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/MRP/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+} 
