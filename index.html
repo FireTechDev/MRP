@@ -1833,24 +1833,35 @@
       const updateStatus = document.getElementById('updateStatus');
       updateStatus.style.display = 'none';
       
+      // Détecter si l'utilisateur est sur iOS
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+      
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.getRegistration().then(registration => {
           if (registration) {
-            registration.update().then(() => {
-              updateStatus.textContent = 'Application à jour et disponible hors-ligne';
+            if (isIOS) {
+              // Sur iOS, on force un rechargement de la page
+              window.location.reload(true);
+              updateStatus.textContent = 'Vérification des mises à jour...';
               updateStatus.style.display = 'block';
-              setTimeout(() => {
-                updateStatus.style.display = 'none';
-              }, 3000);
-            }).catch(error => {
-              console.error('Erreur lors de la mise à jour:', error);
-              updateStatus.textContent = 'Erreur lors de la vérification';
-              updateStatus.style.color = '#dc3545';
-              updateStatus.style.display = 'block';
-              setTimeout(() => {
-                updateStatus.style.display = 'none';
-              }, 3000);
-            });
+            } else {
+              // Sur les autres plateformes, on utilise la méthode standard
+              registration.update().then(() => {
+                updateStatus.textContent = 'Application à jour et disponible hors-ligne';
+                updateStatus.style.display = 'block';
+                setTimeout(() => {
+                  updateStatus.style.display = 'none';
+                }, 3000);
+              }).catch(error => {
+                console.error('Erreur lors de la mise à jour:', error);
+                updateStatus.textContent = 'Erreur lors de la vérification';
+                updateStatus.style.color = '#dc3545';
+                updateStatus.style.display = 'block';
+                setTimeout(() => {
+                  updateStatus.style.display = 'none';
+                }, 3000);
+              });
+            }
           }
         });
       }
