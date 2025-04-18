@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fond circulaire -->
+  <circle cx="256" cy="256" r="240" fill="#007BFF"/>
+  
+  <!-- Symbole de radio -->
+  <path d="M256 120c-75 0-136 61-136 136s61 136 136 136 136-61 136-136-61-136-136-136zm0 240c-57.4 0-104-46.6-104-104s46.6-104 104-104 104 46.6 104 104-46.6 104-104 104z" fill="white"/>
+  
+  <!-- Antenne -->
+  <path d="M256 80v40" stroke="white" stroke-width="20" stroke-linecap="round"/>
+  
+  <!-- Symbole de pompier -->
+  <path d="M256 200l-40 40h80l-40-40z" fill="white"/>
+  <path d="M256 200v72" stroke="white" stroke-width="20" stroke-linecap="round"/>
+</svg> 
