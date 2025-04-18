@@ -1,11 +1,1784 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="0; url=message-radio-pompier.html">
-    <title>Redirection</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Message radio Pompier V2.3</title>
+  <style>
+    :root {
+      --primary-color: #007BFF;
+      --secondary-color: #ccc;
+      --danger-color: red;
+      --background-color: #f2f2f2;
+      --container-bg: #fff;
+      --box-shadow: 0 0 8px rgba(0,0,0,0.2);
+      --border-radius: 8px;
+      --font-family: Arial, sans-serif;
+      --font-size: 18px;
+      --padding: 15px;
+      --margin: 10px;
+    }
+
+    /* Base styles */
+    body {
+      font-family: var(--font-family);
+      margin: 0;
+      padding: var(--margin);
+      background: var(--background-color);
+      font-size: var(--font-size);
+      line-height: 1.5;
+    }
+
+    /* Layout */
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: var(--container-bg);
+      padding: var(--padding);
+      box-shadow: var(--box-shadow);
+      border-radius: var(--border-radius);
+    }
+
+    /* Typography */
+    h1, h3, h4 {
+      margin: 15px 0 10px;
+      color: #333;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 24px;
+    }
+
+    /* Form elements */
+    input, select, textarea, button, .toggle-btn {
+      width: 100%;
+      padding: var(--padding);
+      margin: 8px 0;
+      box-sizing: border-box;
+      font-size: var(--font-size);
+      border-radius: 5px;
+    }
+
+    button, .toggle-btn {
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    button {
+      background-color: var(--primary-color);
+      color: #fff;
+    }
+
+    .toggle-btn {
+      background-color: var(--secondary-color);
+      color: #000;
+      text-align: left;
+    }
+
+    button:hover, .toggle-btn:hover {
+      transform: scale(1.03);
+    }
+
+    .prev-btn { background-color: grey; }
+    .reset-btn { background-color: var(--danger-color); }
+    
+    /* Progress bar */
+    .progress-bar {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 15px;
+    }
+
+    .progress-step {
+      flex: 1;
+      padding: 5px;
+      text-align: center;
+      font-size: 12px;
+      border-bottom: 3px solid #ddd;
+      cursor: pointer;
+      white-space: normal;
+      text-transform: lowercase;
+    }
+
+    .progress-step.active {
+      border-bottom-color: var(--primary-color);
+      font-weight: bold;
+    }
+
+    /* Controls */
+    .number-control {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .number-control button {
+      width: 30%;
+    }
+
+    .number-control input {
+      width: 40%;
+      text-align: center;
+    }
+
+    /* States and containers */
+    .hidden { display: none !important; }
+    
+    .step {
+      display: none;
+      animation: fadeIn 0.5s;
+    }
+
+    .step.active { display: block; }
+
+    .sub-container, .risk-section {
+      margin: 10px 0;
+      padding: var(--padding);
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: var(--border-radius);
+    }
+
+    /* Toggle elements */
+    .toggle-btn.selected, #toggleRouteBtn.active {
+      background-color: var(--primary-color);
+      color: #fff;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+    }
+
+    .toggle-icon {
+      display: inline-block;
+      font-size: 20px;
+      font-weight: bold;
+      margin-left: 5px;
+      transition: transform 0.3s;
+    }
+
+    .toggle-icon.rotated {
+      transform: rotate(90deg);
+    }
+
+    /* Info elements */
+    .info-text {
+      background: #e9ecef;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      font-size: 14px;
+      line-height: 1.4;
+      white-space: pre-line;
+    }
+
+    .result {
+      composes: info-text;
+      margin-top: 15px;
+      white-space: pre-wrap;
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .progress-step {
+        font-size: 10px;
+        padding: 3px;
+      }
+      
+      input, select, textarea, button {
+        font-size: 16px;
+      }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+  </style>
 </head>
 <body>
-    <p>Redirection en cours vers l'application Message Radio Pompier...</p>
+  <div class="container">
+    <h1>Message radio Pompier</h1>
+    <!-- Barre de progression -->
+    <div class="progress-bar">
+      <div class="progress-step active" data-step="0" onclick="goToStep(0)">intervention</div>
+      <div class="progress-step" data-step="1" onclick="goToStep(1)">je suis</div>
+      <div class="progress-step" data-step="2" onclick="goToStep(2)">je vois</div>
+      <div class="progress-step" data-step="3" onclick="goToStep(3)">victimes</div>
+      <div class="progress-step" data-step="4" onclick="goToStep(4)">je fais</div>
+      <div class="progress-step" data-step="5" onclick="goToStep(5)">je demande</div>
+      <div class="progress-step" data-step="6" onclick="goToStep(6)">message</div>
+    </div>
+
+    <!-- Étape 0 : Intervention -->
+    <div id="step0" class="step active">
+      <label for="interventionNumero">Intervention numéro</label>
+      <input type="text" id="interventionNumero" placeholder="Intervention numéro">
+
+      <label for="motifDepart">Motif de départ</label>
+      <select id="motifDepart">
+        <option value="">Choisir</option>
+        <option>AVP</option>
+        <option>Feu de véhicule</option>
+        <option>Feu de bâtiment</option>
+        <option>Chute de ligne électrique</option>
+        <option>Odeur de brulé</option>
+        <option>Fumée suspecte</option>
+        <option>Fuite de Gaz procédure classique</option>
+        <option>Fuite de Gaz procédure renforcée</option>
+        <option>Déclenchement alarme</option>
+        <option>Autre type d'intervention</option>
+      </select>
+
+      <hr>
+
+      <label for="groupeHoraireAuto">Groupe horaire (récupéré automatiquement)</label>
+      <input type="text" id="groupeHoraireAuto" readonly>
+      <button type="button" onclick="setCurrentTime()">Actualiser le groupe horaire</button>
+
+      <div class="separator">ou</div>
+
+      <label for="groupeHoraireManuel">Saisir un groupe horaire</label>
+      <input type="time" id="groupeHoraireManuel" placeholder="hh:mm">
+
+      <hr>
+      <button type="button" onclick="goToStep(1)">Suivant →</button>
+    </div>
+
+    <!-- Étape 1 : Je suis -->
+    <div id="step1" class="step hidden">
+      <label for="adresseConfirmee">Adresse initiale confirmée / modifiée</label>
+      <select id="adresseConfirmee">
+        <option value="">Choisir</option>
+        <option>Confirmée</option>
+        <option>Modifiée</option>
+      </select>
+
+      <button type="button" onclick="geolocalise()" class="gps-btn">
+        <i class="gps-icon">📍</i> Géolocaliser ma position
+      </button>
+
+      <div class="field-group">
+        <label for="adresse">Adresse</label>
+        <input type="text" id="adresse" placeholder="Saisissez une adresse">
+        <span id="gpsInfo" class="gps-info hidden">Position approximative basée sur le GPS du navigateur.</span>
+      </div>
+
+      <div class="field-group">
+      <label for="commune">Commune</label>
+      <input type="text" id="commune" placeholder="Saisissez une commune">
+        <span id="gpsInfoCommune" class="gps-info hidden">Position approximative basée sur le GPS du navigateur.</span>
+      </div>
+
+      <button type="button" id="toggleRouteBtn" onclick="toggleRouteInfo()">
+        Informations route
+        <span class="toggle-icon">›</span>
+      </button>
+
+      <div id="routeInfo" class="sub-container hidden">
+      <label for="typeRoute">Type de route</label>
+      <select id="typeRoute">
+        <option value="">Choisir</option>
+        <option>Autoroute</option>
+        <option>Route nationale</option>
+        <option>Route départementale</option>
+        <option>Rocade intérieure</option>
+        <option>Rocade extérieure</option>
+      </select>
+
+      <label for="numeroRoute">Numéro de route</label>
+        <input type="text" id="numeroRoute" placeholder="Saisissez numéro de route">
+
+        <label for="nomEchangeur">Nom de l'échangeur</label>
+        <input type="text" id="nomEchangeur" placeholder="Saisissez le nom de l'échangeur">
+
+      <label for="pk">PK</label>
+      <input type="text" id="pk" placeholder="Saisissez numéro PK">
+
+      <label for="sens">Sens</label>
+      <input type="text" id="sens" placeholder="Saisissez un sens">
+      </div>
+
+      <hr>
+      <button type="button" class="prev-btn" onclick="goToStep(0)">← Précédent</button>
+      <button type="button" onclick="goToStep(2)">Suivant →</button>
+    </div>
+
+    <!-- Étape 2 : Je vois -->
+    <div id="step2" class="step hidden">
+      <div id="natureInterventionContainer">
+        <button type="button" class="toggle-btn nature-toggle" data-value="AVP" onclick="selectNature(this)">AVP</button>
+        <button type="button" class="toggle-btn nature-toggle" data-value="Feu de véhicule" onclick="selectNature(this)">Feu de véhicule</button>
+        <button type="button" class="toggle-btn nature-toggle" data-value="Feu de bâtiment" onclick="selectNature(this)">Feu de bâtiment</button>
+        <button type="button" class="toggle-btn nature-toggle" data-value="Autre" onclick="selectNature(this)">Autre type d'intervention</button>
+        
+        <div id="autreTypeContainer" class="hidden" style="margin-top: 10px;">
+          <label for="autreTypeIntervention">Autre type d'intervention</label>
+          <select id="autreTypeIntervention" onchange="handleAutreIntervention(this.value)">
+            <option value="">Choisir</option>
+            <option value="Chute de ligne électrique">Chute de ligne électrique</option>
+            <option value="Fuite de gaz procédure classique">Fuite de gaz procédure classique</option>
+            <option value="Fuite de gaz procédure renforcée">Fuite de gaz procédure renforcée</option>
+            <option value="Fumée suspecte">Fumée suspecte</option>
+            <option value="Odeur de brulé">Odeur de brulé</option>
+            <option value="Autre type de feu">Autre type de feu</option>
+          </select>
+        </div>
+      </div>
+
+      <h3 id="selectedNatureTitle" class="hidden" style="margin-top: 20px; text-align: center; color: #333; border-bottom: 2px solid #007BFF; padding-bottom: 10px;"></h3>
+
+      <!-- Champs AVP -->
+      <div id="avpFields" class="sub-container hidden">
+        <h3>Nombre et type de véhicules impliqués</h3>
+        
+        <!-- Véhicule léger -->
+        <div class="vehicle-count">
+          <label>Véhicule léger</label>
+          <div class="number-control">
+            <button type="button" onclick="decrementVehicle('vehiculeLeger')">-</button>
+            <input type="number" id="vehiculeLeger" value="0" readonly>
+            <button type="button" onclick="incrementVehicle('vehiculeLeger')">+</button>
+          </div>
+          <div id="vehiculeLegerDetails" class="hidden">
+            <input type="text" placeholder="Énergie.." id="vehiculeLegerPrecisions">
+          </div>
+        </div>
+
+        <!-- Poids lourd -->
+        <div class="vehicle-count">
+          <label>Poids lourd</label>
+          <div class="number-control">
+            <button type="button" onclick="decrementVehicle('poidsLourd')">-</button>
+            <input type="number" id="poidsLourd" value="0" readonly>
+            <button type="button" onclick="incrementVehicle('poidsLourd')">+</button>
+          </div>
+          <div id="poidsLourdDetails" class="hidden">
+            <input type="text" placeholder="Nature du transport, code danger, code matière" id="poidsLourdPrecisions">
+          </div>
+        </div>
+
+        <!-- Deux roues -->
+        <div class="vehicle-count">
+          <label>Deux roues</label>
+          <div class="number-control">
+            <button type="button" onclick="decrementVehicle('deuxRoues')">-</button>
+            <input type="number" id="deuxRoues" value="0" readonly>
+            <button type="button" onclick="incrementVehicle('deuxRoues')">+</button>
+          </div>
+          <div id="deuxRouesDetails" class="hidden">
+            <input type="text" placeholder="Préciser nature, moto, scooter, trottinette.." id="deuxRouesPrecisions">
+          </div>
+        </div>
+
+        <!-- Bus -->
+        <div class="vehicle-count">
+          <label>Bus</label>
+          <div class="number-control">
+            <button type="button" onclick="decrementVehicle('bus')">-</button>
+            <input type="number" id="bus" value="0" readonly>
+            <button type="button" onclick="incrementVehicle('bus')">+</button>
+          </div>
+          <div id="busDetails" class="hidden">
+            <input type="text" placeholder="Préciser, bus scolaire, tourisme, nom société.." id="busPrecisions">
+          </div>
+        </div>
+
+        <!-- Autre type de véhicule -->
+        <div>
+          <label>Autre type de véhicule impliqués</label>
+          <input type="text" placeholder="Préciser nature et nombre, train, tram, numéro de ligne.." id="autreVehicule">
+        </div>
+
+        <!-- Détails supplémentaires -->
+        <button type="button" class="toggle-btn" onclick="toggleDetailsSupplementaires()" id="toggleDetailsBtn">
+          Ajouter détails
+          <span class="toggle-icon">›</span>
+        </button>
+
+        <div id="detailsSupplementaires" class="sub-container hidden">
+          <label>Présence d'une fuite en phase</label>
+          <select id="typePhase">
+            <option value="">Choisir</option>
+            <option>Liquide</option>
+            <option>Gazeuse</option>
+            <option>Inflammée</option>
+          </select>
+
+          <label>Localisation de la fuite</label>
+          <input type="text" id="localisationFuite" placeholder="préciser localisation">
+
+          <label>Présence d'un feu sur</label>
+          <input type="text" id="presenceFeu" placeholder="Préciser quel véhicule">
+
+          <label>Localisation du feu</label>
+          <input type="text" id="localisationFeu" placeholder="Préciser localisation du feu">
+
+          <label>Circonstances particulières</label>
+          <input type="text" id="circonstances" placeholder="Choisir (feu, ravin, eau, matière dangereuse)">
+        </div>
+
+        <label>État de la circulation sur la voie</label>
+        <select id="etatCirculation">
+            <option value="">Choisir</option>
+          <option>Coupée</option>
+          <option>Alternée</option>
+          <option>Ralentie</option>
+          </select>
+
+        <label>Nombre de voies impactées</label>
+        <input type="text" placeholder="Préciser le nombre de voies impactées" id="voiesImpactees">
+
+        <label>Sens de circulation</label>
+        <input type="text" placeholder="Préciser le sens de circulation" id="sensCirculation">
+          </div>
+
+      <!-- Champs Feu de véhicule -->
+      <div id="feuVehiculeFields" class="sub-container hidden">
+        <label>Type de véhicule</label>
+        <select id="typeVehicule">
+          <option value="">Choisir</option>
+          <optgroup label="Véhicules terrestres">
+            <option>VEHICULE LEGER</option>
+            <option>VEHICULE DEUX ROUES</option>
+            <option>VEHICULE POIDS LOURD</option>
+            <option>VEHICULE POIDS LOURD TMD</option>
+            <option>VEHICULE AGRICOLE</option>
+          </optgroup>
+          <optgroup label="Autres véhicules">
+            <option>AVION DE LIGNE - MILITAIRE</option>
+            <option>AVION DE TOURISME</option>
+            <option>BATEAU</option>
+            <option>BUS</option>
+            <option>HÉLICOPTÈRE</option>
+            <option>METRO</option>
+            <option>PÉNICHE</option>
+            <option>TRAMWAY</option>
+            <option>TRAIN</option>
+            <option>ULM</option>
+          </optgroup>
+        </select>
+
+        <label>Énergie</label>
+        <select id="energieVehicule">
+          <option value="">Choisir</option>
+          <option>Essence</option>
+          <option>Gazoil</option>
+          <option>Électrique</option>
+          <option>Hybride</option>
+          <option>GPL</option>
+          <option>Inconnue</option>
+        </select>
+
+        <div class="risk-section">
+          <h4>Risque de propagation</h4>
+          <div id="propagationVehiculeContainer">
+            <button type="button" class="toggle-btn" onclick="selectToggle('propagationVehicule', this)" data-value="Oui">Oui</button>
+            <button type="button" class="toggle-btn" onclick="selectToggle('propagationVehicule', this)" data-value="Non">Non</button>
+          </div>
+          <input type="hidden" id="propagationVehicule">
+          <div id="propagationVehiculeDetails" class="hidden">
+            <input type="text" placeholder="Préciser à quoi peut se propager le feu" id="precisionsPropagationVehicule">
+          </div>
+        </div>
+
+        <div class="risk-section">
+          <h4>Véhicule Isolé</h4>
+          <div id="isoleVehiculeContainer">
+            <button type="button" class="toggle-btn" onclick="selectToggle('isoleVehicule', this)" data-value="Oui">Oui</button>
+            <button type="button" class="toggle-btn" onclick="selectToggle('isoleVehicule', this)" data-value="Non">Non</button>
+          </div>
+          <input type="hidden" id="isoleVehicule">
+          <div id="isoleVehiculeDetails" class="hidden">
+            <input type="text" placeholder="Préciser l'environnement" id="precisionsIsoleVehicule">
+          </div>
+          </div>
+
+        <label>Présence d'un risque spécifique</label>
+        <select id="risqueSpecifiqueVehicule">
+            <option value="">Choisir</option>
+            <option>Hydrocarbure</option>
+            <option>Acétylène</option>
+            <option>Engrais</option>
+            <option>Gaz</option>
+          </select>
+
+        <label>Évolution du feu</label>
+        <select id="evolutionFeuVehicule">
+            <option value="">Choisir</option>
+          <option>1-En développement</option>
+          <option>2-Stabilisé</option>
+          <option>3-En régression</option>
+          <option>4-Circonscrit</option>
+          <option>5-Maîtrisé</option>
+          <option>6-Foyer principal éteint</option>
+          <option>7-Feu éteint</option>
+          </select>
+      </div>
+
+      <!-- Champs communs bâtiment -->
+      <div id="batimentFields" class="sub-container hidden">
+        <h3>Type de bâtiment</h3>
+        <div id="typeBatimentContainer">
+          <button type="button" class="toggle-btn" onclick="selectBatimentType(this)" data-value="Plain pied">De plain pied</button>
+          <button type="button" class="toggle-btn" onclick="selectBatimentType(this)" data-value="R+">Bâtiment R+</button>
+        </div>
+
+        <div id="etagesFields" class="hidden">
+          <label>Nombre d'étages R+</label>
+            <select id="etagesRPlus">
+              <option value="">Choisir</option>
+              <option>0</option><option>1</option><option>2</option><option>3</option><option>4</option>
+              <option>5</option><option>6</option><option>7</option><option>8</option><option>9</option>
+              <option>10</option><option>11</option><option>12</option>
+            </select>
+
+          <label>Nombre d'étages R-</label>
+            <select id="etagesRMoins">
+              <option value="">Choisir</option>
+              <option>-1</option><option>-2</option><option>-3</option><option>-4</option><option>-5</option>
+              <option>-6</option><option>-7</option><option>-8</option><option>-9</option><option>-10</option>
+              <option>-11</option><option>-12</option>
+            </select>
+          </div>
+
+        <label>Type de bâtiment</label>
+        <select id="typeBatimentSelect">
+          <option value="">Choisir</option>
+          <option>Appartement</option>
+          <option>Maison</option>
+          <option>Entrepôt</option>
+          <option>Agricole</option>
+          <option>Tertiaire</option>
+          <option>ERP</option>
+        </select>
+
+        <label>Bâtiment à usage de</label>
+        <select id="usageBatiment">
+          <option value="">Choisir</option>
+          <option>Habitation (maison, villa, appartement)</option>
+          <option>Usage commercial (magasin, centre commercial)</option>
+          <option>Usage tertiaire (bureaux)</option>
+          <option>Usage industriel (usine, entrepôt, site seveso)</option>
+          <option>ERP (école, hôpital, clinique, hôtel, EPHAD, Complexe sportif, salle de spectacle)</option>
+          <option>Agricole</option>
+        </select>
+
+        <label>Structure</label>
+          <select id="structure">
+            <option value="">Choisir</option>
+          <option>Métallique</option>
+          <option>Traditionnelle</option>
+          <option>Béton</option>
+          <option>Bois</option>
+          <option>Mixte</option>
+          </select>
+
+        <label>Surface totale estimée m²</label>
+        <input type="number" id="surfaceTotale" placeholder="Surface totale estimée en m²">
+
+        <label>Surface sinistrée estimée m²</label>
+        <input type="number" id="surfaceSinistree" placeholder="Surface sinistrée estimée en m²">
+
+        <div class="risk-section">
+          <h4>Risque de propagation</h4>
+          <div id="propagationBatimentContainer">
+            <button type="button" class="toggle-btn" onclick="selectToggle('propagationBatiment', this)" data-value="Oui">Oui</button>
+            <button type="button" class="toggle-btn" onclick="selectToggle('propagationBatiment', this)" data-value="Non">Non</button>
+          </div>
+          <input type="hidden" id="propagationBatiment">
+          <div id="propagationBatimentDetails" class="hidden">
+            <input type="text" placeholder="Préciser à quoi peut se propager le feu" id="precisionsPropagationBatiment">
+          </div>
+        </div>
+
+        <div class="risk-section">
+          <h4>Isolé</h4>
+          <div id="isoleBatimentContainer">
+            <button type="button" class="toggle-btn" onclick="selectToggle('isoleBatiment', this)" data-value="Oui">Oui</button>
+            <button type="button" class="toggle-btn" onclick="selectToggle('isoleBatiment', this)" data-value="Non">Non</button>
+          </div>
+          <input type="hidden" id="isoleBatiment">
+          <div id="isoleBatimentDetails" class="hidden">
+            <input type="text" placeholder="Préciser l'environnement" id="precisionsIsoleBatiment">
+          </div>
+        </div>
+
+        <label>Présence d'un risque spécifique</label>
+        <select id="risqueSpecifiqueBatiment">
+            <option value="">Choisir</option>
+          <option>Hydrocarbure</option>
+          <option>Acétylène</option>
+          <option>Engrais</option>
+          <option>Gaz</option>
+          </select>
+
+        <label>Évolution du feu</label>
+        <select id="evolutionFeuBatiment">
+          <option value="">Choisir</option>
+          <option>1-En développement</option>
+          <option>2-Stabilisé</option>
+          <option>3-En régression</option>
+          <option>4-Circonscrit</option>
+          <option>5-Maîtrisé</option>
+          <option>6-Foyer principal éteint</option>
+          <option>7-Feu éteint</option>
+        </select>
+        </div>
+
+      <!-- Champs Chute de ligne électrique -->
+      <div id="chuteLigneFields" class="sub-container hidden">
+        <h3>Chute de ligne électrique</h3>
+        <label>Localisation de la chute</label>
+        <input type="text" id="localisationChute" placeholder="Localisation de la chute">
+
+        <h4>Type de ligne</h4>
+        <div id="typeLigneContainer">
+          <button type="button" class="toggle-btn" onclick="selectTypeLigne('BT')">BT</button>
+          <button type="button" class="toggle-btn" onclick="selectTypeLigne('HTA')">HTA</button>
+          <button type="button" class="toggle-btn" onclick="selectTypeLigne('HTB')">HTB</button>
+      </div>
+        <div id="perimetresInfo" class="info-text"></div>
+
+        <button type="button" class="toggle-btn" onclick="toggleLigneDetails()" id="toggleLigneDetailsBtn">
+          Ajouter détails
+          <span class="toggle-icon">›</span>
+        </button>
+
+        <div id="ligneDetailsFields" class="sub-container hidden">
+          <label>Présence d'un feu sur</label>
+          <input type="text" id="presenceFeuLigne" placeholder="Préciser quel véhicule">
+
+          <label>Localisation du feu</label>
+          <input type="text" id="localisationFeuLigne" placeholder="Préciser localisation du feu">
+
+          <label>Circonstances particulières</label>
+          <input type="text" id="circonstancesLigne" placeholder="Choisir (feu, ravin, eau, matière dangereuse)">
+        </div>
+      </div>
+
+      <!-- Message d'information pour les fuites de gaz -->
+      <div id="infoFuiteGaz" class="info-text hidden">
+        Demande de PGR possible à la demande du COS si :
+        - fuite sur voie publique avec échappement à l'air libre (fuite ouverte)
+        - fuite à l'intérieur d'un bâtiment.
+        Rappel des périmètres : zone exclusion = 50m, zone contrôlée = 100m.
+      </div>
+
+      <hr>
+      <button type="button" class="prev-btn" onclick="goToStep(1)">← Précédent</button>
+      <button type="button" onclick="goToStep(3)">Suivant →</button>
+    </div>
+
+    <!-- Étape 3 : Victimes -->
+    <div id="step3" class="step hidden">
+      <div id="victimsToggleContainer">
+        <button type="button" class="toggle-btn" onclick="selectVictimsToggle(true, this)">Oui</button>
+        <button type="button" class="toggle-btn" onclick="selectVictimsToggle(false, this)">Non</button>
+      </div>
+      <div id="victimsFields" class="hidden">
+        <label>Victimes</label>
+        <div class="number-control">
+          <button type="button" onclick="decrement('victimes')">-</button>
+          <input type="number" id="victimes" value="0" readonly>
+          <button type="button" onclick="increment('victimes')">+</button>
+        </div>
+        <label>Indemnes</label>
+        <div class="number-control">
+          <button type="button" onclick="decrement('indemnes')">-</button>
+          <input type="number" id="indemnes" value="0" readonly>
+          <button type="button" onclick="increment('indemnes')">+</button>
+        </div>
+        <label>UA</label>
+        <div class="number-control">
+          <button type="button" onclick="decrement('UA')">-</button>
+          <input type="number" id="UA" value="0" readonly>
+          <button type="button" onclick="increment('UA')">+</button>
+        </div>
+        <label>UR</label>
+        <div class="number-control">
+          <button type="button" onclick="decrement('UR')">-</button>
+          <input type="number" id="UR" value="0" readonly>
+          <button type="button" onclick="increment('UR')">+</button>
+        </div>
+        <label>DCD</label>
+        <div class="number-control">
+          <button type="button" onclick="decrement('DCD')">-</button>
+          <input type="number" id="DCD" value="0" readonly>
+          <button type="button" onclick="increment('DCD')">+</button>
+        </div>
+
+        <label>Incarcérées</label>
+        <div class="number-control">
+          <button type="button" onclick="decrement('incarcerees')">-</button>
+          <input type="number" id="incarcerees" value="0" readonly>
+          <button type="button" onclick="increment('incarcerees')">+</button>
+        </div>
+
+        <label>Intoxiquées</label>
+        <div class="number-control">
+          <button type="button" onclick="decrement('intoxiquees')">-</button>
+          <input type="number" id="intoxiquees" value="0" readonly>
+          <button type="button" onclick="increment('intoxiquees')">+</button>
+        </div>
+
+        <label>Impliqués</label>
+        <div class="number-control">
+          <button type="button" onclick="decrement('impliques')">-</button>
+          <input type="number" id="impliques" value="0" readonly>
+          <button type="button" onclick="increment('impliques')">+</button>
+        </div>
+
+        <label>Autres précisions sur victimes</label>
+        <textarea id="precisionVictimes" placeholder="Saisissez des précisions supplémentaires sur les victimes" style="width: 100%; min-height: 60px; margin-top: 10px; padding: 10px; border: 1px solid #ccc; border-radius: 5px;"></textarea>
+      </div>
+      <button type="button" class="prev-btn" onclick="goToStep(2)">← Précédent</button>
+      <button type="button" onclick="goToStep(4)">Suivant →</button>
+    </div>
+
+    <!-- Étape 4 : Je fais -->
+    <div id="step4" class="step hidden">
+      <!-- Nouvelle section "Je prévois" -->
+      <button type="button" class="toggle-btn" onclick="togglePrevois()" id="togglePrevoisBtn">
+        Je prévois (Chef de groupe)
+        <span class="toggle-icon">›</span>
+      </button>
+
+      <div id="prevoisFields" class="sub-container hidden">
+        <div id="prevoisActions">
+          <button type="button" class="toggle-btn" onclick="toggleActionDetails(this)" data-target="augmentationVictimes">Augmentation du nombre de victimes</button>
+          <div id="augmentationVictimes" class="action-details hidden">
+            <input type="text" id="preciserAugmentationVictimes" placeholder="Préciser l'augmentation du nombre de victimes">
+          </div>
+
+          <button type="button" class="toggle-btn" onclick="toggleActionDetails(this)" data-target="aggravationVictimes">Aggravation de l'état des victimes</button>
+          <div id="aggravationVictimes" class="action-details hidden">
+            <input type="text" id="preciserAggravationVictimes" placeholder="Préciser l'aggravation de l'état des victimes">
+          </div>
+
+          <button type="button" class="toggle-btn" onclick="toggleActionDetails(this)" data-target="interventionLongue">Intervention de longue durée</button>
+          <div id="interventionLongue" class="action-details hidden">
+            <input type="text" id="preciserInterventionLongue" placeholder="Préciser l'intervention de longue durée">
+          </div>
+
+          <button type="button" class="toggle-btn" onclick="toggleActionDetails(this)" data-target="pollution">Pollution</button>
+          <div id="pollution" class="action-details hidden">
+            <input type="text" id="preciserPollution" placeholder="Préciser la pollution">
+          </div>
+
+          <button type="button" class="toggle-btn" onclick="toggleActionDetails(this)" data-target="feu">Feu</button>
+          <div id="feu" class="action-details hidden">
+            <input type="text" id="preciserFeu" placeholder="Préciser le feu">
+          </div>
+
+          <button type="button" class="toggle-btn" onclick="toggleActionDetails(this)" data-target="effondrement">Effondrement</button>
+          <div id="effondrement" class="action-details hidden">
+            <input type="text" id="preciserEffondrement" placeholder="Préciser l'effondrement">
+          </div>
+
+          <button type="button" class="toggle-btn" onclick="toggleActionDetails(this)" data-target="explosion">Explosion</button>
+          <div id="explosion" class="action-details hidden">
+            <input type="text" id="preciserExplosion" placeholder="Préciser l'explosion">
+          </div>
+        </div>
+        <div class="field-group">
+          <label for="precisionsPrevois">Préciser</label>
+          <textarea id="precisionsPrevois" placeholder="Précisions sur les prévisions"></textarea>
+        </div>
+      </div>
+
+      <h3>Je fais</h3>
+      <div id="actionsContainer">
+        <!-- Désincarcération -->
+        <button type="button" class="toggle-btn" onclick="toggleActionDetails(this)" data-target="desincarceration">Désincarcération</button>
+        <div id="desincarceration" class="action-details hidden">
+          <input type="text" id="preciserDesincarceration" placeholder="Précisez la désincarcération">
+        </div>
+
+        <!-- Balisage -->
+        <button type="button" class="toggle-btn" onclick="toggleActionDetails(this)" data-target="balisage">Balisage</button>
+        <div id="balisage" class="action-details hidden">
+          <input type="text" id="preciserBalisage" placeholder="Préciser balisage">
+        </div>
+
+        <!-- Extinction -->
+        <button type="button" class="toggle-btn" onclick="toggleActionDetails(this)" data-target="extinction">Extinction</button>
+        <div id="extinction" class="action-details hidden">
+          <input type="text" id="preciserExtinction" placeholder="Précisez l'extinction">
+          <label for="nombreLDV">Nombre de LDV</label>
+          <select id="nombreLDV">
+            <option value="">Choisir</option>
+            <option>1</option><option>2</option><option>3</option>
+            <option>4</option><option>5</option><option>6</option>
+          </select>
+          <label for="debit">Débit</label>
+          <select id="debit">
+            <option value="">Choisir</option>
+            <option>150L/min</option><option>250L/min</option>
+            <option>500L/min</option><option>1000L/min</option>
+          </select>
+          <label for="fourgonAlimente">Fourgon alimenté</label>
+          <select id="fourgonAlimente">
+            <option value="">Choisir</option>
+            <option>Oui</option><option>Non</option>
+            <option>Oui sur PI</option><option>Oui sur RI</option>
+            <option>Oui sur Porteur d'eau</option>
+          </select>
+        </div>
+
+        <!-- Mise en sécurité -->
+        <button type="button" class="toggle-btn" onclick="toggleActionDetails(this)" data-target="miseEnSecurite">Mise en sécurité</button>
+        <div id="miseEnSecurite" class="action-details hidden">
+          <input type="text" id="preciserMiseEnSecurite" placeholder="Préciser la mise en sécurité">
+          <input type="number" id="nombrePersonnesMiseEnSecurite" placeholder="Nombre de personnes">
+          <input type="text" id="pointRassemblement" placeholder="Point de rassemblement des victimes">
+        </div>
+
+        <!-- Prise en charge des victimes -->
+        <button type="button" class="toggle-btn" onclick="toggleActionDetails(this)" data-target="priseEnCharge">Prise en charge des victimes</button>
+        <div id="priseEnCharge" class="action-details hidden">
+          <input type="text" id="preciserPriseEnCharge" placeholder="Préciser la prise en charge">
+          <input type="number" id="nombreVictimesPriseEnCharge" placeholder="Nombre de victimes">
+          <input type="text" id="parEquipage" placeholder="Par équipage (VSAV...)">
+        </div>
+
+        <!-- Coupures des énergies -->
+        <button type="button" class="toggle-btn" onclick="toggleActionDetails(this)" data-target="coupuresEnergies">Coupures des énergies</button>
+        <div id="coupuresEnergies" class="action-details hidden">
+          <input type="text" id="preciserCoupuresEnergies" placeholder="Préciser les coupures d'énergies">
+        </div>
+
+        <!-- Arrêt écoulement -->
+        <button type="button" class="toggle-btn" onclick="toggleActionDetails(this)" data-target="arretEcoulement">Arrêt écoulement / déversement</button>
+        <div id="arretEcoulement" class="action-details hidden">
+          <input type="text" id="preciserArretEcoulement" placeholder="Préciser l'arrêt d'écoulement">
+        </div>
+
+        <!-- Sauvetage -->
+        <button type="button" class="toggle-btn" onclick="toggleActionDetails(this)" data-target="sauvetage">Sauvetage des victimes</button>
+        <div id="sauvetage" class="action-details hidden">
+          <input type="text" id="preciserSauvetage" placeholder="Préciser le sauvetage">
+        </div>
+
+        <!-- Relevés thermiques -->
+        <button type="button" class="toggle-btn" onclick="toggleActionDetails(this)" data-target="relevesThermiques">Relevés thermiques</button>
+        <div id="relevesThermiques" class="action-details hidden">
+          <input type="text" id="preciserRelevesThermiques" placeholder="Préciser les relevés thermiques">
+        </div>
+
+        <!-- Relevés explosimètre -->
+        <button type="button" class="toggle-btn" onclick="toggleActionDetails(this)" data-target="relevesExplosimetre">Relevés explosimètre</button>
+        <div id="relevesExplosimetre" class="action-details hidden">
+          <input type="text" id="preciserRelevesExplosimetre" placeholder="Préciser les relevés explosimètre">
+        </div>
+
+        <!-- Boutons sans détails -->
+        <button type="button" class="toggle-btn" onclick="toggleButton(this)">Désenfumage</button>
+        <button type="button" class="toggle-btn" onclick="toggleButton(this)">Ventilation</button>
+        <button type="button" class="toggle-btn" onclick="toggleButton(this)">Déblai</button>
+        <button type="button" class="toggle-btn" onclick="toggleButton(this)">Je poursuis reconnaissance</button>
+      </div>
+
+      <hr>
+      <button type="button" class="prev-btn" onclick="goToStep(3)">← Précédent</button>
+      <button type="button" onclick="goToStep(5)">Suivant →</button>
+    </div>
+
+    <!-- Étape 5 : Je demande / confirme -->
+    <div id="step5" class="step hidden">
+      <div id="suggestions" class="info-text"></div>
+      <div id="demandeActions">
+        <button type="button" class="toggle-btn" id="action-EPA" onclick="toggleButton(this)">EPA</button>
+        <button type="button" class="toggle-btn" id="action-VSAV" onclick="toggleButton(this)">VSAV</button>
+        <div id="vsavNumberContainer" class="sub-container hidden">
+          <label for="nombreVSAV">Nombre de VSAV (1-5)</label>
+          <input type="number" id="nombreVSAV" min="1" max="5" placeholder="1">
+        </div>
+        <button type="button" class="toggle-btn" id="action-FPT" onclick="toggleButton(this)">FPT</button>
+        <button type="button" class="toggle-btn" id="action-chefGroupe" onclick="toggleButton(this)">Chef de groupe</button>
+        <button type="button" class="toggle-btn" id="action-vehiculeSpecifique" onclick="toggleButton(this)">Véhicule spécifique</button>
+        <div id="vehiculeSpecifiqueContainer" class="sub-container hidden">
+          <label for="vehiculeSpecifiqueText">Précisez le véhicule spécifique</label>
+          <input type="text" id="vehiculeSpecifiqueText" placeholder="Votre précision">
+        </div>
+        <button type="button" class="toggle-btn" id="action-gendarmerie" onclick="toggleButton(this)">Gendarmerie</button>
+        <button type="button" class="toggle-btn" id="action-police" onclick="toggleButton(this)">Police</button>
+        <button type="button" class="toggle-btn" id="action-ENEDIS" onclick="toggleButton(this)">ENEDIS</button>
+        <button type="button" class="toggle-btn" id="toggle-btn" id="action-GRDF" onclick="toggleButton(this)">GRDF</button>
+        <button type="button" class="toggle-btn" id="action-SMUR" onclick="toggleButton(this)">SMUR</button>
+        <button type="button" class="toggle-btn" id="action-elus" onclick="toggleButton(this)">Élus</button>
+        <button type="button" class="toggle-btn" id="action-RTE" onclick="toggleButton(this)" style="display:none;">RTE</button>
+      </div>
+      <label for="difficultes">Difficultés rencontrées</label>
+      <textarea id="difficultes" placeholder="Difficultés rencontrées"></textarea>
+      <label for="solution">Solution proposée</label>
+      <textarea id="solution" placeholder="Solution proposée"></textarea>
+      <label for="autresInfos">Autres informations</label>
+      <textarea id="autresInfos" placeholder="Autres informations"></textarea>
+      <button type="button" class="prev-btn" onclick="goToStep(4)">← Précédent</button>
+      <button type="button" onclick="generateMessage()">Suivant →</button>
+    </div>
+
+    <!-- Étape 6 : Message généré -->
+    <div id="step6" class="step hidden">
+      <textarea id="message" class="result" readonly></textarea>
+      <textarea id="additionalInfo" placeholder="Ajouter une information supplémentaire manuellement" style="width: 100%; margin-top: 10px; padding: 10px; min-height: 60px;"></textarea>
+      <button type="button" class="prev-btn" onclick="goToStep(5)">← Précédent</button>
+      <button type="button" onclick="copyMessage()">Copier le message</button>
+      <button type="button" onclick="sendMail()">Envoyer par mail</button>
+      <button type="button" class="reset-btn" onclick="resetForm()">Recommencer le message</button>
+    </div>
+  </div>
+
+  <script>
+    let currentStep = 0,
+        selectedNature = "",
+        selectedBatiment = "",
+        victimsSelected = false;
+
+    function goToStep(step) {
+      document.querySelector(`.step.active`).classList.replace("active", "hidden");
+      document.querySelector(`#step${step}`).classList.replace("hidden", "active");
+      currentStep = step;
+      updateProgress();
+      
+      // Si on arrive à l'étape "Je suis" (step 1), vérifier si le motif est AVP
+      if (step === 1) {
+        const motifDepart = document.getElementById('motifDepart').value;
+        // Ne plus forcer l'état du bloc route ici, laisser toggleRouteInfo le gérer
+        if (motifDepart === 'AVP') {
+          updateRouteFields();
+        }
+      }
+      
+      // Si on arrive à l'étape "Je vois" (step 2), sélectionner automatiquement le motif de départ
+      if (step === 2) {
+        const motifDepart = document.getElementById('motifDepart').value;
+        
+        // Réinitialiser d'abord toutes les sélections
+        document.querySelectorAll(".nature-toggle").forEach(b => b.classList.remove("selected"));
+        ["avpFields", "feuVehiculeFields", "batimentFields", "chuteLigneFields", "autreTypeContainer"].forEach(id => 
+          document.getElementById(id).classList.add("hidden")
+        );
+        document.getElementById("infoFuiteGaz").classList.add("hidden");
+        
+        // Sélectionner le bouton approprié en fonction du motif de départ
+        switch(motifDepart) {
+          case 'AVP':
+            const avpButton = document.querySelector('.nature-toggle[data-value="AVP"]');
+            if (avpButton) selectNature(avpButton);
+            break;
+          case 'Feu de véhicule':
+            const feuVLButton = document.querySelector('.nature-toggle[data-value="Feu de véhicule"]');
+            if (feuVLButton) selectNature(feuVLButton);
+            break;
+          case 'Feu de bâtiment':
+            const feuBatButton = document.querySelector('.nature-toggle[data-value="Feu de bâtiment"]');
+            if (feuBatButton) selectNature(feuBatButton);
+            break;
+          case 'Chute de ligne électrique':
+          case 'Odeur de brulé':
+          case 'Fumée suspecte':
+          case 'Fuite de Gaz procédure classique':
+          case 'Fuite de Gaz procédure renforcée':
+          case 'Déclenchement alarme':
+          case 'Autre type d\'intervention':
+            const autreButton = document.querySelector('.nature-toggle[data-value="Autre"]');
+            if (autreButton) {
+              selectNature(autreButton);
+              const autreSelect = document.getElementById('autreTypeIntervention');
+              if (autreSelect) {
+                autreSelect.value = motifDepart;
+                handleAutreIntervention(motifDepart);
+              }
+            }
+            break;
+        }
+      }
+      
+      if (step === 5) updateSuggestions();
+    }
+
+    function updateProgress() {
+      document.querySelectorAll(".progress-step").forEach(el => {
+        el.classList.toggle("active", +el.dataset.step === currentStep);
+      });
+    }
+
+    function setCurrentTime() {
+      document.querySelector("#groupeHoraireAuto").value = new Date().toLocaleTimeString();
+    }
+
+    function geolocalise() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(pos => {
+          let lat = pos.coords.latitude, lon = pos.coords.longitude;
+          fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
+            .then(r => r.json()).then(d => {
+              document.querySelector("#adresse").value = d.display_name || `Lat:${lat},Lon:${lon}`;
+              document.querySelector("#commune").value = d.address.city || d.address.town || "";
+              // Afficher les informations GPS
+              document.getElementById("gpsInfo").classList.remove("hidden");
+              document.getElementById("gpsInfoCommune").classList.remove("hidden");
+            })
+            .catch(_ => {
+              document.querySelector("#adresse").value = `Lat:${lat},Lon:${lon}`;
+              // Afficher les informations GPS même en cas d'erreur de géocodage
+              document.getElementById("gpsInfo").classList.remove("hidden");
+              document.getElementById("gpsInfoCommune").classList.remove("hidden");
+            });
+        });
+      }
+    }
+
+    // Ajout d'une fonction pour réinitialiser les infos GPS quand l'utilisateur modifie manuellement les champs
+    function setupGPSInfoReset() {
+      ['adresse', 'commune'].forEach(id => {
+        document.getElementById(id).addEventListener('input', function() {
+          document.getElementById("gpsInfo").classList.add("hidden");
+          document.getElementById("gpsInfoCommune").classList.add("hidden");
+        });
+      });
+    }
+
+    function increment(id) {
+      let i = document.getElementById(id);
+      i.value = +i.value + 1;
+    }
+
+    function decrement(id) {
+      let i = document.getElementById(id);
+      if (+i.value > 0) i.value = +i.value - 1;
+    }
+
+    function selectNature(btn) {
+      // Si le bouton est déjà sélectionné, on le désélectionne et on cache tous les champs
+      if (btn.classList.contains("selected")) {
+        btn.classList.remove("selected");
+        selectedNature = "";
+        ["avpFields", "feuVehiculeFields", "batimentFields", "chuteLigneFields", "autreTypeContainer"].forEach(id => 
+          document.getElementById(id).classList.add("hidden")
+        );
+        document.getElementById("infoFuiteGaz").classList.add("hidden");
+        document.getElementById("selectedNatureTitle").classList.add("hidden");
+        // Réinitialiser les champs du formulaire
+        resetFields();
+        return;
+      }
+
+      // Réinitialiser le select d'autres types d'intervention
+      document.getElementById("autreTypeIntervention").value = "";
+
+      document.querySelectorAll(".nature-toggle").forEach(b => b.classList.remove("selected"));
+      btn.classList.add("selected");
+      selectedNature = btn.dataset.value;
+      
+      // Hide all fields first
+      ["avpFields", "feuVehiculeFields", "batimentFields", "chuteLigneFields", "autreTypeContainer"].forEach(id => 
+        document.getElementById(id).classList.add("hidden")
+      );
+      document.getElementById("infoFuiteGaz").classList.add("hidden");
+
+      // Show relevant fields based on selection
+      if (selectedNature === "AVP") {
+        document.getElementById("avpFields").classList.remove("hidden");
+      } else if (selectedNature === "Feu de véhicule") {
+        document.getElementById("feuVehiculeFields").classList.remove("hidden");
+      } else if (selectedNature === "Feu de bâtiment") {
+        document.getElementById("batimentFields").classList.remove("hidden");
+      } else if (selectedNature === "Autre") {
+        document.getElementById("autreTypeContainer").classList.remove("hidden");
+      }
+
+      // Update and show the title
+      const titleElement = document.getElementById("selectedNatureTitle");
+      if (selectedNature !== "Autre") {
+        titleElement.textContent = selectedNature;
+        titleElement.classList.remove("hidden");
+      } else {
+        titleElement.classList.add("hidden");
+      }
+    }
+
+    function handleAutreIntervention(value) {
+      if (!value) {
+        resetFields();
+        document.getElementById("selectedNatureTitle").classList.add("hidden");
+        return;
+      }
+
+      // Désélectionner tous les boutons de nature sauf "Autre"
+      document.querySelectorAll(".nature-toggle").forEach(b => {
+        if (b.dataset.value !== "Autre") {
+          b.classList.remove("selected");
+        }
+      });
+      selectedNature = value;
+      
+      // Hide all fields first
+      ["avpFields", "feuVehiculeFields", "batimentFields", "chuteLigneFields"].forEach(id => 
+        document.getElementById(id).classList.add("hidden")
+      );
+      document.getElementById("infoFuiteGaz").classList.add("hidden");
+
+      // Show relevant fields based on selection
+      if (value === "Chute de ligne électrique") {
+        document.getElementById("chuteLigneFields").classList.remove("hidden");
+      } else if (value.startsWith("Fuite de gaz")) {
+        document.getElementById("batimentFields").classList.remove("hidden");
+        document.getElementById("infoFuiteGaz").classList.remove("hidden");
+      } else if (["Fumée suspecte", "Odeur de brulé", "Autre type de feu"].includes(value)) {
+        document.getElementById("batimentFields").classList.remove("hidden");
+      }
+
+      // Update and show the title
+      const titleElement = document.getElementById("selectedNatureTitle");
+      titleElement.textContent = value;
+      titleElement.classList.remove("hidden");
+    }
+
+    function incrementVehicle(id) {
+      let input = document.getElementById(id);
+      input.value = (+input.value + 1);
+      updateVehicleDetails(id);
+    }
+
+    function decrementVehicle(id) {
+      let input = document.getElementById(id);
+      if (+input.value > 0) {
+        input.value = (+input.value - 1);
+        updateVehicleDetails(id);
+      }
+    }
+
+    function updateVehicleDetails(id) {
+      let details = document.getElementById(id + "Details");
+      if (details) {
+        details.classList.toggle("hidden", document.getElementById(id).value === "0");
+      }
+    }
+
+    function toggleDetailsSupplementaires() {
+      const details = document.getElementById("detailsSupplementaires");
+      const btn = document.getElementById("toggleDetailsBtn");
+      const icon = btn.querySelector('.toggle-icon');
+      
+      details.classList.toggle("hidden");
+      btn.classList.toggle("active");
+      icon.classList.toggle("rotated");
+    }
+
+    function selectTypeLigne(type) {
+      document.querySelectorAll("#typeLigneContainer .toggle-btn").forEach(btn => 
+        btn.classList.remove("selected")
+      );
+      document.querySelector(`#typeLigneContainer button[onclick="selectTypeLigne('${type}')"]`).classList.add("selected");
+      
+      let info = document.getElementById("perimetresInfo");
+      if (type === "BT") {
+        info.innerText = "Rappel des périmètres : zone exclusion = 1m, zone contrôlée = 20m.";
+      } else {
+        info.innerText = "Rappel des périmètres : zone exclusion = 10m, zone contrôlée = 50m.";
+      }
+      info.classList.remove("hidden");
+
+      // Show/hide RTE button in "Je demande" step
+      let rteBtn = document.getElementById("action-RTE");
+      if (rteBtn) {
+        rteBtn.style.display = type === "HTB" ? "block" : "none";
+        if (type !== "HTB") rteBtn.classList.remove("selected");
+      }
+    }
+
+    function selectToggle(field, btn) {
+      let container = document.getElementById(field + "Container");
+      if (container) {
+        container.querySelectorAll(".toggle-btn").forEach(b => b.classList.remove("selected"));
+      btn.classList.add("selected");
+      }
+      document.getElementById(field).value = btn.dataset.value;
+
+      // Handle details visibility
+      let details = document.getElementById(field + "Details");
+      if (details) {
+        details.classList.toggle("hidden", btn.dataset.value !== "Oui");
+      }
+    }
+
+    function selectBatimentType(btn) {
+      // Si le bouton est déjà sélectionné, on le désélectionne
+      if (btn.classList.contains("selected")) {
+        btn.classList.remove("selected");
+        selectedBatiment = "";
+        document.getElementById("etagesFields").classList.add("hidden");
+        return;
+      }
+
+      // Désélectionner tous les boutons avant de sélectionner le nouveau
+      document.querySelectorAll("#typeBatimentContainer .toggle-btn").forEach(b => b.classList.remove("selected"));
+      btn.classList.add("selected");
+      selectedBatiment = btn.dataset.value;
+      document.getElementById("etagesFields").classList.toggle("hidden", selectedBatiment !== "R+");
+
+      // Réinitialiser les champs d'étages si on passe à "Plain pied"
+      if (selectedBatiment === "Plain pied") {
+        document.getElementById("etagesRPlus").value = "";
+        document.getElementById("etagesRMoins").value = "";
+      }
+    }
+
+    function selectVictimsToggle(show, btn) {
+      document.querySelectorAll("#victimsToggleContainer .toggle-btn").forEach(b => b.classList.remove("selected"));
+      btn.classList.add("selected");
+      victimsSelected = show;
+      document.getElementById("victimsFields").classList.toggle("hidden", !show);
+    }
+
+    function toggleButton(el) {
+      el.classList.toggle("selected");
+      
+      // Si le bouton a un data-target, gérer l'affichage des détails
+      const target = el.getAttribute("data-target");
+      if (target) {
+        const details = document.getElementById(target);
+        if (details) {
+          details.classList.toggle("hidden");
+        }
+      }
+    }
+
+    function updateExtinctionFields() {
+      document.getElementById("extinctionFields").classList.toggle("hidden",
+        !document.getElementById("action-extinction").classList.contains("selected"));
+    }
+
+    function updateCamThermiqueField() {
+      document.getElementById("camThermiqueContainer").classList.toggle("hidden",
+        !document.getElementById("action-relevesThermiques").classList.contains("selected"));
+    }
+
+    function updateExplosimetreField() {
+      document.getElementById("explosimetreContainer").classList.toggle("hidden",
+        !document.getElementById("action-relevesExplosimetre").classList.contains("selected"));
+    }
+
+    function updateSuggestions() {
+      let s = "suggestion : ";
+      if (selectedBatiment === "R+") {
+        document.getElementById("action-EPA").classList.add("selected");
+        s += "epa, ";
+      }
+      let ua = +document.getElementById("UA").value, ur = +document.getElementById("UR").value;
+      if (ua + ur > 0) {
+        document.getElementById("action-VSAV").classList.add("selected");
+        let cnt = Math.min(ua + ur, 5);
+        s += cnt + " vsav, ";
+        document.getElementById("vsavNumberContainer").classList.remove("hidden");
+        document.getElementById("nombreVSAV").value = cnt;
+        if (ua > 0) {
+          document.getElementById("action-SMUR").classList.add("selected");
+          s += "smur, ";
+        }
+      }
+      ["chefGroupe", "vehiculeSpecifique"].forEach(id => {
+        if (document.getElementById("action-" + id).classList.contains("selected")) s += id.replace(/([A-Z])/, " $1").trim() + ", ";
+      });
+      document.getElementById("suggestions").innerText = s.replace(/, $/, "");
+    }
+
+    function generateMessage() {
+      let msg = "CODIS, prenez message :\n\n";
+      let getVal = id => document.getElementById(id)?.value || "";
+      
+      // Intervention info
+      if (getVal("interventionNumero")) msg += `Intervention numéro: ${getVal("interventionNumero")}\n`;
+      if (getVal("groupeHoraireAuto")) msg += `Groupe horaire: ${getVal("groupeHoraireAuto")}\n`;
+      if (getVal("groupeHoraireManuel")) msg += `Groupe horaire: ${getVal("groupeHoraireManuel")}\n`;
+      msg += "\n";
+
+      // Location info
+      if (getVal("adresse")) {
+        msg += "JE SUIS:\n";
+        msg += `Adresse: ${getVal("adresse")}\n`;
+      }
+      if (getVal("adresseConfirmee")) msg += `Adresse confirmée/modifiée: ${getVal("adresseConfirmee")}\n`;
+      if (getVal("commune")) msg += `Commune: ${getVal("commune")}\n`;
+      if (getVal("typeRoute")) msg += `Type de route: ${getVal("typeRoute")}\n`;
+      if (getVal("numeroRoute")) msg += `Numéro de route: ${getVal("numeroRoute")}\n`;
+      if (getVal("nomEchangeur")) msg += `Nom de l'échangeur: ${getVal("nomEchangeur")}\n`;
+      if (getVal("pk")) msg += `PK: ${getVal("pk")}\n`;
+      if (getVal("sens")) msg += `Sens: ${getVal("sens")}\n`;
+      msg += "\n";
+
+      // Situation info
+      msg += "JE VOIS:\n";
+      
+      // Get selected nature
+      let natureBtn = document.querySelector(".nature-toggle.selected");
+      let autreNature = getVal("autreTypeIntervention");
+      let nature = natureBtn ? natureBtn.dataset.value : autreNature;
+      
+      if (nature) {
+        msg += `Je vois un ${nature}\n\n`;
+
+        // AVP specific fields
+        if (nature === "AVP") {
+          msg += "Véhicules impliqués:\n";
+          let vehicules = ["vehiculeLeger", "poidsLourd", "deuxRoues", "bus"];
+          vehicules.forEach(v => {
+            let count = getVal(v);
+            if (count && count !== "0") {
+              msg += `- ${v.replace(/([A-Z])/g, ' $1').toLowerCase()}: ${count}\n`;
+              let precisions = getVal(v + "Precisions");
+              if (precisions) msg += `  Précisions: ${precisions}\n`;
+            }
+          });
+
+          let autreVehicule = getVal("autreVehicule");
+          if (autreVehicule) msg += `- Autre véhicule: ${autreVehicule}\n`;
+
+          // Détails supplémentaires
+          if (!document.getElementById("detailsSupplementaires").classList.contains("hidden")) {
+            msg += "\n";
+            let typePhase = getVal("typePhase");
+            if (typePhase) msg += `Fuite en phase: ${typePhase}\n`;
+            if (getVal("localisationFuite")) msg += `Localisation fuite: ${getVal("localisationFuite")}\n`;
+            if (getVal("presenceFeu")) msg += `Présence feu sur: ${getVal("presenceFeu")}\n`;
+            if (getVal("localisationFeu")) msg += `Localisation feu: ${getVal("localisationFeu")}\n`;
+            if (getVal("circonstances")) msg += `Circonstances particulières: ${getVal("circonstances")}\n`;
+          }
+
+          // État circulation
+          msg += "\n";
+          if (getVal("etatCirculation")) msg += `État circulation: ${getVal("etatCirculation")}\n`;
+          if (getVal("voiesImpactees")) msg += `Voies impactées: ${getVal("voiesImpactees")}\n`;
+          if (getVal("sensCirculation")) msg += `Sens circulation: ${getVal("sensCirculation")}\n`;
+        }
+
+        // Feu de véhicule specific fields
+        else if (nature === "Feu de véhicule") {
+          if (getVal("typeVehicule")) msg += `Type de véhicule: ${getVal("typeVehicule")}\n`;
+          if (getVal("energieVehicule")) msg += `Énergie: ${getVal("energieVehicule")}\n`;
+          
+          let propagation = getVal("propagationVehicule");
+          if (propagation) {
+            msg += `Risque de propagation: ${propagation}\n`;
+            if (propagation === "Oui" && getVal("precisionsPropagationVehicule")) {
+              msg += `Précisions propagation: ${getVal("precisionsPropagationVehicule")}\n`;
+            }
+          }
+
+          let isole = getVal("isoleVehicule");
+          if (isole) {
+            msg += `Véhicule isolé: ${isole}\n`;
+            if (isole === "Oui" && getVal("precisionsIsoleVehicule")) {
+              msg += `Précisions environnement: ${getVal("precisionsIsoleVehicule")}\n`;
+            }
+          }
+
+          if (getVal("risqueSpecifiqueVehicule")) msg += `Risque spécifique: ${getVal("risqueSpecifiqueVehicule")}\n`;
+          if (getVal("evolutionFeuVehicule")) msg += `Évolution du feu: ${getVal("evolutionFeuVehicule")}\n`;
+        }
+
+        // Building related fields (used by multiple types)
+        else if (nature === "Feu de bâtiment" || nature.includes("Fuite de gaz") || 
+                 nature === "Fumée suspecte" || nature === "Odeur de brulé" || 
+                 nature === "Autre type de feu") {
+          
+          let batimentType = document.querySelector("#typeBatimentContainer .toggle-btn.selected");
+          if (batimentType) {
+            msg += "Type de bâtiment:\n";
+            let typeValue = batimentType.dataset.value;
+            msg += typeValue === "R+" ? `Bâtiment : R+\n` : `Bâtiment de : Plain pied\n`;
+            if (typeValue === "R+") {
+              if (getVal("etagesRPlus")) msg += `Nombre d'étages R+: ${getVal("etagesRPlus")}\n`;
+              if (getVal("etagesRMoins")) msg += `Nombre d'étages R-: ${getVal("etagesRMoins")}\n`;
+            }
+          }
+
+          if (getVal("usageBatiment")) msg += `Bâtiment à usage de: ${getVal("usageBatiment")}\n`;
+          if (getVal("typeBatimentSelect")) msg += `De type: ${getVal("typeBatimentSelect")}\n`;
+          if (getVal("structure")) msg += `Structure: ${getVal("structure")}\n`;
+          if (getVal("surfaceTotale")) msg += `Surface totale: ${getVal("surfaceTotale")} m²\n`;
+          if (getVal("surfaceSinistree")) msg += `Surface sinistrée: ${getVal("surfaceSinistree")} m²\n`;
+
+          let propagation = getVal("propagationBatiment");
+          if (propagation) {
+            msg += `Risque de propagation: ${propagation}\n`;
+            if (propagation === "Oui" && getVal("precisionsPropagationBatiment")) {
+              msg += `Précisions propagation: ${getVal("precisionsPropagationBatiment")}\n`;
+            }
+          }
+
+          let isole = getVal("isoleBatiment");
+          if (isole) {
+            msg += `Bâtiment isolé: ${isole}\n`;
+            if (isole === "Oui" && getVal("precisionsIsoleBatiment")) {
+              msg += `Précisions environnement: ${getVal("precisionsIsoleBatiment")}\n`;
+            }
+          }
+
+          if (getVal("risqueSpecifiqueBatiment")) msg += `Risque spécifique: ${getVal("risqueSpecifiqueBatiment")}\n`;
+          if (getVal("evolutionFeuBatiment")) msg += `Évolution du feu: ${getVal("evolutionFeuBatiment")}\n`;
+        }
+
+        // Chute de ligne électrique specific fields
+        else if (nature === "Chute de ligne électrique") {
+          if (getVal("localisationChute")) msg += `Localisation de la chute: ${getVal("localisationChute")}\n`;
+          let typeLigne = document.querySelector("#typeLigneContainer .toggle-btn.selected");
+          if (typeLigne) {
+            msg += `Type de ligne: ${typeLigne.textContent}\n`;
+          }
+          
+          // Ajouter les détails supplémentaires s'ils sont présents
+          if (!document.getElementById("ligneDetailsFields").classList.contains("hidden")) {
+            msg += "\n";
+            if (getVal("presenceFeuLigne")) msg += `Présence d'un feu sur: ${getVal("presenceFeuLigne")}\n`;
+            if (getVal("localisationFeuLigne")) msg += `Localisation du feu: ${getVal("localisationFeuLigne")}\n`;
+            if (getVal("circonstancesLigne")) msg += `Circonstances particulières: ${getVal("circonstancesLigne")}\n`;
+          }
+        }
+      }
+      msg += "\n";
+
+      // Victims info
+      if (victimsSelected) {
+        msg += "VICTIMES:\n";
+        ["victimes", "indemnes", "UA", "UR", "DCD", "incarcerees", "intoxiquees", "impliques"].forEach(id => {
+          let v = +getVal(id);
+          if (v > 0) {
+            // Personnaliser l'affichage pour les nouveaux champs
+            if (id === "incarcerees") {
+              msg += `Personnes incarcérées: ${v}\n`;
+            } else if (id === "intoxiquees") {
+              msg += `Personnes intoxiquées: ${v}\n`;
+            } else {
+              msg += `${id.charAt(0).toUpperCase() + id.slice(1)}: ${v}\n`;
+            }
+          }
+        });
+
+        // Ajouter les précisions sur les victimes si présentes
+        let precisionVictimes = getVal("precisionVictimes");
+        if (precisionVictimes) {
+          msg += `Précisions sur les victimes: ${precisionVictimes}\n`;
+        }
+        msg += "\n";
+      }
+
+      // Actions info
+      msg += "JE FAIS:\n";
+      
+      // Récupérer toutes les actions sélectionnées
+      document.querySelectorAll('#actionsContainer .toggle-btn.selected').forEach(btn => {
+        const action = btn.textContent;
+        const target = btn.getAttribute('data-target');
+        
+        // Si l'action a des détails
+        if (target) {
+          const details = document.getElementById(target);
+          if (details) {
+            msg += `${action}\n`;
+            
+            // Pour l'extinction, inclure tous les détails spécifiques
+            if (target === 'extinction') {
+              const precisions = getVal('preciserExtinction');
+              if (precisions) msg += `Précisions: ${precisions}\n`;
+              if (getVal('nombreLDV')) msg += `Nombre de LDV: ${getVal('nombreLDV')}\n`;
+              if (getVal('debit')) msg += `Débit: ${getVal('debit')}\n`;
+              if (getVal('fourgonAlimente')) msg += `Fourgon alimenté: ${getVal('fourgonAlimente')}\n`;
+            }
+            // Pour la mise en sécurité
+            else if (target === 'miseEnSecurite') {
+              const precisions = getVal('preciserMiseEnSecurite');
+              if (precisions) msg += `Précisions: ${precisions}\n`;
+              const nbPersonnes = getVal('nombrePersonnesMiseEnSecurite');
+              if (nbPersonnes) msg += `Nombre de personnes: ${nbPersonnes}\n`;
+              const pointRassemblement = getVal('pointRassemblement');
+              if (pointRassemblement) msg += `Point de rassemblement: ${pointRassemblement}\n`;
+            }
+            // Pour la prise en charge des victimes
+            else if (target === 'priseEnCharge') {
+              const precisions = getVal('preciserPriseEnCharge');
+              if (precisions) msg += `Précisions: ${precisions}\n`;
+              const nbVictimes = getVal('nombreVictimesPriseEnCharge');
+              if (nbVictimes) msg += `Nombre de victimes: ${nbVictimes}\n`;
+              const parEquipage = getVal('parEquipage');
+              if (parEquipage) msg += `Par équipage: ${parEquipage}\n`;
+            }
+            // Pour les autres actions avec précisions
+            else {
+              const precisionInput = details.querySelector('input[type="text"]');
+              if (precisionInput && precisionInput.value) {
+                msg += `Précisions: ${precisionInput.value}\n`;
+              }
+            }
+          }
+        } else {
+          // Actions sans détails (comme Désenfumage, Ventilation, etc.)
+          msg += `${action}\n`;
+        }
+      });
+
+      // Ajouter les prévisions du chef de groupe si présentes
+      const prevoisBtn = document.getElementById('togglePrevoisBtn');
+      if (prevoisBtn.classList.contains('active')) {
+        msg += "\nJE PREVOIS:\n";
+        document.querySelectorAll('#prevoisActions .toggle-btn.selected').forEach(btn => {
+          const action = btn.textContent;
+          const target = btn.getAttribute('data-target');
+          if (target) {
+            const details = document.getElementById(target);
+            if (details) {
+              const precisionInput = details.querySelector('input[type="text"]');
+              if (precisionInput && precisionInput.value) {
+                msg += `${action}: ${precisionInput.value}\n`;
+              } else {
+                msg += `${action}\n`;
+              }
+            }
+          }
+        });
+        
+        // Ajouter les précisions générales des prévisions
+        const precisionsPrevois = getVal('precisionsPrevois');
+        if (precisionsPrevois) {
+          msg += `Précisions: ${precisionsPrevois}\n`;
+        }
+      }
+      msg += "\n";
+
+      // Requests info
+      msg += "JE DEMANDE / CONFIRME:\n";
+      [
+        "action-FPT", "action-EPA", "action-VSAV", "action-chefGroupe", "action-vehiculeSpecifique",
+        "action-gendarmerie", "action-police", "action-ENEDIS", "action-GRDF", "action-SMUR",
+        "action-elus", "action-RTE"
+      ].forEach(id => {
+        let btn = document.getElementById(id);
+        if (btn?.classList.contains("selected")) {
+          msg += btn.textContent + "\n";
+          if (id === "action-VSAV" && getVal("nombreVSAV")) {
+            msg += `Nombre de VSAV: ${getVal("nombreVSAV")}\n`;
+          }
+          if (id === "action-vehiculeSpecifique" && getVal("vehiculeSpecifiqueText")) {
+            msg += `Précision véhicule: ${getVal("vehiculeSpecifiqueText")}\n`;
+          }
+        }
+      });
+      msg += "\n";
+
+      // Additional info
+      ["difficultes", "solution", "autresInfos"].forEach(id => {
+        if (getVal(id)) msg += `${id.charAt(0).toUpperCase() + id.slice(1)}: ${getVal(id)}\n\n`;
+      });
+
+      // Add any additional information
+      let additionalInfo = getVal("additionalInfo");
+      if (additionalInfo) {
+        msg += `Information supplémentaire: ${additionalInfo}\n\n`;
+      }
+
+      msg += "fin de message, comment reçu parlez.";
+      
+      document.getElementById("message").value = msg;
+      setTimeout(() => {
+        let ta = document.getElementById("message");
+        ta.style.height = "auto";
+        ta.style.height = ta.scrollHeight + "px";
+      }, 0);
+      goToStep(6);
+    }
+
+    function copyMessage() {
+      let msg = document.getElementById("message").value;
+      let additionalInfo = document.getElementById("additionalInfo").value;
+      if (additionalInfo) {
+        msg = msg.replace("fin de message, comment reçu parlez.", `Information supplémentaire: ${additionalInfo}\n\nfin de message, comment reçu parlez.`);
+      }
+      navigator.clipboard.writeText(msg);
+      alert("Message copié !");
+    }
+
+    function sendMail() {
+      let msg = document.getElementById("message").value;
+      let additionalInfo = document.getElementById("additionalInfo").value;
+      if (additionalInfo) {
+        msg = msg.replace("fin de message, comment reçu parlez.", `Information supplémentaire: ${additionalInfo}\n\nfin de message, comment reçu parlez.`);
+      }
+      let sub = encodeURIComponent("Message Radio Pompier");
+      window.location.href = `mailto:?subject=${sub}&body=${encodeURIComponent(msg)}`;
+    }
+
+    function resetForm() {
+      document.querySelectorAll("input,select,textarea").forEach(el => {
+        el.value = "";
+        el.classList.remove("selected");
+      });
+      selectedNature = "";
+      selectedBatiment = "";
+      victimsSelected = false;
+      ["natureFields", "fvlFields", "nonFvlFields", "autreFeuFields", "etagesFields", "extinctionFields",
+        "camThermiqueContainer", "explosimetreContainer", "infoFuiteGaz", "infoTypeLigne", "vsavNumberContainer"
+      ].forEach(id => {
+        let e = document.getElementById(id);
+        if (e) e.classList.add("hidden");
+      });
+      currentStep = 0;
+      document.querySelectorAll(".step").forEach(e => e.classList.add("hidden"));
+      document.getElementById("step0").classList.replace("hidden", "active");
+      updateProgress();
+    }
+
+    function toggleRouteInfo() {
+      console.log("Toggle route info called"); // Debug
+      const routeInfo = document.getElementById('routeInfo');
+      const btn = document.getElementById('toggleRouteBtn');
+      const icon = btn.querySelector('.toggle-icon');
+      
+      if (!routeInfo || !btn || !icon) {
+        console.log("Missing elements"); // Debug
+        return;
+      }
+      
+      // Force display style
+      if (routeInfo.classList.contains('hidden')) {
+        routeInfo.classList.remove('hidden');
+        routeInfo.style.display = 'block';
+      } else {
+        routeInfo.classList.add('hidden');
+        routeInfo.style.display = 'none';
+      }
+      
+      btn.classList.toggle('active');
+      icon.classList.toggle('rotated');
+      
+      // Debug
+      console.log("Hidden class:", routeInfo.classList.contains('hidden'));
+      console.log("Display style:", routeInfo.style.display);
+    }
+
+    // Supprimer l'écouteur d'événement du bouton dans initializeEventListeners
+    function initializeEventListeners() {
+      const typeRoute = document.getElementById('typeRoute');
+      if (typeRoute) {
+        typeRoute.addEventListener('change', updateRouteFields);
+      }
+      
+      const motifDepart = document.getElementById('motifDepart');
+      if (motifDepart) {
+        motifDepart.addEventListener('change', function(e) {
+          if (currentStep === 2) {
+            goToStep(2);
+          }
+        });
+      }
+    }
+
+    // Modifier window.onload pour inclure l'initialisation des écouteurs
+    window.onload = function() {
+      setCurrentTime();
+      setupGPSInfoReset();
+      updateRouteFields();
+      initializeEventListeners();
+    }
+
+    function toggleLigneDetails() {
+      const detailsFields = document.getElementById('ligneDetailsFields');
+      const btn = document.getElementById('toggleLigneDetailsBtn');
+      const icon = btn.querySelector('.toggle-icon');
+      
+      detailsFields.classList.toggle('hidden');
+      btn.classList.toggle('active');
+      icon.classList.toggle('rotated');
+    }
+
+    function resetFields() {
+      // Réinitialiser tous les champs de saisie
+      document.querySelectorAll('input[type="text"], input[type="number"], select, textarea').forEach(el => {
+        el.value = '';
+      });
+
+      // Réinitialiser tous les boutons toggle
+      document.querySelectorAll('.toggle-btn').forEach(btn => {
+        btn.classList.remove('selected');
+      });
+
+      // Réinitialiser les compteurs de véhicules
+      ['vehiculeLeger', 'poidsLourd', 'deuxRoues', 'bus'].forEach(id => {
+        let input = document.getElementById(id);
+        if (input) input.value = '0';
+      });
+
+      // Cacher les sections dépliables
+      document.querySelectorAll('.sub-container, .hidden').forEach(el => {
+        el.classList.add('hidden');
+      });
+
+      // Réinitialiser les icônes de dépliage
+      document.querySelectorAll('.toggle-icon').forEach(icon => {
+        icon.classList.remove('rotated');
+      });
+
+      // Réinitialiser les boutons d'expansion
+      document.querySelectorAll('.toggle-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+
+      // Hide the nature title
+      document.getElementById("selectedNatureTitle").classList.add("hidden");
+    }
+
+    // Nouvelle fonction pour basculer entre les sections "Je prévois" et "Je fais"
+    function togglePrevois() {
+      const prevoisFields = document.getElementById("prevoisFields");
+      const btn = document.getElementById("togglePrevoisBtn");
+      const icon = btn.querySelector(".toggle-icon");
+      
+      prevoisFields.classList.toggle("hidden");
+      btn.classList.toggle("active");
+      icon.classList.toggle("rotated");
+    }
+
+    // Nouvelle fonction pour basculer les détails des actions
+    function toggleActionDetails(el) {
+      // Toggle la sélection du bouton
+      el.classList.toggle("selected");
+      
+      const target = el.getAttribute("data-target");
+      if (target) {
+        const details = document.getElementById(target);
+        if (details) {
+          details.classList.toggle("hidden");
+        }
+      }
+    }
+
+    // Ajouter cette fonction pour gérer l'affichage des champs PK et Sens
+    function updateRouteFields() {
+      const typeRoute = document.getElementById('typeRoute').value;
+      const pkField = document.getElementById('pk').parentElement;
+      const sensField = document.getElementById('sens').parentElement;
+      
+      if (typeRoute === 'Autoroute') {
+        pkField.style.display = 'block';
+        sensField.style.display = 'block';
+      } else {
+        pkField.style.display = 'none';
+        sensField.style.display = 'none';
+      }
+    }
+
+    // Ajouter un écouteur d'événements pour le type de route
+    document.getElementById('typeRoute').addEventListener('change', updateRouteFields);
+
+    // Ajouter un écouteur pour le changement de motif de départ
+    document.getElementById('motifDepart').addEventListener('change', function(e) {
+      // Si on est déjà sur l'étape "Je vois", mettre à jour la sélection
+      if (currentStep === 2) {
+        goToStep(2);
+      }
+    });
+  </script>
 </body>
-</html> 
+</html>
