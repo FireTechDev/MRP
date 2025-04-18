@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Message radio Pompier (PWA) v1.0.6</title>
+  <title>Message radio Pompier (PWA) v1.0.7</title>
   <!-- PWA Meta Tags -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
@@ -329,6 +329,14 @@
 
     .gps-icon {
       margin-right: 5px;
+    }
+
+    .gps-info {
+      font-size: 12px;
+      color: #666;
+      margin-top: -5px;
+      margin-bottom: 5px;
+      font-style: italic;
     }
   </style>
 </head>
@@ -1062,7 +1070,7 @@
     </div>
   </div>
   <div class="update-container">
-    <p class="offline-info"><i>L'application fonctionne même hors ligne.</i> <span class="version-info">Version : 1.0.6</span></p>
+    <p class="offline-info"><i>L'application fonctionne même hors ligne.</i> <span class="version-info">Version : 1.0.7</span></p>
     <a href="#" id="updateLink" class="update-link" onclick="checkForUpdates(); return false;">Vérifier si l'app est à jour</a>
     <p id="updateStatus" class="update-status"></p>
   </div>
@@ -1157,7 +1165,13 @@
           fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
             .then(r => r.json()).then(d => {
               document.querySelector("#adresse").value = d.display_name || `Lat:${lat},Lon:${lon}`;
-              document.querySelector("#commune").value = d.address.city || d.address.town || "";
+              // Mettre à jour la commune si elle est disponible
+              if (d.address) {
+                const commune = d.address.city || d.address.town || d.address.village || d.address.municipality || "";
+                if (commune) {
+                  document.querySelector("#commune").value = commune;
+                }
+              }
               // Afficher les informations GPS
               document.getElementById("gpsInfo").classList.remove("hidden");
               document.getElementById("gpsInfoCommune").classList.remove("hidden");
@@ -1921,7 +1935,7 @@
     });
 
     // Version de l'application
-    const APP_VERSION = '1.0.6';
+    const APP_VERSION = '1.0.7';
 
     // Fonction pour vérifier les mises à jour
     function checkForUpdates() {
