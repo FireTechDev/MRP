@@ -1840,10 +1840,39 @@
         navigator.serviceWorker.getRegistration().then(registration => {
           if (registration) {
             if (isIOS) {
-              // Sur iOS, on force un rechargement de la page
-              window.location.reload(true);
+              // Sur iOS, on utilise une approche différente
               updateStatus.textContent = 'Vérification des mises à jour...';
               updateStatus.style.display = 'block';
+              
+              // Créer un timestamp unique pour le cache-busting
+              const timestamp = new Date().getTime();
+              
+              // Vérifier si le service worker est à jour
+              fetch(`/MRP/sw.js?v=${timestamp}`)
+                .then(response => {
+                  if (response.ok) {
+                    // Forcer le rechargement des ressources
+                    caches.keys().then(cacheNames => {
+                      cacheNames.forEach(cacheName => {
+                        caches.delete(cacheName);
+                      });
+                    });
+                    
+                    // Recharger la page
+                    window.location.reload(true);
+                  } else {
+                    throw new Error('Service worker non disponible');
+                  }
+                })
+                .catch(error => {
+                  console.error('Erreur lors de la vérification:', error);
+                  updateStatus.textContent = 'Erreur lors de la vérification';
+                  updateStatus.style.color = '#dc3545';
+                  updateStatus.style.display = 'block';
+                  setTimeout(() => {
+                    updateStatus.style.display = 'none';
+                  }, 3000);
+                });
             } else {
               // Sur les autres plateformes, on utilise la méthode standard
               registration.update().then(() => {
