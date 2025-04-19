@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Message radio Pompier (PWA) v1.0.9</title>
+  <title>Message radio Pompier (PWA) v1.0.10</title>
   <!-- PWA Meta Tags -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
@@ -98,17 +98,26 @@
     }
 
     .toggle-btn {
-      background-color: white;
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      background: rgba(0, 123, 255, 0.05);
       color: var(--primary-color);
       border: 1px solid var(--primary-color);
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
     }
 
     .toggle-btn:hover {
-      background: rgba(0, 123, 255, 0.05);
+      background: rgba(0, 123, 255, 0.1);
     }
 
-    button:hover, .toggle-btn:hover {
-      transform: scale(1.03);
+    .toggle-btn.selected, #toggleRouteBtn.active {
+      background-color: var(--primary-color);
+      color: white;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
 
     .prev-btn { background-color: grey; }
@@ -340,7 +349,7 @@
       width: 100%;
       padding: 10px;
       margin: 8px 0;
-      background: white;
+      background: rgba(0, 123, 255, 0.05);
       border: 1px solid var(--primary-color);
       border-radius: var(--border-radius);
       color: var(--primary-color);
@@ -351,14 +360,14 @@
     }
 
     .gps-btn:hover {
-      background: rgba(0, 123, 255, 0.05);
+      background: rgba(0, 123, 255, 0.1);
     }
 
     .secondary-btn {
       width: 100%;
       padding: 10px;
       margin: 8px 0;
-      background: white;
+      background: rgba(0, 123, 255, 0.05);
       border: 1px solid var(--primary-color);
       border-radius: var(--border-radius);
       color: var(--primary-color);
@@ -369,7 +378,7 @@
     }
 
     .secondary-btn:hover {
-      background: rgba(0, 123, 255, 0.05);
+      background: rgba(0, 123, 255, 0.1);
     }
 
     .gps-icon {
@@ -390,9 +399,17 @@
     #demandeActions .toggle-btn,
     #prevoisActions .toggle-btn,
     #natureInterventionContainer .toggle-btn {
-      background-color: white;
+      background: rgba(0, 123, 255, 0.05);
       color: var(--primary-color);
       border: 1px solid var(--primary-color);
+    }
+
+    #victimsToggleContainer .toggle-btn:hover,
+    #actionsContainer .toggle-btn:hover,
+    #demandeActions .toggle-btn:hover,
+    #prevoisActions .toggle-btn:hover,
+    #natureInterventionContainer .toggle-btn:hover {
+      background: rgba(0, 123, 255, 0.1);
     }
 
     #victimsToggleContainer .toggle-btn.selected,
@@ -406,9 +423,13 @@
 
     /* Style pour le bouton "Je prévois" */
     #togglePrevoisBtn {
-      background-color: white;
+      background: rgba(0, 123, 255, 0.05);
       color: var(--primary-color);
       border: 1px solid var(--primary-color);
+    }
+
+    #togglePrevoisBtn:hover {
+      background: rgba(0, 123, 255, 0.1);
     }
 
     #togglePrevoisBtn.active {
@@ -425,10 +446,12 @@
     /* Ajout des styles pour le nouveau compteur */
     .vehicle-count {
       display: flex;
-      flex-direction: column;
-      margin-bottom: 30px;
-      padding-bottom: 20px;
-      border-bottom: 1px solid #ddd;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      padding: 5px 0;
+      border-bottom: 1px solid #eee;
     }
 
     .vehicle-count-header {
@@ -436,41 +459,29 @@
       align-items: center;
       justify-content: space-between;
       width: 100%;
-      margin-bottom: 10px;
     }
 
     .vehicle-count label {
       margin: 0;
       color: #333;
-      font-size: 18px;
+      font-size: 16px;
       font-weight: normal;
+      flex: 1;
     }
 
     .vehicle-count .counter-container {
       display: flex;
       align-items: center;
-      gap: 20px;
-    }
-
-    .vehicle-count-details {
-      width: 100%;
-      margin-top: 10px;
-    }
-
-    .vehicle-count-details input {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
+      gap: 8px;
     }
 
     .vehicle-count .counter-btn {
-      width: 44px;
-      height: 44px;
+      width: 32px;
+      height: 32px;
       border: none;
       background: #007BFF;
       color: white;
-      font-size: 24px;
+      font-size: 20px;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -499,7 +510,7 @@
     }
 
     .vehicle-count .counter-value {
-      font-size: 36px;
+      font-size: 24px;
       font-weight: bold;
       color: #333;
       border: none;
@@ -508,12 +519,25 @@
       margin: 0;
       padding: 0;
       text-align: center;
-      min-width: 50px;
+      min-width: 30px;
     }
 
     .vehicle-count .counter-btn:disabled {
       background: #ccc;
       cursor: not-allowed;
+    }
+
+    .vehicle-count-details {
+      margin-top: 5px;
+      width: 100%;
+    }
+
+    .vehicle-count-details input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 14px;
     }
 
     #vehiculeLegerDetails,
@@ -783,22 +807,22 @@
         <select id="typeVehicule">
           <option value="">Choisir</option>
           <optgroup label="Véhicules terrestres">
-            <option>VEHICULE LEGER</option>
-            <option>VEHICULE DEUX ROUES</option>
-            <option>VEHICULE POIDS LOURD</option>
-            <option>VEHICULE POIDS LOURD TMD</option>
-            <option>VEHICULE AGRICOLE</option>
+            <option>Véhicule léger</option>
+            <option>Véhicule deux roues</option>
+            <option>Véhicule poids lourd</option>
+            <option>Véhicule poids lourd TMD</option>
+            <option>Véhicule agricole</option>
           </optgroup>
           <optgroup label="Autres véhicules">
-            <option>AVION DE LIGNE - MILITAIRE</option>
-            <option>AVION DE TOURISME</option>
-            <option>BATEAU</option>
-            <option>BUS</option>
-            <option>HÉLICOPTÈRE</option>
-            <option>METRO</option>
-            <option>PÉNICHE</option>
-            <option>TRAMWAY</option>
-            <option>TRAIN</option>
+            <option>Avion de ligne - militaire</option>
+            <option>Avion de tourisme</option>
+            <option>Bateau</option>
+            <option>Bus</option>
+            <option>Hélicoptère</option>
+            <option>Métro</option>
+            <option>Péniche</option>
+            <option>Tramway</option>
+            <option>Train</option>
             <option>ULM</option>
           </optgroup>
         </select>
@@ -1271,41 +1295,93 @@
     <!-- Étape 5 : Je demande / confirme -->
     <div id="step5" class="step hidden">
       <div id="suggestions" class="info-text"></div>
-      <div id="demandeActions">
-        <button type="button" class="toggle-btn" id="action-EPA" onclick="toggleButton(this)">EPA</button>
-        <button type="button" class="toggle-btn" id="action-VSAV" onclick="toggleButton(this)">VSAV</button>
-        <div id="vsavNumberContainer" class="sub-container hidden">
-          <label for="nombreVSAV">Nombre de VSAV (1-5)</label>
-          <input type="number" id="nombreVSAV" min="1" max="5" placeholder="1">
+      
+      <h3>Moyens pompiers</h3>
+      <hr>
+      <div id="moyensPompiers">
+        <!-- VSAV -->
+        <div class="vehicle-count">
+          <div class="vehicle-count-header">
+            <label>VSAV</label>
+            <div class="counter-container">
+              <button type="button" class="counter-btn minus" onclick="decrementVehicle('VSAV')" id="VSAVMinus">−</button>
+              <span class="counter-value" id="VSAV">0</span>
+              <button type="button" class="counter-btn plus" onclick="incrementVehicle('VSAV')">+</button>
+            </div>
+          </div>
         </div>
-        <button type="button" class="toggle-btn" id="action-FPT" onclick="toggleButton(this)">FPT</button>
-        <button type="button" class="toggle-btn" id="action-chefGroupe" onclick="toggleButton(this)">Chef de groupe</button>
-        <button type="button" class="toggle-btn" id="action-vehiculeSpecifique" onclick="toggleButton(this)">Véhicule spécifique</button>
-        <div id="vehiculeSpecifiqueContainer" class="sub-container hidden">
-          <label for="vehiculeSpecifiqueText">Précisez le véhicule spécifique</label>
-          <input type="text" id="vehiculeSpecifiqueText" placeholder="Votre précision">
+
+        <!-- FPT -->
+        <div class="vehicle-count">
+          <div class="vehicle-count-header">
+            <label>FPT</label>
+            <div class="counter-container">
+              <button type="button" class="counter-btn minus" onclick="decrementVehicle('FPT')" id="FPTMinus">−</button>
+              <span class="counter-value" id="FPT">0</span>
+              <button type="button" class="counter-btn plus" onclick="incrementVehicle('FPT')">+</button>
+            </div>
+          </div>
         </div>
+
+        <!-- EPA -->
+        <div class="vehicle-count">
+          <div class="vehicle-count-header">
+            <label>EPA</label>
+            <div class="counter-container">
+              <button type="button" class="counter-btn minus" onclick="decrementVehicle('EPA')" id="EPAMinus">−</button>
+              <span class="counter-value" id="EPA">0</span>
+              <button type="button" class="counter-btn plus" onclick="incrementVehicle('EPA')">+</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chef de groupe -->
+        <div class="vehicle-count">
+          <div class="vehicle-count-header">
+            <label>Chef de groupe</label>
+            <div class="counter-container">
+              <button type="button" class="counter-btn minus" onclick="decrementVehicle('chefGroupe')" id="chefGroupeMinus">−</button>
+              <span class="counter-value" id="chefGroupe">0</span>
+              <button type="button" class="counter-btn plus" onclick="incrementVehicle('chefGroupe')">+</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Véhicule spécifique -->
+        <div class="vehicle-count">
+          <div class="vehicle-count-header">
+            <label>Véhicule spécifique</label>
+            <div class="counter-container">
+              <button type="button" class="counter-btn minus" onclick="decrementVehicle('vehiculeSpecifique')" id="vehiculeSpecifiqueMinus">−</button>
+              <span class="counter-value" id="vehiculeSpecifique">0</span>
+              <button type="button" class="counter-btn plus" onclick="incrementVehicle('vehiculeSpecifique')">+</button>
+            </div>
+          </div>
+          <div id="vehiculeSpecifiqueDetails" class="vehicle-count-details hidden">
+            <input type="text" placeholder="Préciser le véhicule spécifique" id="vehiculeSpecifiqueText">
+          </div>
+        </div>
+      </div>
+
+      <h3>Autres services</h3>
+      <hr>
+      <div id="autresServices">
+        <button type="button" class="toggle-btn" id="action-ENEDIS" onclick="toggleButton(this)">ENEDIS</button>
+        <button type="button" class="toggle-btn" id="action-GRDF" onclick="toggleButton(this)">GRDF</button>
+        <button type="button" class="toggle-btn" id="action-SMUR" onclick="toggleButton(this)">SMUR</button>
         <button type="button" class="toggle-btn" id="action-gendarmerie" onclick="toggleButton(this)">Gendarmerie</button>
         <button type="button" class="toggle-btn" id="action-police" onclick="toggleButton(this)">Police</button>
-        <button type="button" class="toggle-btn" id="action-ENEDIS" onclick="toggleButton(this)">ENEDIS</button>
-        <button type="button" class="toggle-btn" id="toggle-btn" id="action-GRDF" onclick="toggleButton(this)">GRDF</button>
-        <button type="button" class="toggle-btn" id="action-SMUR" onclick="toggleButton(this)">SMUR</button>
         <button type="button" class="toggle-btn" id="action-elus" onclick="toggleButton(this)">Élus</button>
         <button type="button" class="toggle-btn" id="action-RTE" onclick="toggleButton(this)" style="display:none;">RTE</button>
       </div>
-      <label for="difficultes">Difficultés rencontrées</label>
-      <textarea id="difficultes" placeholder="Difficultés rencontrées"></textarea>
-      <label for="solution">Solution proposée</label>
-      <textarea id="solution" placeholder="Solution proposée"></textarea>
-      <label for="autresInfos">Autres informations</label>
-      <textarea id="autresInfos" placeholder="Autres informations"></textarea>
+
       <button type="button" class="prev-btn" onclick="goToStep(4)">← Précédent</button>
       <button type="button" onclick="generateMessage()">Suivant →</button>
     </div>
 
     <!-- Étape 6 : Message généré -->
     <div id="step6" class="step hidden">
-      <textarea id="message" class="result" readonly></textarea>
+      <textarea id="message" class="result" readonly contenteditable="true"></textarea>
       <textarea id="additionalInfo" placeholder="Ajouter une information supplémentaire manuellement" style="width: 100%; margin-top: 10px; padding: 10px; min-height: 60px;"></textarea>
       <button type="button" class="prev-btn" onclick="goToStep(5)">← Précédent</button>
       <button type="button" onclick="copyMessage()">Copier le message</button>
@@ -1314,7 +1390,7 @@
     </div>
   </div>
   <div class="update-container">
-    <p class="offline-info"><i>L'application fonctionne même hors ligne.</i> <span class="version-info">Version : 1.0.9</span></p>
+    <p class="offline-info"><i>L'application fonctionne même hors ligne.</i> <span class="version-info">Version : 1.0.10</span></p>
     <a href="#" id="updateLink" class="update-link" onclick="checkForUpdates(); return false;">Vérifier si l'app est à jour</a>
     <p id="updateStatus" class="update-status"></p>
     <p class="copyright">© Tael PINAULT 2025</p>
@@ -1542,6 +1618,37 @@
       titleElement.classList.remove("hidden");
     }
 
+    function updateMinusButtonState(id) {
+      let minusBtn = document.getElementById(id + "Minus");
+      let value = parseInt(document.getElementById(id).textContent);
+      if (value === 0) {
+        minusBtn.classList.add("disabled");
+        minusBtn.disabled = true;
+      } else {
+        minusBtn.classList.remove("disabled");
+        minusBtn.disabled = false;
+      }
+    }
+
+    // Initialiser l'état des boutons au chargement
+    window.addEventListener('load', function() {
+      // Compteurs de véhicules
+      ['vehiculeLeger', 'poidsLourd', 'deuxRoues', 'bus'].forEach(id => {
+        updateMinusButtonState(id);
+        updateVehicleDetails(id);
+      });
+      
+      // Compteurs de victimes
+      ['victimes', 'indemnes', 'UA', 'UR', 'DCD', 'incarcerees', 'intoxiquees', 'impliques'].forEach(id => {
+        updateMinusButtonState(id);
+      });
+      
+      // Compteurs de moyens pompiers
+      ['VSAV', 'FPT', 'EPA', 'chefGroupe', 'vehiculeSpecifique'].forEach(id => {
+        updateMinusButtonState(id);
+      });
+    });
+
     function incrementVehicle(id) {
       let span = document.getElementById(id);
       let value = parseInt(span.textContent) + 1;
@@ -1572,24 +1679,6 @@
         }
       }
     }
-
-    function updateMinusButtonState(id) {
-      let minusBtn = document.getElementById(id + "Minus");
-      let value = parseInt(document.getElementById(id).textContent);
-      if (value === 0) {
-        minusBtn.classList.add("disabled");
-      } else {
-        minusBtn.classList.remove("disabled");
-      }
-    }
-
-    // Initialiser l'état des boutons au chargement
-    window.addEventListener('load', function() {
-      ['vehiculeLeger', 'poidsLourd', 'deuxRoues', 'bus', 'victimes', 'indemnes', 'UA', 'UR', 'DCD', 'incarcerees', 'intoxiquees', 'impliques'].forEach(id => {
-        updateMinusButtonState(id);
-        updateVehicleDetails(id);
-      });
-    });
 
     function toggleDetailsSupplementaires() {
       const details = document.getElementById("detailsSupplementaires");
@@ -1698,24 +1787,19 @@
     function updateSuggestions() {
       let s = "suggestion : ";
       if (selectedBatiment === "R+") {
-        document.getElementById("action-EPA").classList.add("selected");
+        document.getElementById("EPA").textContent = "1";
         s += "epa, ";
       }
-      let ua = +document.getElementById("UA").value, ur = +document.getElementById("UR").value;
+      let ua = +document.getElementById("UA").textContent, ur = +document.getElementById("UR").textContent;
       if (ua + ur > 0) {
-        document.getElementById("action-VSAV").classList.add("selected");
         let cnt = Math.min(ua + ur, 5);
+        document.getElementById("VSAV").textContent = cnt.toString();
         s += cnt + " vsav, ";
-        document.getElementById("vsavNumberContainer").classList.remove("hidden");
-        document.getElementById("nombreVSAV").value = cnt;
         if (ua > 0) {
           document.getElementById("action-SMUR").classList.add("selected");
           s += "smur, ";
         }
       }
-      ["chefGroupe", "vehiculeSpecifique"].forEach(id => {
-        if (document.getElementById("action-" + id).classList.contains("selected")) s += id.replace(/([A-Z])/, " $1").trim() + ", ";
-      });
       document.getElementById("suggestions").innerText = s.replace(/, $/, "");
     }
 
@@ -1729,10 +1813,8 @@
       msg += "\n";
 
       // Location info
-      if (getVal("adresse")) {
-        msg += "JE SUIS:\n";
-        msg += `Adresse: ${getVal("adresse")}\n`;
-      }
+      msg += "Je suis:\n";
+      if (getVal("adresse")) msg += `Adresse: ${getVal("adresse")}\n`;
       if (getVal("adresseConfirmee")) msg += `Adresse confirmée/modifiée: ${getVal("adresseConfirmee")}\n`;
       if (getVal("commune")) msg += `Commune: ${getVal("commune")}\n`;
       if (getVal("typeRoute")) msg += `Type de route: ${getVal("typeRoute")}\n`;
@@ -1743,7 +1825,7 @@
       msg += "\n";
 
       // Situation info
-      msg += "JE VOIS:\n";
+      msg += "Je vois:\n";
       
       // Get selected nature
       let natureBtn = document.querySelector(".nature-toggle.selected");
@@ -1758,8 +1840,8 @@
           msg += "Véhicules impliqués:\n";
           let vehicules = ["vehiculeLeger", "poidsLourd", "deuxRoues", "bus"];
           vehicules.forEach(v => {
-            let count = getVal(v);
-            if (count && count !== "0") {
+            let count = document.getElementById(v)?.textContent || "0";
+            if (count !== "0") {
               msg += `- ${v.replace(/([A-Z])/g, ' $1').toLowerCase()}: ${count}\n`;
               let precisions = getVal(v + "Precisions");
               if (precisions) msg += `  Précisions: ${precisions}\n`;
@@ -1873,33 +1955,40 @@
       }
       msg += "\n";
 
-      // Victims info
-      if (victimsSelected) {
-        msg += "VICTIMES:\n";
-        ["victimes", "indemnes", "UA", "UR", "DCD", "incarcerees", "intoxiquees", "impliques"].forEach(id => {
-          let v = +getVal(id);
-          if (v > 0) {
-            // Personnaliser l'affichage pour les nouveaux champs
-            if (id === "incarcerees") {
-              msg += `Personnes incarcérées: ${v}\n`;
-            } else if (id === "intoxiquees") {
-              msg += `Personnes intoxiquées: ${v}\n`;
-            } else {
-              msg += `${id.charAt(0).toUpperCase() + id.slice(1)}: ${v}\n`;
-            }
-          }
-        });
+      // Victimes info
+      msg += "Victimes:\n";
+      const victimTypes = {
+        "victimes": "Victimes",
+        "indemnes": "Indemnes",
+        "UA": "UA",
+        "UR": "UR",
+        "DCD": "DCD",
+        "incarcerees": "Personnes incarcérées",
+        "intoxiquees": "Personnes intoxiquées",
+        "impliques": "Impliqués"
+      };
 
-        // Ajouter les précisions sur les victimes si présentes
-        let precisionVictimes = getVal("precisionVictimes");
-        if (precisionVictimes) {
-          msg += `Précisions sur les victimes: ${precisionVictimes}\n`;
+      let hasVictims = false;
+      Object.entries(victimTypes).forEach(([id, label]) => {
+        const count = parseInt(document.getElementById(id)?.textContent || "0");
+        if (count > 0) {
+          hasVictims = true;
+          msg += `${label}: ${count}\n`;
         }
+      });
+
+      // Ajouter les précisions sur les victimes si présentes
+      let precisionVictimes = getVal("precisionVictimes");
+      if (precisionVictimes) {
+        msg += `Précisions sur les victimes: ${precisionVictimes}\n`;
+      }
+      
+      if (hasVictims) {
         msg += "\n";
       }
 
       // Actions info
-      msg += "JE FAIS:\n";
+      msg += "Je fais:\n";
       
       // Récupérer toutes les actions sélectionnées
       document.querySelectorAll('#actionsContainer .toggle-btn.selected').forEach(btn => {
@@ -1981,63 +2070,75 @@
       msg += "\n";
 
       // Requests info
-      msg += "JE DEMANDE / CONFIRME:\n";
-      [
-        "action-FPT", "action-EPA", "action-VSAV", "action-chefGroupe", "action-vehiculeSpecifique",
-        "action-gendarmerie", "action-police", "action-ENEDIS", "action-GRDF", "action-SMUR",
-        "action-elus", "action-RTE"
-      ].forEach(id => {
-        let btn = document.getElementById(id);
-        if (btn?.classList.contains("selected")) {
-          msg += btn.textContent + "\n";
-          if (id === "action-VSAV" && getVal("nombreVSAV")) {
-            msg += `Nombre de VSAV: ${getVal("nombreVSAV")}\n`;
-          }
-          if (id === "action-vehiculeSpecifique" && getVal("vehiculeSpecifiqueText")) {
+      msg += "Je demande / confirme:\n";
+      
+      // Moyens pompiers
+      const moyensPompiers = {
+        "VSAV": "VSAV",
+        "FPT": "FPT",
+        "EPA": "EPA",
+        "chefGroupe": "Chef de groupe",
+        "vehiculeSpecifique": "Véhicule spécifique"
+      };
+
+      Object.entries(moyensPompiers).forEach(([id, label]) => {
+        const count = parseInt(document.getElementById(id)?.textContent || "0");
+        if (count > 0) {
+          msg += `${label}: ${count}\n`;
+          if (id === "vehiculeSpecifique" && getVal("vehiculeSpecifiqueText")) {
             msg += `Précision véhicule: ${getVal("vehiculeSpecifiqueText")}\n`;
           }
         }
       });
-      msg += "\n";
 
-      // Additional info
-      ["difficultes", "solution", "autresInfos"].forEach(id => {
-        if (getVal(id)) msg += `${id.charAt(0).toUpperCase() + id.slice(1)}: ${getVal(id)}\n\n`;
+      // Autres services
+      [
+        "action-ENEDIS", "action-GRDF", "action-SMUR",
+        "action-gendarmerie", "action-police", "action-elus", "action-RTE"
+      ].forEach(id => {
+        let btn = document.getElementById(id);
+        if (btn?.classList.contains("selected")) {
+          msg += btn.textContent + "\n";
+        }
       });
 
-      // Add any additional information
-      let additionalInfo = getVal("additionalInfo");
-      if (additionalInfo) {
-        msg += `Information supplémentaire: ${additionalInfo}\n\n`;
-      }
-
-      msg += "fin de message, comment reçu parlez.";
+      msg += "Fin de message, comment reçu parlez.";
       
-      document.getElementById("message").value = msg;
+      // Mettre à jour le textarea avec le message en texte brut
+      const messageTextarea = document.getElementById("message");
+      messageTextarea.value = msg;
+      
+      // Ajuster la hauteur du textarea
       setTimeout(() => {
-        let ta = document.getElementById("message");
-        ta.style.height = "auto";
-        ta.style.height = ta.scrollHeight + "px";
+        messageTextarea.style.height = "auto";
+        messageTextarea.style.height = messageTextarea.scrollHeight + "px";
       }, 0);
+      
       goToStep(6);
     }
 
     function copyMessage() {
       let msg = document.getElementById("message").value;
-      let additionalInfo = document.getElementById("additionalInfo").value;
-      if (additionalInfo) {
-        msg = msg.replace("fin de message, comment reçu parlez.", `Information supplémentaire: ${additionalInfo}\n\nfin de message, comment reçu parlez.`);
-      }
+      // Convertir le texte brut en texte brut
+      msg = msg.replace(/\n/g, '\n')
+               .replace(/<br>/g, '\n')
+               .replace(/<b>/g, '')
+               .replace(/<\/b>/g, '')
+               .replace(/<i>/g, '')
+               .replace(/<\/i>/g, '');
       navigator.clipboard.writeText(msg);
       alert("Message copié !");
     }
 
     function sendMail() {
       let msg = document.getElementById("message").value;
-      let additionalInfo = document.getElementById("additionalInfo").value;
-      if (additionalInfo) {
-        msg = msg.replace("fin de message, comment reçu parlez.", `Information supplémentaire: ${additionalInfo}\n\nfin de message, comment reçu parlez.`);
-      }
+      // Convertir le texte brut en texte brut
+      msg = msg.replace(/\n/g, '\n')
+               .replace(/<br>/g, '\n')
+               .replace(/<b>/g, '')
+               .replace(/<\/b>/g, '')
+               .replace(/<i>/g, '')
+               .replace(/<\/i>/g, '');
       let sub = encodeURIComponent("Message Radio Pompier");
       window.location.href = `mailto:?subject=${sub}&body=${encodeURIComponent(msg)}`;
     }
@@ -2060,41 +2161,82 @@
       document.querySelectorAll(".step").forEach(e => e.classList.add("hidden"));
       document.getElementById("step0").classList.replace("hidden", "active");
       updateProgress();
+      
+      // Réinitialiser les compteurs de moyens pompiers
+      ['EPA', 'VSAV', 'FPT', 'chefGroupe', 'vehiculeSpecifique'].forEach(id => {
+        let counter = document.getElementById(id);
+        if (counter) counter.textContent = '0';
+      });
     }
 
     function toggleRouteInfo() {
-      console.log("Toggle route info called"); // Debug
       const routeInfo = document.getElementById('routeInfo');
       const btn = document.getElementById('toggleRouteBtn');
       const icon = btn.querySelector('.toggle-icon');
       
-      if (!routeInfo || !btn || !icon) {
-        console.log("Missing elements"); // Debug
-        return;
-      }
+      // Toggle la visibilité de la section
+      routeInfo.classList.toggle('hidden');
       
-      // Force display style
-      if (routeInfo.classList.contains('hidden')) {
-        routeInfo.classList.remove('hidden');
-        routeInfo.style.display = 'block';
-      } else {
-        routeInfo.classList.add('hidden');
-        routeInfo.style.display = 'none';
-      }
-      
+      // Toggle l'état du bouton et de l'icône
       btn.classList.toggle('active');
       icon.classList.toggle('rotated');
       
-      // Debug
-      console.log("Hidden class:", routeInfo.classList.contains('hidden'));
-      console.log("Display style:", routeInfo.style.display);
+      // Forcer l'affichage de la section si elle est ouverte
+      if (!routeInfo.classList.contains('hidden')) {
+        routeInfo.style.display = 'block';
+      }
     }
 
-    // Supprimer l'écouteur d'événement du bouton dans initializeEventListeners
-    function initializeEventListeners() {
+    function updateRouteFields() {
+      const typeRoute = document.getElementById('typeRoute').value;
+      const pkField = document.getElementById('pk').parentElement;
+      const sensField = document.getElementById('sens').parentElement;
+      const nomEchangeurField = document.getElementById('nomEchangeur').parentElement;
+      
+      // Réinitialiser l'affichage de tous les champs
+      pkField.style.display = 'none';
+      sensField.style.display = 'none';
+      nomEchangeurField.style.display = 'none';
+      
+      // Afficher les champs appropriés selon le type de route
+      switch(typeRoute) {
+        case 'Autoroute':
+          pkField.style.display = 'block';
+          sensField.style.display = 'block';
+          nomEchangeurField.style.display = 'block';
+          break;
+        case 'Route nationale':
+        case 'Route départementale':
+          pkField.style.display = 'block';
+          sensField.style.display = 'block';
+          break;
+        case 'Rocade intérieure':
+        case 'Rocade extérieure':
+          sensField.style.display = 'block';
+          break;
+      }
+    }
+
+    // Modifier l'écouteur d'événements pour le type de route
+    document.getElementById('typeRoute').addEventListener('change', function(e) {
+      updateRouteFields();
+    });
+
+    // Ajouter un écouteur pour le changement de motif de départ
+    document.getElementById('motifDepart').addEventListener('change', function(e) {
+      // Si on est déjà sur l'étape "Je vois", mettre à jour la sélection
+      if (currentStep === 2) {
+        goToStep(2);
+      }
+    });
+
+    // Initialiser les écouteurs d'événements
+    function initializeRouteEventListeners() {
       const typeRoute = document.getElementById('typeRoute');
       if (typeRoute) {
-        typeRoute.addEventListener('change', updateRouteFields);
+        typeRoute.addEventListener('change', function(e) {
+          updateRouteFields();
+        });
       }
       
       const motifDepart = document.getElementById('motifDepart');
@@ -2107,12 +2249,12 @@
       }
     }
 
-    // Modifier window.onload pour inclure l'initialisation des écouteurs
+    // Modifier window.onload pour inclure l'initialisation des écouteurs de route
     window.onload = function() {
       setCurrentTime();
       setupGPSInfoReset();
       updateRouteFields();
-      initializeEventListeners();
+      initializeRouteEventListeners();
     }
 
     function toggleLigneDetails() {
@@ -2186,34 +2328,8 @@
       }
     }
 
-    // Ajouter cette fonction pour gérer l'affichage des champs PK et Sens
-    function updateRouteFields() {
-      const typeRoute = document.getElementById('typeRoute').value;
-      const pkField = document.getElementById('pk').parentElement;
-      const sensField = document.getElementById('sens').parentElement;
-      
-      if (typeRoute === 'Autoroute') {
-        pkField.style.display = 'block';
-        sensField.style.display = 'block';
-      } else {
-        pkField.style.display = 'none';
-        sensField.style.display = 'none';
-      }
-    }
-
-    // Ajouter un écouteur d'événements pour le type de route
-    document.getElementById('typeRoute').addEventListener('change', updateRouteFields);
-
-    // Ajouter un écouteur pour le changement de motif de départ
-    document.getElementById('motifDepart').addEventListener('change', function(e) {
-      // Si on est déjà sur l'étape "Je vois", mettre à jour la sélection
-      if (currentStep === 2) {
-        goToStep(2);
-      }
-    });
-
     // Version de l'application
-    const APP_VERSION = '1.0.9';
+    const APP_VERSION = '1.0.10';
 
     // Fonction pour vérifier les mises à jour
     function checkForUpdates() {
