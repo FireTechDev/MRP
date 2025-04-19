@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Message radio Pompier (PWA) v1.0.10</title>
+  <title>MRP</title>
   <!-- PWA Meta Tags -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
@@ -664,11 +664,62 @@
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       margin-bottom: 20px;
     }
+
+    .app-info {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 20px 0;
+    }
+
+    .app-icon {
+      width: 64px;
+      height: 64px;
+      margin-bottom: 10px;
+      border-radius: 50%;
+      object-fit: cover;
+      background-color: white;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .app-name {
+      font-size: 24px;
+      font-weight: bold;
+      margin: 5px 0;
+    }
+
+    .version-info {
+      font-size: 14px;
+      color: #666;
+      margin: 5px 0;
+    }
+
+    .update-container {
+      text-align: center;
+      margin-top: 20px;
+      padding: 20px;
+    }
+
+    .offline-info {
+      margin-bottom: 10px;
+    }
+
+    .update-link {
+      display: block;
+      margin: 10px 0;
+      color: #0066cc;
+      text-decoration: none;
+    }
+
+    .copyright {
+      margin-top: 20px;
+      font-size: 12px;
+      color: #666;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Message radio Pompier</h1>
     <!-- Barre de progression -->
     <div class="progress-bar">
       <div class="progress-step active" data-step="0" onclick="goToStep(0)">inter</div>
@@ -1531,9 +1582,14 @@
     </div>
   </div>
   <div class="update-container">
-    <p class="offline-info"><i>L'application fonctionne même hors ligne.</i> <span class="version-info">Version : 1.0.10</span></p>
+    <p class="offline-info"><i>L'application fonctionne même hors ligne.</i></p>
     <a href="#" id="updateLink" class="update-link" onclick="checkForUpdates(); return false;">Vérifier si l'app est à jour</a>
     <p id="updateStatus" class="update-status"></p>
+    <div class="app-info">
+      <img src="icons/192.png" alt="MRP Icon" class="app-icon">
+      <p class="app-name">MRP</p>
+      <p class="version-info">Version : 1.0.10</p>
+    </div>
     <p class="copyright">© Tael PINAULT 2025</p>
   </div>
 
