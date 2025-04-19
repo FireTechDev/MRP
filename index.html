@@ -655,6 +655,15 @@
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       margin-bottom: 20px;
     }
+
+    /* Ajout du style pour la section des moyens pompiers */
+    #moyensPompiers {
+      background-color: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
   </style>
 </head>
 <body>
@@ -1549,7 +1558,6 @@
       // Si on arrive à l'étape "Je suis" (step 1), vérifier si le motif est AVP
       if (step === 1) {
         const motifDepart = document.getElementById('motifDepart').value;
-        // Ne plus forcer l'état du bloc route ici, laisser toggleRouteInfo le gérer
         if (motifDepart === 'AVP') {
           updateRouteFields();
         }
@@ -1561,16 +1569,17 @@
         
         // Réinitialiser d'abord toutes les sélections
         document.querySelectorAll(".nature-toggle").forEach(b => b.classList.remove("selected"));
-        ["avpFields", "feuVehiculeFields", "batimentFields", "chuteLigneFields", "autreTypeBox", "etatCirculationContainer"].forEach(id => 
-          document.getElementById(id).classList.add("hidden")
-        );
-        document.getElementById("infoFuiteGaz").classList.add("hidden");
         
         // Sélectionner le bouton approprié en fonction du motif de départ
         switch(motifDepart) {
           case 'AVP':
             const avpButton = document.querySelector('.nature-toggle[data-value="AVP"]');
-            if (avpButton) selectNature(avpButton);
+            if (avpButton) {
+              selectNature(avpButton);
+              // Forcer l'affichage des champs AVP et de l'état de la circulation
+              document.getElementById("avpFields").classList.remove("hidden");
+              document.getElementById("etatCirculationContainer").classList.remove("hidden");
+            }
             break;
           case 'Feu de véhicule':
             const feuVLButton = document.querySelector('.nature-toggle[data-value="Feu de véhicule"]');
