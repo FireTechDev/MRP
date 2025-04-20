@@ -209,7 +209,7 @@
 
     /* Style pour les sections de risque */
     .risk-section {
-      margin: 8px 0;
+      margin: 4px 0;
       padding: 8px;
       background: #f8f9fa;
       border-radius: 5px;
@@ -222,6 +222,12 @@
       background: #f8f9fa;
       border-radius: 5px;
       border: 1px solid #e9ecef;
+    }
+
+    /* Style spécifique pour le formulaire AVP */
+    #avpFields {
+      background: white;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
     /* Toggle elements */
@@ -716,6 +722,14 @@
       font-size: 12px;
       color: #666;
     }
+
+    /* Style pour les sections de risque dans le feu de véhicule */
+    .vehicle-risk-section {
+      margin: 2px 0;
+      padding: 8px;
+      background: #f8f9fa;
+      border-radius: 5px;
+    }
   </style>
 </head>
 <body>
@@ -867,6 +881,7 @@
               <option>Électrique</option>
               <option>Hybride</option>
               <option>GPL</option>
+              <option>Hydrogène</option>
               <option>Inconnue</option>
             </select>
           </div>
@@ -967,7 +982,7 @@
 
         <div id="circulationDetails" class="hidden">
           <label>Nombre de voies impactées</label>
-          <input type="text" placeholder="Préciser le nombre de voies impactées" id="voiesImpactees">
+          <input type="text" placeholder="Préciser le nombre de voies impactées" id="voiesImpactees" onkeypress="return event.charCode >= 48 && event.charCode <= 57" pattern="[0-9]*">
 
           <label>Sens de circulation</label>
           <input type="text" placeholder="Préciser le sens de circulation" id="sensCirculation">
@@ -1000,6 +1015,12 @@
           </optgroup>
         </select>
 
+        <div id="codeMatiereTMDContainer" class="hidden">
+          <label>Préciser code matière</label>
+          <input type="text" id="codeMatiereTMD" placeholder="Entrez le code matière" onkeypress="return event.charCode >= 48 && event.charCode <= 57" pattern="[0-9]*">
+          <div class="info-text">Rappel "X devant code matière" = Pas d'eau</div>
+        </div>
+
         <label>Énergie</label>
         <select id="energieVehicule">
           <option value="">Choisir</option>
@@ -1008,14 +1029,15 @@
           <option>Électrique</option>
           <option>Hybride</option>
           <option>GPL</option>
+          <option>Hydrogène</option>
           <option>Inconnue</option>
         </select>
 
-        <div class="risk-section">
-          <h4>Risque de propagation</h4>
+        <div class="risk-section vehicle-risk-section">
+          <label>Risque de propagation</label>
           <div id="propagationVehiculeContainer">
-            <button type="button" class="toggle-btn" onclick="selectToggle('propagationVehicule', this)" data-value="Non">Non</button>
             <button type="button" class="toggle-btn" onclick="selectToggle('propagationVehicule', this)" data-value="Oui">Oui</button>
+            <button type="button" class="toggle-btn" onclick="selectToggle('propagationVehicule', this)" data-value="Non">Non</button>
           </div>
           <input type="hidden" id="propagationVehicule">
           <div id="propagationVehiculeDetails" class="hidden">
@@ -1023,11 +1045,11 @@
           </div>
         </div>
 
-        <div class="risk-section">
-          <h4>Véhicule Isolé</h4>
+        <div class="risk-section vehicle-risk-section">
+          <label>Véhicule Isolé</label>
           <div id="isoleVehiculeContainer">
-            <button type="button" class="toggle-btn" onclick="selectToggle('isoleVehicule', this)" data-value="Non">Non</button>
             <button type="button" class="toggle-btn" onclick="selectToggle('isoleVehicule', this)" data-value="Oui">Oui</button>
+            <button type="button" class="toggle-btn" onclick="selectToggle('isoleVehicule', this)" data-value="Non">Non</button>
           </div>
           <input type="hidden" id="isoleVehicule">
           <div id="isoleVehiculeDetails" class="hidden">
@@ -1169,7 +1191,6 @@
 
       <!-- Champs Chute de ligne électrique -->
       <div id="chuteLigneFields" class="sub-container hidden">
-        <h3>Chute de ligne électrique</h3>
         <label>Localisation de la chute</label>
         <input type="text" id="localisationChute" placeholder="Localisation de la chute">
 
@@ -1214,34 +1235,10 @@
     <!-- Étape 3 : Victimes -->
     <div id="step3" class="step hidden">
       <div id="victimsFields">
-        <!-- Victimes -->
-        <div class="vehicle-count">
-          <div class="vehicle-count-header">
-            <label>Victimes</label>
-            <div class="counter-container">
-              <button type="button" class="counter-btn minus" onclick="decrementVehicle('victimes')" id="victimesMinus">−</button>
-              <span class="counter-value" id="victimes">0</span>
-              <button type="button" class="counter-btn plus" onclick="incrementVehicle('victimes')">+</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Indemnes -->
-        <div class="vehicle-count">
-          <div class="vehicle-count-header">
-            <label>Indemnes</label>
-            <div class="counter-container">
-              <button type="button" class="counter-btn minus" onclick="decrementVehicle('indemnes')" id="indemnesMinus">−</button>
-              <span class="counter-value" id="indemnes">0</span>
-              <button type="button" class="counter-btn plus" onclick="incrementVehicle('indemnes')">+</button>
-            </div>
-          </div>
-        </div>
-
         <!-- UA -->
         <div class="vehicle-count">
           <div class="vehicle-count-header">
-            <label>UA</label>
+            <label>Victime UA</label>
             <div class="counter-container">
               <button type="button" class="counter-btn minus" onclick="decrementVehicle('UA')" id="UAMinus">−</button>
               <span class="counter-value" id="UA">0</span>
@@ -1253,7 +1250,7 @@
         <!-- UR -->
         <div class="vehicle-count">
           <div class="vehicle-count-header">
-            <label>UR</label>
+            <label>Victime UR</label>
             <div class="counter-container">
               <button type="button" class="counter-btn minus" onclick="decrementVehicle('UR')" id="URMinus">−</button>
               <span class="counter-value" id="UR">0</span>
@@ -1265,7 +1262,7 @@
         <!-- DCD -->
         <div class="vehicle-count">
           <div class="vehicle-count-header">
-            <label>DCD</label>
+            <label>Victime DCD</label>
             <div class="counter-container">
               <button type="button" class="counter-btn minus" onclick="decrementVehicle('DCD')" id="DCDMinus">−</button>
               <span class="counter-value" id="DCD">0</span>
@@ -1277,7 +1274,7 @@
         <!-- Incarcérées -->
         <div class="vehicle-count">
           <div class="vehicle-count-header">
-            <label>Incarcérées</label>
+            <label>Victime Incarcérée</label>
             <div class="counter-container">
               <button type="button" class="counter-btn minus" onclick="decrementVehicle('incarcerees')" id="incarcereesMinus">−</button>
               <span class="counter-value" id="incarcerees">0</span>
@@ -1289,7 +1286,7 @@
         <!-- Intoxiquées -->
         <div class="vehicle-count">
           <div class="vehicle-count-header">
-            <label>Intoxiquées</label>
+            <label>Victime Intoxiquée</label>
             <div class="counter-container">
               <button type="button" class="counter-btn minus" onclick="decrementVehicle('intoxiquees')" id="intoxiqueesMinus">−</button>
               <span class="counter-value" id="intoxiquees">0</span>
@@ -1298,10 +1295,22 @@
           </div>
         </div>
 
+        <!-- Indemnes -->
+        <div class="vehicle-count">
+          <div class="vehicle-count-header">
+            <label>Indemne</label>
+            <div class="counter-container">
+              <button type="button" class="counter-btn minus" onclick="decrementVehicle('indemnes')" id="indemnesMinus">−</button>
+              <span class="counter-value" id="indemnes">0</span>
+              <button type="button" class="counter-btn plus" onclick="incrementVehicle('indemnes')">+</button>
+            </div>
+          </div>
+        </div>
+
         <!-- Impliqués -->
         <div class="vehicle-count">
           <div class="vehicle-count-header">
-            <label>Impliqués</label>
+            <label>Impliqué</label>
             <div class="counter-container">
               <button type="button" class="counter-btn minus" onclick="decrementVehicle('impliques')" id="impliquesMinus">−</button>
               <span class="counter-value" id="impliques">0</span>
@@ -1400,6 +1409,28 @@
         </div>
       </div>
 
+      <h3>Secours routier</h3>
+      <hr>
+      <div id="secoursRoutierContainer">
+        <!-- Désincarcération -->
+        <button type="button" class="toggle-btn" onclick="toggleActionDetails(this)" data-target="desincarceration">Désincarcération</button>
+        <div id="desincarceration" class="action-details hidden">
+          <input type="text" id="preciserDesincarceration" placeholder="Précisez la désincarcération">
+        </div>
+
+        <!-- Balisage -->
+        <button type="button" class="toggle-btn" onclick="toggleActionDetails(this)" data-target="balisage">Balisage</button>
+        <div id="balisage" class="action-details hidden">
+          <input type="text" id="preciserBalisage" placeholder="Préciser balisage">
+        </div>
+
+        <!-- Arrêt écoulement -->
+        <button type="button" class="toggle-btn" onclick="toggleActionDetails(this)" data-target="arretEcoulement">Arrêt écoulement / déversement</button>
+        <div id="arretEcoulement" class="action-details hidden">
+          <input type="text" id="preciserArretEcoulement" placeholder="Préciser l'arrêt d'écoulement">
+        </div>
+      </div>
+
       <h3>Incendie</h3>
       <hr>
       <div id="incendieContainer">
@@ -1457,28 +1488,6 @@
 
         <!-- Je poursuis reconnaissance -->
         <button type="button" class="toggle-btn" onclick="toggleButton(this)">Je poursuis reconnaissance</button>
-      </div>
-
-      <h3>Secours routier</h3>
-      <hr>
-      <div id="secoursRoutierContainer">
-        <!-- Désincarcération -->
-        <button type="button" class="toggle-btn" onclick="toggleActionDetails(this)" data-target="desincarceration">Désincarcération</button>
-        <div id="desincarceration" class="action-details hidden">
-          <input type="text" id="preciserDesincarceration" placeholder="Précisez la désincarcération">
-        </div>
-
-        <!-- Balisage -->
-        <button type="button" class="toggle-btn" onclick="toggleActionDetails(this)" data-target="balisage">Balisage</button>
-        <div id="balisage" class="action-details hidden">
-          <input type="text" id="preciserBalisage" placeholder="Préciser balisage">
-        </div>
-
-        <!-- Arrêt écoulement -->
-        <button type="button" class="toggle-btn" onclick="toggleActionDetails(this)" data-target="arretEcoulement">Arrêt écoulement / déversement</button>
-        <div id="arretEcoulement" class="action-details hidden">
-          <input type="text" id="preciserArretEcoulement" placeholder="Préciser l'arrêt d'écoulement">
-        </div>
       </div>
 
       <hr>
@@ -1561,8 +1570,8 @@
         <button type="button" class="toggle-btn" id="action-ENEDIS" onclick="toggleButton(this)">ENEDIS</button>
         <button type="button" class="toggle-btn" id="action-GRDF" onclick="toggleButton(this)">GRDF</button>
         <button type="button" class="toggle-btn" id="action-SMUR" onclick="toggleButton(this)">SMUR <span class="suggestion-tag hidden" id="SMURSuggestion"></span></button>
-        <button type="button" class="toggle-btn" id="action-gendarmerie" onclick="toggleButton(this)">Gendarmerie</button>
-        <button type="button" class="toggle-btn" id="action-police" onclick="toggleButton(this)">Police</button>
+        <button type="button" class="toggle-btn" id="action-gendarmerie" onclick="toggleButton(this)">Gendarmerie <span class="suggestion-tag hidden" id="gendarmerieSuggestion"></span></button>
+        <button type="button" class="toggle-btn" id="action-police" onclick="toggleButton(this)">Police <span class="suggestion-tag hidden" id="policeSuggestion"></span></button>
         <button type="button" class="toggle-btn" id="action-elus" onclick="toggleButton(this)">Élus</button>
         <button type="button" class="toggle-btn" id="action-RTE" onclick="toggleButton(this)" style="display:none;">RTE</button>
       </div>
@@ -1691,21 +1700,58 @@
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(pos => {
           let lat = pos.coords.latitude, lon = pos.coords.longitude;
-          fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
+          fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&addressdetails=1`)
             .then(r => r.json()).then(d => {
-              document.querySelector("#adresse").value = d.display_name || `Lat:${lat},Lon:${lon}`;
-              // Mettre à jour la commune si elle est disponible
+              console.log('Données reçues:', d);
+              
+              let address = '';
               if (d.address) {
-                const commune = d.address.city || d.address.town || d.address.village || d.address.municipality || "";
-                if (commune) {
-                  document.querySelector("#commune").value = commune;
+                console.log('Composants d\'adresse:', d.address);
+                
+                // Construire l'adresse dans l'ordre logique
+                if (d.address.isolated_dwelling) {
+                  address = d.address.isolated_dwelling;
                 }
+                
+                if (d.address.neighbourhood) {
+                  if (address) address += ', ';
+                  address += d.address.neighbourhood;
+                }
+                
+                if (d.address.road) {
+                  if (address) address += ', ';
+                  address += d.address.road;
+                }
+                
+                // Si nous n'avons toujours pas d'adresse, utiliser le village
+                if (!address && d.address.village) {
+                  address = d.address.village;
+                }
+                
+                console.log('Adresse construite:', address);
+                
+                // Si aucune adresse n'a pu être construite, utiliser l'adresse complète
+                if (!address) {
+                  address = d.display_name || `Lat:${lat},Lon:${lon}`;
+                }
+                
+                document.querySelector("#adresse").value = address;
+                
+                // Mettre à jour la commune si elle est disponible
+                if (d.address) {
+                  const commune = d.address.village || d.address.town || d.address.city || d.address.municipality || "";
+                  if (commune) {
+                    document.querySelector("#commune").value = commune;
+                  }
+                }
+                
+                // Afficher les informations GPS
+                document.getElementById("gpsInfo").classList.remove("hidden");
+                document.getElementById("gpsInfoCommune").classList.remove("hidden");
               }
-              // Afficher les informations GPS
-              document.getElementById("gpsInfo").classList.remove("hidden");
-              document.getElementById("gpsInfoCommune").classList.remove("hidden");
             })
-            .catch(_ => {
+            .catch(error => {
+              console.error('Erreur lors de la géolocalisation:', error);
               document.querySelector("#adresse").value = `Lat:${lat},Lon:${lon}`;
               // Afficher les informations GPS même en cas d'erreur de géocodage
               document.getElementById("gpsInfo").classList.remove("hidden");
@@ -1747,6 +1793,7 @@
         document.getElementById("selectedNatureTitle").classList.add("hidden");
         // Réinitialiser les champs du formulaire
         resetFields();
+        updateSuggestions(); // Mettre à jour les suggestions quand on désélectionne
         return;
       }
 
@@ -1768,11 +1815,12 @@
       if (selectedNature === "AVP") {
         document.getElementById("avpFields").classList.remove("hidden");
         document.getElementById("etatCirculationContainer").classList.remove("hidden");
+        updateSuggestions(); // Mettre à jour les suggestions quand AVP est sélectionné
       } else if (selectedNature === "Feu de véhicule") {
         document.getElementById("feuVehiculeFields").classList.remove("hidden");
       } else if (selectedNature === "Feu de bâtiment") {
         document.getElementById("batimentFields").classList.remove("hidden");
-      } else if (selectedNature === "Autre") {
+      
         document.getElementById("autreTypeBox").classList.remove("hidden");
       }
     }
@@ -1904,19 +1952,37 @@
       }
     }
 
-    function selectToggle(field, btn) {
-      let container = document.getElementById(field + "Container");
-      if (container) {
-        container.querySelectorAll(".toggle-btn").forEach(b => b.classList.remove("selected"));
-      btn.classList.add("selected");
-      }
-      document.getElementById(field).value = btn.dataset.value;
-
-      // Handle details visibility
-      let details = document.getElementById(field + "Details");
-      if (details) {
-        details.classList.toggle("hidden", btn.dataset.value !== "Oui");
-      }
+    function selectToggle(field, button) {
+      const container = document.getElementById(`${field}Container`);
+      const buttons = container.querySelectorAll('.toggle-btn');
+      const detailsContainer = document.getElementById(`${field}Details`);
+      
+      buttons.forEach(btn => {
+        if (btn === button) {
+          btn.classList.add('selected');
+          document.getElementById(field).value = button.getAttribute('data-value');
+          // Gérer l'affichage des détails en fonction du type de section
+          if (detailsContainer) {
+            if (field === 'isoleVehicule') {
+              // Pour "Véhicule Isolé", afficher les détails si "Non" est sélectionné
+              if (button.getAttribute('data-value') === 'Non') {
+                detailsContainer.classList.remove('hidden');
+              } else {
+                detailsContainer.classList.add('hidden');
+              }
+            } else if (field === 'propagationVehicule') {
+              // Pour "Risque de propagation", afficher les détails si "Oui" est sélectionné
+              if (button.getAttribute('data-value') === 'Oui') {
+                detailsContainer.classList.remove('hidden');
+              } else {
+                detailsContainer.classList.add('hidden');
+              }
+            }
+          }
+        } else {
+          btn.classList.remove('selected');
+        }
+      });
     }
 
     function selectBatimentType(btn) {
@@ -2001,6 +2067,14 @@
           document.getElementById("SMURSuggestion").textContent = "suggéré";
           document.getElementById("SMURSuggestion").classList.remove("hidden");
         }
+      }
+
+      // Ajouter les suggestions pour Police et Gendarmerie si AVP est sélectionné
+      if (selectedNature === "AVP") {
+        document.getElementById("policeSuggestion").textContent = "suggéré";
+        document.getElementById("gendarmerieSuggestion").textContent = "suggéré";
+        document.getElementById("policeSuggestion").classList.remove("hidden");
+        document.getElementById("gendarmerieSuggestion").classList.remove("hidden");
       }
     }
 
@@ -2093,6 +2167,9 @@
 
           if (getVal("risqueSpecifiqueVehicule")) msg += `Risque spécifique: ${getVal("risqueSpecifiqueVehicule")}\n`;
           if (getVal("evolutionFeuVehicule")) msg += `Évolution du feu: ${getVal("evolutionFeuVehicule")}\n`;
+          if (getVal("typeVehicule") === "Véhicule poids lourd TMD" && getVal("codeMatiereTMD")) {
+            msg += `Code matière TMD: ${getVal("codeMatiereTMD")}\n`;
+          }
         }
 
         // Building related fields (used by multiple types)
@@ -2159,14 +2236,13 @@
       // Victimes info
       msg += "[ VICTIMES ]\n";
       const victimTypes = {
-        "victimes": "Victimes",
-        "indemnes": "Indemnes",
-        "UA": "UA",
-        "UR": "UR",
-        "DCD": "DCD",
-        "incarcerees": "Personnes incarcérées",
-        "intoxiquees": "Personnes intoxiquées",
-        "impliques": "Impliqués"
+        "UA": "Victime UA",
+        "UR": "Victime UR",
+        "DCD": "Victime DCD",
+        "incarcerees": "Victime Incarcérée",
+        "intoxiquees": "Victime Intoxiquée",
+        "indemnes": "Indemne",
+        "impliques": "Impliqué"
       };
 
       let hasVictims = false;
@@ -2174,7 +2250,7 @@
         const count = parseInt(document.getElementById(id)?.textContent || "0");
         if (count > 0) {
           hasVictims = true;
-          msg += `${label}: ${count}\n`;
+          msg += `${count} ${label}\n`;
         }
       });
 
@@ -2191,55 +2267,59 @@
       // Actions info
       msg += "[ JE FAIS ]\n";
       
-      // Récupérer toutes les actions sélectionnées
-      document.querySelectorAll('#actionsContainer .toggle-btn.selected').forEach(btn => {
-        const action = btn.textContent;
-        const target = btn.getAttribute('data-target');
-        
-        // Si l'action a des détails
-        if (target) {
-          const details = document.getElementById(target);
-          if (details) {
-            msg += `${action}\n`;
-            
-            // Pour l'extinction, inclure tous les détails spécifiques
-            if (target === 'extinction') {
-              const precisions = getVal('preciserExtinction');
-              if (precisions) msg += `Précisions: ${precisions}\n`;
-              if (getVal('nombreLDV')) msg += `Nombre de LDV: ${getVal('nombreLDV')}\n`;
-              if (getVal('debit')) msg += `Débit: ${getVal('debit')}\n`;
-              if (getVal('fourgonAlimente')) msg += `Fourgon alimenté: ${getVal('fourgonAlimente')}\n`;
-            }
-            // Pour la mise en sécurité
-            else if (target === 'miseEnSecurite') {
-              const precisions = getVal('preciserMiseEnSecurite');
-              if (precisions) msg += `Précisions: ${precisions}\n`;
-              const nbPersonnes = getVal('nombrePersonnesMiseEnSecurite');
-              if (nbPersonnes) msg += `Nombre de personnes: ${nbPersonnes}\n`;
-              const pointRassemblement = getVal('pointRassemblement');
-              if (pointRassemblement) msg += `Point de rassemblement: ${pointRassemblement}\n`;
-            }
-            // Pour la prise en charge des victimes
-            else if (target === 'priseEnCharge') {
-              const precisions = getVal('preciserPriseEnCharge');
-              if (precisions) msg += `Précisions: ${precisions}\n`;
-              const nbVictimes = getVal('nombreVictimesPriseEnCharge');
-              if (nbVictimes) msg += `Nombre de victimes: ${nbVictimes}\n`;
-              const parEquipage = getVal('parEquipage');
-              if (parEquipage) msg += `Par équipage: ${parEquipage}\n`;
-            }
-            // Pour les autres actions avec précisions
-            else {
-              const precisionInput = details.querySelector('input[type="text"]');
-              if (precisionInput && precisionInput.value) {
-                msg += `Précisions: ${precisionInput.value}\n`;
+      // Récupérer toutes les actions sélectionnées de tous les conteneurs
+      const actionContainers = ['actionsContainer', 'incendieContainer', 'secoursRoutierContainer'];
+      actionContainers.forEach(containerId => {
+        document.querySelectorAll(`#${containerId} .toggle-btn.selected`).forEach(btn => {
+          const action = btn.textContent;
+          const target = btn.getAttribute('data-target');
+          
+          // Si l'action a des détails
+          if (target) {
+            const details = document.getElementById(target);
+            if (details) {
+              msg += `${action}\n`;
+              
+              // Pour l'extinction, inclure tous les détails spécifiques
+              if (target === 'extinction') {
+                const precisions = getVal('preciserExtinction');
+                if (precisions) msg += `Précisions: ${precisions}\n`;
+                const nbLDV = getVal('nombreLDV');
+                if (nbLDV) msg += `${nbLDV} LDV\n`;
+                if (getVal('debit')) msg += `Débit: ${getVal('debit')}\n`;
+                if (getVal('fourgonAlimente')) msg += `Fourgon alimenté: ${getVal('fourgonAlimente')}\n`;
+              }
+              // Pour la mise en sécurité
+              else if (target === 'miseEnSecurite') {
+                const precisions = getVal('preciserMiseEnSecurite');
+                if (precisions) msg += `Précisions: ${precisions}\n`;
+                const nbPersonnes = getVal('nombrePersonnesMiseEnSecurite');
+                if (nbPersonnes) msg += `${nbPersonnes} personnes\n`;
+                const pointRassemblement = getVal('pointRassemblement');
+                if (pointRassemblement) msg += `Point de rassemblement: ${pointRassemblement}\n`;
+              }
+              // Pour la prise en charge des victimes
+              else if (target === 'priseEnCharge') {
+                const precisions = getVal('preciserPriseEnCharge');
+                if (precisions) msg += `Précisions: ${precisions}\n`;
+                const nbVictimes = getVal('nombreVictimesPriseEnCharge');
+                if (nbVictimes) msg += `${nbVictimes} victimes\n`;
+                const parEquipage = getVal('parEquipage');
+                if (parEquipage) msg += `Par équipage: ${parEquipage}\n`;
+              }
+              // Pour les autres actions avec précisions
+              else {
+                const precisionInput = details.querySelector('input[type="text"]');
+                if (precisionInput && precisionInput.value) {
+                  msg += `Précisions: ${precisionInput.value}\n`;
+                }
               }
             }
+          } else {
+            // Actions sans détails (comme Désenfumage, Ventilation, etc.)
+            msg += `${action}\n`;
           }
-        } else {
-          // Actions sans détails (comme Désenfumage, Ventilation, etc.)
-          msg += `${action}\n`;
-        }
+        });
       });
 
       // Ajouter les prévisions du chef de groupe si présentes
@@ -2252,29 +2332,21 @@
           if (target) {
             const details = document.getElementById(target);
             if (details) {
+              msg += `${action}\n`;
               const precisionInput = details.querySelector('input[type="text"]');
               if (precisionInput && precisionInput.value) {
-                msg += `${action}: ${precisionInput.value}\n`;
-              } else {
-                msg += `${action}\n`;
+                msg += `Précisions: ${precisionInput.value}\n`;
               }
             }
+          } else {
+            msg += `${action}\n`;
           }
         });
-        
-        // Ajouter les précisions générales des prévisions
-        const precisionsPrevois = getVal('precisionsPrevois');
-        if (precisionsPrevois) {
-          msg += `Précisions: ${precisionsPrevois}\n`;
-        }
       }
-      msg += "\n";
 
-      // Requests info
-      msg += "[ JE DEMANDE ]\n";
-      
-      // Moyens pompiers
-      const moyensPompiers = {
+      // Ajouter les moyens demandés
+      msg += "\n[ JE DEMANDE ]\n";
+      const moyensTypes = {
         "VSAV": "VSAV",
         "FPT": "FPT",
         "EPA": "EPA",
@@ -2282,25 +2354,25 @@
         "vehiculeSpecifique": "Véhicule spécifique"
       };
 
-      Object.entries(moyensPompiers).forEach(([id, label]) => {
+      Object.entries(moyensTypes).forEach(([id, label]) => {
         const count = parseInt(document.getElementById(id)?.textContent || "0");
         if (count > 0) {
-          msg += `${label}: ${count}\n`;
-          if (id === "vehiculeSpecifique" && getVal("vehiculeSpecifiqueText")) {
-            msg += `Précision véhicule: ${getVal("vehiculeSpecifiqueText")}\n`;
+          if (id === "vehiculeSpecifique") {
+            const details = document.getElementById("vehiculeSpecifiqueText");
+            if (details && details.value) {
+              msg += `${count} ${details.value}\n`;
+            } else {
+              msg += `${count} ${label}\n`;
+            }
+          } else {
+            msg += `${count} ${label}\n`;
           }
         }
       });
 
-      // Autres services
-      [
-        "action-ENEDIS", "action-GRDF", "action-SMUR",
-        "action-gendarmerie", "action-police", "action-elus", "action-RTE"
-      ].forEach(id => {
-        let btn = document.getElementById(id);
-        if (btn?.classList.contains("selected")) {
-          msg += btn.textContent + "\n";
-        }
+      // Ajouter les autres services demandés
+      document.querySelectorAll('#autresServices .toggle-btn.selected').forEach(btn => {
+        msg += `${btn.textContent}\n`;
       });
 
       msg += "\n[ FIN DE MESSAGE, COMMENT REÇU PARLEZ. ]";
@@ -2460,6 +2532,17 @@
     // Modifier l'écouteur d'événements pour le type de route
     document.getElementById('typeRoute').addEventListener('change', function(e) {
       updateRouteFields();
+    });
+
+    // Ajouter un écouteur pour le changement de type de véhicule
+    document.getElementById('typeVehicule').addEventListener('change', function(e) {
+      const codeMatiereContainer = document.getElementById('codeMatiereTMDContainer');
+      if (e.target.value === 'Véhicule poids lourd TMD') {
+        codeMatiereContainer.classList.remove('hidden');
+      } else {
+        codeMatiereContainer.classList.add('hidden');
+        document.getElementById('codeMatiereTMD').value = '';
+      }
     });
 
     // Ajouter un écouteur pour le changement de motif de départ
@@ -2715,6 +2798,27 @@
       container.classList.toggle("hidden");
       btn.classList.toggle("active");
       icon.classList.toggle("rotated");
+    }
+
+    function toggleButtonWithField(button, field, value) {
+      const buttons = document.querySelectorAll(`[onclick*="${field}"]`);
+      buttons.forEach(btn => {
+        if (btn === button) {
+          btn.classList.add('selected');
+          document.getElementById(field).value = value;
+          // Afficher/masquer les détails en fonction de la valeur sélectionnée
+          const detailsContainer = document.getElementById(`${field}Details`);
+          if (detailsContainer) {
+            if (value === 'non') {
+              detailsContainer.classList.remove('hidden');
+            } else {
+              detailsContainer.classList.add('hidden');
+            }
+          }
+        } else {
+          btn.classList.remove('selected');
+        }
+      });
     }
   </script>
   <script>
