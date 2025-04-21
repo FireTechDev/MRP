@@ -804,6 +804,49 @@
     .navigation-buttons {
       margin-top: 32px;
     }
+
+    /* Animation pour le swipe */
+    .step {
+      transition: transform 0.3s ease-out;
+    }
+
+    .step.swiping-left {
+      transform: translateX(-100%);
+    }
+
+    .step.swiping-right {
+      transform: translateX(100%);
+    }
+
+    .step.swipe-in-left {
+      animation: swipeInLeft 0.3s ease-out;
+    }
+
+    .step.swipe-in-right {
+      animation: swipeInRight 0.3s ease-out;
+    }
+
+    @keyframes swipeInLeft {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes swipeInRight {
+      from {
+        transform: translateX(-100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
   </style>
 </head>
 <body>
@@ -2947,18 +2990,48 @@
     // Configuration des gestes
     hammer.get('swipe').set({ direction: Hammer.DIRECTION_HORIZONTAL });
 
+    // Variables pour suivre le swipe
+    let isSwiping = false;
+    let currentStepElement = null;
+
     // Gestion des événements de swipe
     hammer.on('swipeleft', function() {
-      // Swipe vers la gauche = aller à l'étape suivante
-      if (currentStep < 6) { // 6 est le nombre maximum d'étapes
-        goToStep(currentStep + 1);
+      if (currentStep < 6 && !isSwiping) {
+        isSwiping = true;
+        currentStepElement = document.querySelector(`#step${currentStep}`);
+        currentStepElement.classList.add('swiping-left');
+        
+        setTimeout(() => {
+          goToStep(currentStep + 1);
+          const newStepElement = document.querySelector(`#step${currentStep + 1}`);
+          newStepElement.classList.add('swipe-in-left');
+          
+          setTimeout(() => {
+            currentStepElement.classList.remove('swiping-left');
+            newStepElement.classList.remove('swipe-in-left');
+            isSwiping = false;
+          }, 300);
+        }, 300);
       }
     });
 
     hammer.on('swiperight', function() {
-      // Swipe vers la droite = aller à l'étape précédente
-      if (currentStep > 0) {
-        goToStep(currentStep - 1);
+      if (currentStep > 0 && !isSwiping) {
+        isSwiping = true;
+        currentStepElement = document.querySelector(`#step${currentStep}`);
+        currentStepElement.classList.add('swiping-right');
+        
+        setTimeout(() => {
+          goToStep(currentStep - 1);
+          const newStepElement = document.querySelector(`#step${currentStep - 1}`);
+          newStepElement.classList.add('swipe-in-right');
+          
+          setTimeout(() => {
+            currentStepElement.classList.remove('swiping-right');
+            newStepElement.classList.remove('swipe-in-right');
+            isSwiping = false;
+          }, 300);
+        }, 300);
       }
     });
   </script>
