@@ -16,14 +16,67 @@
   <link rel="apple-touch-icon" sizes="512x512" href="icons/512.png">
   <link rel="manifest" href="manifest.json">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <meta name="theme-color" content="#007BFF">
-  <meta name="apple-mobile-web-app-status-bar" content="#007BFF">
   <style>
-    @font-face {
+    @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+    
+    .material-icons {
       font-family: 'Material Icons';
+      font-weight: normal;
       font-style: normal;
-      font-weight: 400;
-      src: url(https://fonts.gstatic.com/s/materialicons/v140/flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2) format('woff2');
+      font-size: 24px;
+      line-height: 1;
+      letter-spacing: normal;
+      text-transform: none;
+      display: inline-block;
+      white-space: nowrap;
+      word-wrap: normal;
+      direction: ltr;
+      -webkit-font-feature-settings: 'liga';
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .progress-step::before {
+      content: '';
+      width: 32px;
+      height: 32px;
+      background: transparent;
+      border-radius: 50%;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Material Icons';
+      font-size: 24px;
+      line-height: 1;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .progress-step[data-step="inter"]::before {
+      content: 'description';
+    }
+
+    .progress-step[data-step="je-suis"]::before {
+      content: 'my_location';
+    }
+
+    .progress-step[data-step="je-vois"]::before {
+      content: 'visibility';
+    }
+
+    .progress-step[data-step="victimes"]::before {
+      content: 'personal_injury';
+    }
+
+    .progress-step[data-step="je-fais"]::before {
+      content: 'touch_app';
+    }
+
+    .progress-step[data-step="je-demande"]::before {
+      content: 'local_fire_department';
+    }
+
+    .progress-step[data-step="message"]::before {
+      content: 'phone_android';
     }
 
     :root {
@@ -160,48 +213,6 @@
       flex-direction: column;
       align-items: center;
       gap: 4px;
-    }
-
-    .progress-step::before {
-      content: '';
-      width: 32px;
-      height: 32px;
-      background: transparent;
-      border-radius: 50%;
-      margin-bottom: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 24px;
-      line-height: 1;
-    }
-
-    .progress-step[data-step="inter"]::before {
-      content: '📝';
-    }
-
-    .progress-step[data-step="je-suis"]::before {
-      content: '📍';
-    }
-
-    .progress-step[data-step="je-vois"]::before {
-      content: '👁️';
-    }
-
-    .progress-step[data-step="victimes"]::before {
-      content: '🚑';
-    }
-
-    .progress-step[data-step="je-fais"]::before {
-      content: '✋';
-    }
-
-    .progress-step[data-step="je-demande"]::before {
-      content: '🚒';
-    }
-
-    .progress-step[data-step="message"]::before {
-      content: '📻';
     }
 
     .progress-step.active {
