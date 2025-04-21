@@ -788,6 +788,18 @@
       background: #f8f9fa;
       border-radius: 5px;
     }
+
+    /* Styles existants */
+    
+    .divider {
+      height: 1px;
+      background-color: #e0e0e0; /* Gris clair */
+      margin: 16px 0;
+    }
+
+    .next-button {
+      margin-top: 32px !important; /* Ajout d'espace au-dessus des boutons Suivant uniquement */
+    }
   </style>
 </head>
 <body>
@@ -829,8 +841,11 @@
         <button type="button" class="secondary-btn" onclick="setCurrentTime()">Actualiser l'heure</button>
       </div>
 
-      <hr>
-      <button type="button" onclick="goToStep(1)">Suivant →</button>
+      <div class="navigation-buttons">
+        <button type="button" class="prev-btn" onclick="goToStep(0)">← Précédent</button>
+        <hr>
+        <button type="button" onclick="goToStep(1)">Suivant →</button>
+      </div>
     </div>
 
     <!-- Étape 1 : Je suis -->
@@ -886,9 +901,11 @@
       <input type="text" id="sens" placeholder="Saisissez un sens">
       </div>
 
-      <hr>
-      <button type="button" class="prev-btn" onclick="goToStep(0)">← Précédent</button>
-      <button type="button" onclick="goToStep(2)">Suivant →</button>
+      <div class="navigation-buttons">
+        <button type="button" class="prev-btn" onclick="goToStep(0)">← Précédent</button>
+        <hr>
+        <button type="button" onclick="goToStep(2)">Suivant →</button>
+      </div>
     </div>
 
     <!-- Étape 2 : Je vois -->
@@ -1283,9 +1300,11 @@
         Rappel des périmètres : zone exclusion = 50m, zone contrôlée = 100m.
       </div>
 
-      <hr>
-      <button type="button" class="prev-btn" onclick="goToStep(1)">← Précédent</button>
-      <button type="button" onclick="goToStep(3)">Suivant →</button>
+      <div class="navigation-buttons">
+        <button type="button" class="prev-btn" onclick="goToStep(1)">← Précédent</button>
+        <hr>
+        <button type="button" onclick="goToStep(3)">Suivant →</button>
+      </div>
     </div>
 
     <!-- Étape 3 : Victimes -->
@@ -1384,8 +1403,11 @@
           <textarea id="precisionVictimes" placeholder="Saisissez des précisions supplémentaires sur les victimes" style="width: 100%; min-height: 60px; margin-top: 10px; padding: 10px; border: 1px solid #ccc; border-radius: 5px;"></textarea>
         </div>
       </div>
-      <button type="button" class="prev-btn" onclick="goToStep(2)">← Précédent</button>
-      <button type="button" onclick="goToStep(4)">Suivant →</button>
+      <div class="navigation-buttons">
+        <button type="button" class="prev-btn" onclick="goToStep(2)">← Précédent</button>
+        <hr>
+        <button type="button" onclick="goToStep(4)">Suivant →</button>
+      </div>
     </div>
 
     <!-- Étape 4 : Je fais -->
@@ -1546,9 +1568,11 @@
         <button type="button" class="toggle-btn" onclick="toggleButton(this)">Je poursuis reconnaissance</button>
       </div>
 
-      <hr>
-      <button type="button" class="prev-btn" onclick="goToStep(3)">← Précédent</button>
-      <button type="button" onclick="goToStep(5)">Suivant →</button>
+      <div class="navigation-buttons">
+        <button type="button" class="prev-btn" onclick="goToStep(3)">← Précédent</button>
+        <hr>
+        <button type="button" onclick="goToStep(5)">Suivant →</button>
+      </div>
     </div>
 
     <!-- Étape 5 : Je demande / confirme -->
@@ -1632,18 +1656,24 @@
         <button type="button" class="toggle-btn" id="action-RTE" onclick="toggleButton(this)" style="display:none;">RTE</button>
       </div>
 
-      <button type="button" class="prev-btn" onclick="goToStep(4)">← Précédent</button>
-      <button type="button" onclick="generateMessage()">Suivant →</button>
+      <div class="navigation-buttons">
+        <button type="button" class="prev-btn" onclick="goToStep(4)">← Précédent</button>
+        <hr>
+        <button type="button" onclick="generateMessage()">Suivant →</button>
+      </div>
     </div>
 
     <!-- Étape 6 : Message généré -->
     <div id="step6" class="step hidden">
       <textarea id="message" class="result" readonly contenteditable="true"></textarea>
       <textarea id="additionalInfo" placeholder="Ajouter une information supplémentaire manuellement" style="width: 100%; margin-top: 10px; padding: 10px; min-height: 60px;"></textarea>
-      <button type="button" class="prev-btn" onclick="goToStep(5)">← Précédent</button>
-      <button type="button" onclick="copyMessage()">Copier le message</button>
-      <button type="button" onclick="sendMail()">Envoyer par mail</button>
-      <button type="button" class="reset-btn" onclick="resetForm()">Recommencer le message</button>
+      <div class="navigation-buttons">
+        <button type="button" class="prev-btn" onclick="goToStep(5)">← Précédent</button>
+        <hr>
+        <button type="button" onclick="copyMessage()">Copier le message</button>
+        <button type="button" onclick="sendMail()">Envoyer par mail</button>
+        <button type="button" class="reset-btn" onclick="resetForm()">Recommencer le message</button>
+      </div>
     </div>
   </div>
   <div class="update-container">
