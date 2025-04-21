@@ -15,6 +15,7 @@
   <link rel="apple-touch-icon" sizes="192x192" href="icons/192.png">
   <link rel="apple-touch-icon" sizes="512x512" href="icons/512.png">
   <link rel="manifest" href="manifest.json">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <meta name="theme-color" content="#007BFF">
   <meta name="apple-mobile-web-app-status-bar" content="#007BFF">
   <style>
@@ -156,11 +157,55 @@
 
     .progress-step::before {
       content: '';
-      width: 8px;
-      height: 8px;
-      background: #ddd;
+      width: 32px;
+      height: 32px;
+      background: transparent;
       border-radius: 50%;
       margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Material Icons';
+      font-size: 28px;
+      font-style: normal;
+      font-weight: normal;
+      line-height: 1;
+      letter-spacing: normal;
+      text-transform: none;
+      display: inline-block;
+      white-space: nowrap;
+      word-wrap: normal;
+      direction: ltr;
+      -webkit-font-feature-settings: 'liga';
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .progress-step[data-step="inter"]::before {
+      content: 'description';
+    }
+
+    .progress-step[data-step="je-suis"]::before {
+      content: 'my_location';
+    }
+
+    .progress-step[data-step="je-vois"]::before {
+      content: 'visibility';
+    }
+
+    .progress-step[data-step="victimes"]::before {
+      content: 'personal_injury';
+    }
+
+    .progress-step[data-step="je-fais"]::before {
+      content: 'touch_app';
+    }
+
+    .progress-step[data-step="je-demande"]::before {
+      content: 'fire_truck';
+    }
+
+    .progress-step[data-step="message"]::before {
+      content: 'phone_android';
     }
 
     .progress-step.active {
@@ -170,7 +215,8 @@
     }
 
     .progress-step.active::before {
-      background: var(--primary-color);
+      color: var(--primary-color);
+      border-radius: 50%;
     }
 
     @media (max-width: 480px) {
@@ -736,13 +782,13 @@
   <div class="container">
     <!-- Barre de progression -->
     <div class="progress-bar">
-      <div class="progress-step active" data-step="0" onclick="goToStep(0)">inter</div>
-      <div class="progress-step" data-step="1" onclick="goToStep(1)">je suis</div>
-      <div class="progress-step" data-step="2" onclick="goToStep(2)">je vois</div>
-      <div class="progress-step" data-step="3" onclick="goToStep(3)">victimes</div>
-      <div class="progress-step" data-step="4" onclick="goToStep(4)">je fais</div>
-      <div class="progress-step" data-step="5" onclick="goToStep(5)">je demande</div>
-      <div class="progress-step" data-step="6" onclick="goToStep(6)">message</div>
+      <div class="progress-step active" data-step="inter" onclick="goToStep(0)">inter</div>
+      <div class="progress-step" data-step="je-suis" onclick="goToStep(1)">je suis</div>
+      <div class="progress-step" data-step="je-vois" onclick="goToStep(2)">je vois</div>
+      <div class="progress-step" data-step="victimes" onclick="goToStep(3)">victimes</div>
+      <div class="progress-step" data-step="je-fais" onclick="goToStep(4)">je fais</div>
+      <div class="progress-step" data-step="je-demande" onclick="goToStep(5)">je demande</div>
+      <div class="progress-step" data-step="message" onclick="goToStep(6)">message</div>
     </div>
 
     <!-- Étape 0 : Intervention -->
@@ -764,8 +810,6 @@
         <option>Déclenchement alarme</option>
         <option>Autre type d'intervention</option>
       </select>
-
-      <hr>
 
       <div class="form-group">
         <label for="groupeHoraireAuto">Groupe horaire</label>
@@ -1611,6 +1655,16 @@
     function goToStep(step) {
       document.querySelector(`.step.active`).classList.replace("active", "hidden");
       document.querySelector(`#step${step}`).classList.replace("hidden", "active");
+      
+      // Mettre à jour la classe active des éléments de progression
+      document.querySelectorAll('.progress-step').forEach((el, index) => {
+        if (index === step) {
+          el.classList.add('active');
+        } else {
+          el.classList.remove('active');
+        }
+      });
+      
       currentStep = step;
       updateProgress();
       
@@ -1683,8 +1737,8 @@
     }
 
     function updateProgress() {
-      document.querySelectorAll(".progress-step").forEach(el => {
-        el.classList.toggle("active", +el.dataset.step === currentStep);
+      document.querySelectorAll(".progress-step").forEach((el, index) => {
+        el.classList.toggle("active", index === currentStep);
       });
     }
 
@@ -1790,7 +1844,8 @@
           document.getElementById(id).classList.add("hidden")
         );
         document.getElementById("infoFuiteGaz").classList.add("hidden");
-        document.getElementById("selectedNatureTitle").classList.add("hidden");
+        // Suppression de la ligne suivante
+        // document.getElementById("selectedNatureTitle").classList.add("hidden");
         // Réinitialiser les champs du formulaire
         resetFields();
         updateSuggestions(); // Mettre à jour les suggestions quand on désélectionne
@@ -1809,7 +1864,8 @@
         document.getElementById(id).classList.add("hidden")
       );
       document.getElementById("infoFuiteGaz").classList.add("hidden");
-      document.getElementById("selectedNatureTitle").classList.add("hidden");
+      // Suppression de la ligne suivante
+      // document.getElementById("selectedNatureTitle").classList.add("hidden");
 
       // Show relevant fields based on selection
       if (selectedNature === "AVP") {
@@ -1820,8 +1876,10 @@
         document.getElementById("feuVehiculeFields").classList.remove("hidden");
       } else if (selectedNature === "Feu de bâtiment") {
         document.getElementById("batimentFields").classList.remove("hidden");
-      
+      } else if (selectedNature === "Autre") {
         document.getElementById("autreTypeBox").classList.remove("hidden");
+        // Suppression de la ligne suivante
+        // document.getElementById("selectedNatureTitle").classList.remove("hidden");
       }
     }
 
