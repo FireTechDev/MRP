@@ -16,6 +16,7 @@
   <link rel="apple-touch-icon" sizes="512x512" href="icons/512.png">
   <link rel="manifest" href="manifest.json">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
   <style>
     @font-face {
       font-family: 'Material Icons';
@@ -223,7 +224,6 @@
     .progress-step.active {
       border-bottom-color: var(--primary-color);
       color: var(--primary-color);
-      font-weight: bold;
     }
 
     .progress-step.active::before {
@@ -799,6 +799,10 @@
 
     .next-button {
       margin-top: 32px !important; /* Ajout d'espace au-dessus des boutons Suivant uniquement */
+    }
+
+    .navigation-buttons {
+      margin-top: 32px;
     }
   </style>
 </head>
@@ -2934,6 +2938,29 @@
           });
       });
     }
+  </script>
+  <script>
+    // Initialisation des gestes de swipe
+    const container = document.querySelector('.container');
+    const hammer = new Hammer(container);
+
+    // Configuration des gestes
+    hammer.get('swipe').set({ direction: Hammer.DIRECTION_HORIZONTAL });
+
+    // Gestion des événements de swipe
+    hammer.on('swipeleft', function() {
+      // Swipe vers la gauche = aller à l'étape suivante
+      if (currentStep < 6) { // 6 est le nombre maximum d'étapes
+        goToStep(currentStep + 1);
+      }
+    });
+
+    hammer.on('swiperight', function() {
+      // Swipe vers la droite = aller à l'étape précédente
+      if (currentStep > 0) {
+        goToStep(currentStep - 1);
+      }
+    });
   </script>
 </body>
 </html>
