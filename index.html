@@ -192,6 +192,11 @@
     .prev-btn { background-color: grey; }
     .reset-btn { background-color: var(--danger-color); }
     
+    /* Masquer le bouton Précédent sur l'étape INTER */
+    #step0 .prev-btn {
+      display: none;
+    }
+    
     /* Progress bar */
     .progress-bar {
       display: flex;
@@ -846,8 +851,7 @@
       </div>
 
       <div class="navigation-buttons">
-        <button type="button" class="prev-btn" onclick="goToStep(0)">← Précédent</button>
-        <hr>
+        <button type="button" class="prev-btn hidden" onclick="goToStep(0)">← Précédent</button>
         <button type="button" onclick="goToStep(1)">Suivant →</button>
       </div>
     </div>
@@ -907,7 +911,6 @@
 
       <div class="navigation-buttons">
         <button type="button" class="prev-btn" onclick="goToStep(0)">← Précédent</button>
-        <hr>
         <button type="button" onclick="goToStep(2)">Suivant →</button>
       </div>
     </div>
@@ -1306,7 +1309,6 @@
 
       <div class="navigation-buttons">
         <button type="button" class="prev-btn" onclick="goToStep(1)">← Précédent</button>
-        <hr>
         <button type="button" onclick="goToStep(3)">Suivant →</button>
       </div>
     </div>
@@ -1409,7 +1411,6 @@
       </div>
       <div class="navigation-buttons">
         <button type="button" class="prev-btn" onclick="goToStep(2)">← Précédent</button>
-        <hr>
         <button type="button" onclick="goToStep(4)">Suivant →</button>
       </div>
     </div>
@@ -1574,7 +1575,6 @@
 
       <div class="navigation-buttons">
         <button type="button" class="prev-btn" onclick="goToStep(3)">← Précédent</button>
-        <hr>
         <button type="button" onclick="goToStep(5)">Suivant →</button>
       </div>
     </div>
@@ -1662,7 +1662,6 @@
 
       <div class="navigation-buttons">
         <button type="button" class="prev-btn" onclick="goToStep(4)">← Précédent</button>
-        <hr>
         <button type="button" onclick="generateMessage()">Suivant →</button>
       </div>
     </div>
@@ -1673,7 +1672,6 @@
       <textarea id="additionalInfo" placeholder="Ajouter une information supplémentaire manuellement" style="width: 100%; margin-top: 10px; padding: 10px; min-height: 60px;"></textarea>
       <div class="navigation-buttons">
         <button type="button" class="prev-btn" onclick="goToStep(5)">← Précédent</button>
-        <hr>
         <button type="button" onclick="copyMessage()">Copier le message</button>
         <button type="button" onclick="sendMail()">Envoyer par mail</button>
         <button type="button" class="reset-btn" onclick="resetForm()">Recommencer le message</button>
@@ -1713,6 +1711,12 @@
       
       currentStep = step;
       updateProgress();
+      
+      // Masquer le bouton Précédent sur l'étape INTER (step 0)
+      const prevButton = document.querySelector(`#step${step} .prev-btn`);
+      if (prevButton) {
+        prevButton.style.display = step === 0 ? 'none' : 'block';
+      }
       
       // Faire défiler vers le haut de la page
       window.scrollTo({
@@ -2682,6 +2686,11 @@
       setupGPSInfoReset();
       updateRouteFields();
       initializeRouteEventListeners();
+      // Masquer le bouton Précédent sur l'étape INTER au chargement
+      const prevButton = document.querySelector('#step0 .prev-btn');
+      if (prevButton) {
+        prevButton.style.display = 'none';
+      }
     }
 
     function toggleLigneDetails() {
