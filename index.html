@@ -642,9 +642,22 @@
       background-color: #007BFF;
     }
 
-    .vehicle-count .counter-btn.minus.disabled {
-      background-color: #ccc;
+    .vehicle-count .counter-btn.minus:disabled {
+      opacity: 0.5;
       cursor: not-allowed;
+    }
+
+    .vehicle-count .counter-btn.minus.always-active {
+      background-color: #007BFF;
+      color: white;
+      cursor: pointer;
+    }
+
+    .vehicle-count .counter-btn.minus.always-active:disabled {
+      opacity: 1;
+      cursor: pointer;
+      background-color: #007BFF;
+      color: white;
     }
 
     .vehicle-count .counter-btn.plus {
@@ -667,6 +680,7 @@
     .vehicle-count .counter-btn:disabled {
       background: #ccc;
       cursor: not-allowed;
+      opacity: 0.7;
     }
 
     .vehicle-count-details {
@@ -853,8 +867,32 @@
     .vehicle-risk-section {
       margin: 2px 0;
       padding: 8px;
-      background: #f8f9fa;
+      background: transparent;
       border-radius: 5px;
+    }
+
+    /* Style pour le formulaire Feu de véhicule */
+    #feuVehiculeFields {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Style pour le formulaire Feu de bâtiment */
+    #batimentFields {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Style pour le formulaire Chute de ligne électrique */
+    #chuteLigneFields {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
     /* Styles existants */
@@ -964,6 +1002,52 @@
       margin-bottom: 15px;
       font-size: 12px;
     }
+
+    .minus-btn:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+
+    .address-buttons {
+      display: flex;
+      width: 100%;
+      margin: 8px 0;
+      gap: 8px;
+    }
+
+    .secondary-btn {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      background: rgba(0, 123, 255, 0.05);
+      border: 1px solid var(--primary-color);
+      border-radius: var(--border-radius);
+      color: var(--primary-color);
+      font-size: var(--font-size);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+
+    .secondary-btn:hover {
+      background: rgba(0, 123, 255, 0.1);
+    }
+
+    .secondary-btn.selected {
+      background: white;
+      color: var(--primary-color);
+      font-weight: 500;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Style pour les sections de risque dans le feu de bâtiment */
+    .risk-section {
+      margin: 8px 0;
+      padding: 8px;
+      background: transparent;
+      border-radius: 5px;
+    }
   </style>
 </head>
 <body>
@@ -1021,11 +1105,11 @@
 
     <!-- Étape 1 : Je suis -->
     <div id="step1" class="step hidden">
-      <div class="address-toggle-container">
-        <button type="button" class="address-toggle-btn selected" onclick="selectAddressToggle(this, 'Confirmée')">Adresse confirmée</button>
-        <button type="button" class="address-toggle-btn" onclick="selectAddressToggle(this, 'Modifiée')">Adresse modifiée</button>
+      <div class="address-buttons">
+        <button type="button" class="secondary-btn" onclick="selectAddressToggle(this, 'Confirmée')">Adresse confirmée</button>
+        <button type="button" class="secondary-btn" onclick="selectAddressToggle(this, 'Modifiée')">Adresse modifiée</button>
       </div>
-      <input type="hidden" id="adresseConfirmee" value="Confirmée">
+      <input type="hidden" id="adresseConfirmee" value="">
 
       <button type="button" onclick="geolocalise()" class="gps-btn">
         Géolocaliser ma position
@@ -1331,22 +1415,39 @@
         </div>
 
         <div id="etagesFields" class="hidden">
-          <label>Nombre d'étages R+</label>
-            <select id="etagesRPlus">
-              <option value="">Choisir</option>
-              <option>0</option><option>1</option><option>2</option><option>3</option><option>4</option>
-              <option>5</option><option>6</option><option>7</option><option>8</option><option>9</option>
-              <option>10</option><option>11</option><option>12</option>
-            </select>
-
-          <label>Nombre d'étages R-</label>
-            <select id="etagesRMoins">
-              <option value="">Choisir</option>
-              <option>-1</option><option>-2</option><option>-3</option><option>-4</option><option>-5</option>
-              <option>-6</option><option>-7</option><option>-8</option><option>-9</option><option>-10</option>
-              <option>-11</option><option>-12</option>
-            </select>
+          <div class="vehicle-count">
+            <div class="vehicle-count-header">
+              <label>Nombre d'étages R+</label>
+              <div class="counter-container">
+                <button type="button" class="counter-btn minus" onclick="decrementEtage('RPlus')" id="RPlusMinus">−</button>
+                <span class="counter-value" id="RPlus">0</span>
+                <button type="button" class="counter-btn plus" onclick="incrementEtage('RPlus')">+</button>
+              </div>
+            </div>
           </div>
+
+          <div class="vehicle-count">
+            <div class="vehicle-count-header">
+              <label>Nombre d'étages R-</label>
+              <div class="counter-container">
+                <button type="button" class="counter-btn minus" onclick="decrementEtage('RMoins')" id="RMoinsMinus">−</button>
+                <span class="counter-value" id="RMoins">0</span>
+                <button type="button" class="counter-btn plus" onclick="incrementEtage('RMoins')">+</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="vehicle-count">
+            <div class="vehicle-count-header">
+              <label>Préciser le niveau sinistré</label>
+              <div class="counter-container">
+                <button type="button" class="counter-btn minus always-active" onclick="decrementNiveauSinistre()" id="niveauSinistreMinus">−</button>
+                <span class="counter-value" id="niveauSinistre">0</span>
+                <button type="button" class="counter-btn plus" onclick="incrementNiveauSinistre()">+</button>
+              </div>
+            </div>
+          </div>
+        </div>
 
         <label>Type de bâtiment</label>
         <select id="typeBatimentSelect">
@@ -1818,6 +1919,30 @@
           </div>
         </div>
 
+        <!-- VLSM -->
+        <div class="vehicle-count">
+          <div class="vehicle-count-header">
+            <label>VLSM</label>
+            <div class="counter-container">
+              <button type="button" class="counter-btn minus" onclick="decrementVehicle('VLSM')" id="VLSMMinus">−</button>
+              <span class="counter-value" id="VLSM">0</span>
+              <button type="button" class="counter-btn plus" onclick="incrementVehicle('VLSM')">+</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- VID -->
+        <div class="vehicle-count">
+          <div class="vehicle-count-header">
+            <label>VID</label>
+            <div class="counter-container">
+              <button type="button" class="counter-btn minus" onclick="decrementVehicle('VID')" id="VIDMinus">−</button>
+              <span class="counter-value" id="VID">0</span>
+              <button type="button" class="counter-btn plus" onclick="incrementVehicle('VID')">+</button>
+            </div>
+          </div>
+        </div>
+
         <!-- Chef de groupe -->
         <div class="vehicle-count">
           <div class="vehicle-count-header">
@@ -1830,10 +1955,10 @@
           </div>
         </div>
 
-        <!-- Véhicule spécifique -->
+        <!-- Renfort spécifique -->
         <div class="vehicle-count">
           <div class="vehicle-count-header">
-            <label>Véhicule spécifique <span class="suggestion-tag hidden" id="vehiculeSpecifiqueSuggestion"></span></label>
+            <label>Renfort spécifique <span class="suggestion-tag hidden" id="vehiculeSpecifiqueSuggestion"></span></label>
             <div class="counter-container">
               <button type="button" class="counter-btn minus" onclick="decrementVehicle('vehiculeSpecifique')" id="vehiculeSpecifiqueMinus">−</button>
               <span class="counter-value" id="vehiculeSpecifique">0</span>
@@ -1841,7 +1966,7 @@
             </div>
           </div>
           <div id="vehiculeSpecifiqueDetails" class="vehicle-count-details hidden">
-            <input type="text" placeholder="Préciser le véhicule spécifique" id="vehiculeSpecifiqueText">
+            <input type="text" placeholder="Préciser le renfort spécifique" id="vehiculeSpecifiqueText">
           </div>
         </div>
       </div>
@@ -1850,12 +1975,14 @@
       <hr>
       <div id="autresServices">
         <button type="button" class="toggle-btn" id="action-ENEDIS" onclick="toggleButton(this)">ENEDIS</button>
+        <button type="button" class="toggle-btn" id="action-RTE" onclick="toggleButton(this)">RTE <span class="suggestion-tag hidden" id="RTESuggestion"></span></button>
         <button type="button" class="toggle-btn" id="action-GRDF" onclick="toggleButton(this)">GRDF</button>
         <button type="button" class="toggle-btn" id="action-SMUR" onclick="toggleButton(this)">SMUR <span class="suggestion-tag hidden" id="SMURSuggestion"></span></button>
         <button type="button" class="toggle-btn" id="action-gendarmerie" onclick="toggleButton(this)">Gendarmerie <span class="suggestion-tag hidden" id="gendarmerieSuggestion"></span></button>
-        <button type="button" class="toggle-btn" id="action-police" onclick="toggleButton(this)">Police <span class="suggestion-tag hidden" id="policeSuggestion"></span></button>
-        <button type="button" class="toggle-btn" id="action-elus" onclick="toggleButton(this)">Élus</button>
-        <button type="button" class="toggle-btn" id="action-RTE" onclick="toggleButton(this)" style="display:none;">RTE</button>
+        <button type="button" class="toggle-btn" id="action-police" onclick="toggleButton(this)">Police nationale <span class="suggestion-tag hidden" id="policeSuggestion"></span></button>
+        <button type="button" class="toggle-btn" id="action-police-municipale" onclick="toggleButton(this)">Police municipale</button>
+        <button type="button" class="toggle-btn" id="action-DIRSO" onclick="toggleButton(this)">DIRSO <span class="suggestion-tag hidden" id="DIRSOSuggestion"></span></button>
+        <button type="button" class="toggle-btn" id="action-elus" onclick="toggleButton(this)">Élu de permanence</button>
       </div>
 
       <div class="navigation-buttons">
@@ -2196,22 +2323,38 @@
     });
 
     function incrementVehicle(id) {
-      let span = document.getElementById(id);
-      let value = parseInt(span.textContent) + 1;
-      span.textContent = value;
-      updateVehicleDetails(id);
-      updateMinusButtonState(id);
+      const span = document.getElementById(id);
+      if (span) {
+        try {
+          const value = parseInt(span.textContent || '0') + 1;
+          span.textContent = value;
+          updateVehicleDetails(id);
+          updateMinusButtonState(id);
+        } catch (error) {
+          console.error('Error incrementing vehicle:', error);
+        }
+      }
     }
 
     function decrementVehicle(id) {
-      let span = document.getElementById(id);
-      let value = parseInt(span.textContent);
-      if (value > 0) {
-        value--;
-        span.textContent = value;
-        updateVehicleDetails(id);
-        updateMinusButtonState(id);
+      const span = document.getElementById(id);
+      if (span) {
+        try {
+          const value = parseInt(span.textContent || '0');
+          if (value > 0) {
+            span.textContent = value - 1;
+            updateVehicleDetails(id);
+            updateMinusButtonState(id);
+          }
+        } catch (error) {
+          console.error('Error decrementing vehicle:', error);
+        }
       }
+    }
+
+    function updateVehicleDetails(id) {
+      let details = document.getElementById(id + "Details");
+      // ... existing code ...
     }
 
     function updateVehicleDetails(id) {
@@ -2351,38 +2494,33 @@
     }
 
     function updateSuggestions() {
-      // Réinitialiser tous les tags de suggestion
+      // Réinitialiser toutes les suggestions
       document.querySelectorAll('.suggestion-tag').forEach(tag => {
         tag.classList.add('hidden');
       });
 
-      // Vérifier les suggestions pour chaque moyen
-      if (selectedBatiment === "R+") {
-        document.getElementById("EPA").textContent = "1";
-        document.getElementById("EPASuggestion").textContent = "suggéré 1";
-        document.getElementById("EPASuggestion").classList.remove("hidden");
+      // Vérifier si AVP est sélectionné
+      const motifDepart = document.getElementById('motifDepart').value;
+      if (motifDepart === 'AVP') {
+        document.getElementById('DIRSOSuggestion').classList.remove('hidden');
+        document.getElementById('gendarmerieSuggestion').classList.remove('hidden');
+        document.getElementById('policeSuggestion').classList.remove('hidden');
       }
 
-      let ua = +document.getElementById("UA").textContent;
-      let ur = +document.getElementById("UR").textContent;
-      if (ua + ur > 0) {
-        let cnt = Math.min(ua + ur, 5);
-        document.getElementById("VSAV").textContent = cnt.toString();
-        document.getElementById("VSAVSuggestion").textContent = `suggéré ${cnt}`;
-        document.getElementById("VSAVSuggestion").classList.remove("hidden");
-        
-        if (ua > 0) {
-          document.getElementById("SMURSuggestion").textContent = "suggéré";
-          document.getElementById("SMURSuggestion").classList.remove("hidden");
-        }
+      // Vérifier s'il y a des victimes
+      const UA = parseInt(document.getElementById('UA').textContent) || 0;
+      const UR = parseInt(document.getElementById('UR').textContent) || 0;
+      const DCD = parseInt(document.getElementById('DCD').textContent) || 0;
+      
+      if (UA > 0 || UR > 0 || DCD > 0) {
+        document.getElementById('SMURSuggestion').classList.remove('hidden');
       }
 
-      // Ajouter les suggestions pour Police et Gendarmerie si AVP est sélectionné
-      if (selectedNature === "AVP") {
-        document.getElementById("policeSuggestion").textContent = "suggéré";
-        document.getElementById("gendarmerieSuggestion").textContent = "suggéré";
-        document.getElementById("policeSuggestion").classList.remove("hidden");
-        document.getElementById("gendarmerieSuggestion").classList.remove("hidden");
+      // Vérifier si c'est une chute de ligne HTB
+      const autreTypeIntervention = document.getElementById('autreTypeIntervention').value;
+      const typeLigne = document.getElementById('typeLigne').value;
+      if (autreTypeIntervention === 'Chute de ligne électrique' && typeLigne === 'HTB') {
+        document.getElementById('RTESuggestion').classList.remove('hidden');
       }
     }
 
@@ -2492,8 +2630,15 @@
             let typeValue = batimentType.dataset.value;
             msg += typeValue === "R+" ? `Bâtiment : R+\n` : `Bâtiment de : Plain pied\n`;
             if (typeValue === "R+") {
-              if (getVal("etagesRPlus")) msg += `Nombre d'étages R+: ${getVal("etagesRPlus")}\n`;
-              if (getVal("etagesRMoins")) msg += `Nombre d'étages R-: ${getVal("etagesRMoins")}\n`;
+              const rPlus = document.getElementById("RPlus").textContent;
+              const rMoins = document.getElementById("RMoins").textContent;
+              const niveauSinistre = document.getElementById("niveauSinistre").textContent;
+              if (rPlus !== "0") msg += `Nombre d'étages R+: ${rPlus}\n`;
+              if (rMoins !== "0") msg += `Nombre d'étages R-: ${rMoins}\n`;
+              if (niveauSinistre !== "0") {
+                const prefix = parseInt(niveauSinistre) >= 0 ? "R+" : "R";
+                msg += `Niveau sinistré: ${prefix}${niveauSinistre}\n`;
+              }
             }
           }
 
@@ -3070,7 +3215,7 @@
 
     function selectAddressToggle(btn, value) {
       const container = btn.parentElement;
-      container.querySelectorAll('.address-toggle-btn').forEach(b => b.classList.remove('selected'));
+      container.querySelectorAll('.secondary-btn').forEach(b => b.classList.remove('selected'));
       btn.classList.add('selected');
       document.getElementById('adresseConfirmee').value = value;
       updateMessage();
@@ -3235,6 +3380,25 @@
       // Mettre à jour la valeur cachée
       document.getElementById('fonction').value = value;
       
+      // Gérer l'affichage de la section "Je prévois"
+      const prevoisFields = document.getElementById("prevoisFields");
+      const prevoisBtn = document.getElementById("togglePrevoisBtn");
+      const icon = prevoisBtn.querySelector(".toggle-icon");
+      
+      if (value === 'CDG') {
+        // Si CDG est sélectionné, déplier la section
+        prevoisFields.classList.remove("hidden");
+        prevoisBtn.classList.add("active");
+        icon.classList.add("rotated");
+        prevoisBtn.style.display = "block";
+      } else if (value === 'CATE') {
+        // Si CATE est sélectionné, masquer le bouton et la section
+        prevoisFields.classList.add("hidden");
+        prevoisBtn.classList.remove("active");
+        icon.classList.remove("rotated");
+        prevoisBtn.style.display = "none";
+      }
+      
       // Mettre à jour le message
       updateMessage();
     }
@@ -3248,6 +3412,140 @@
         document.getElementById('isolationPrecision').value = '';
       }
       updateMessage();
+    }
+
+    function initializeMinusButtons() {
+      const vehicleTypes = ['voiture', 'moto', 'velo', 'pieton', 'camion', 'bus', 'autre', 'vsr', 'vlsm'];
+      vehicleTypes.forEach(type => {
+        const counter = document.getElementById(type);
+        const minusButton = document.getElementById(type + 'Minus');
+        if (counter && minusButton) {
+          minusButton.disabled = parseInt(counter.textContent) === 0;
+        }
+      });
+    }
+
+    // Appeler la fonction d'initialisation au chargement de la page
+    window.onload = function() {
+      initializeMinusButtons();
+    };
+
+    function updateMessage() {
+      const messageTextarea = document.getElementById('messageText');
+      if (messageTextarea) {
+        messageTextarea.value = generateMessage();
+      }
+    }
+
+    function updateMinusButtonState(type) {
+      const counter = document.getElementById(type);
+      const minusButton = document.getElementById(type + 'Minus');
+      if (counter && minusButton) {
+        try {
+          const value = parseInt(counter.textContent || '0');
+          minusButton.disabled = value === 0;
+        } catch (error) {
+          console.error('Error updating minus button state:', error);
+          minusButton.disabled = true;
+        }
+      }
+    }
+
+    function initializeButtons() {
+      try {
+        // Trouver tous les boutons moins dans la page sauf ceux avec la classe always-active
+        const minusButtons = document.querySelectorAll('button.counter-btn.minus:not(.always-active)');
+        minusButtons.forEach(button => {
+          const id = button.id;
+          if (id && id.endsWith('Minus')) {
+            const type = id.replace('Minus', '');
+            const counter = document.getElementById(type);
+            if (counter) {
+              const value = parseInt(counter.textContent || '0');
+              button.disabled = value === 0;
+            } else {
+              button.disabled = true;
+            }
+          }
+        });
+      } catch (error) {
+        console.error('Error initializing buttons:', error);
+      }
+    }
+
+    // Attendre que le DOM soit complètement chargé
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initializeButtons);
+    } else {
+      initializeButtons();
+    }
+
+    function incrementEtage(type) {
+      const counter = document.getElementById(type);
+      const currentValue = parseInt(counter.textContent);
+      counter.textContent = currentValue + 1;
+      updateMinusButtonState(type);
+      updateMessage();
+    }
+
+    function decrementEtage(type) {
+      const counter = document.getElementById(type);
+      const currentValue = parseInt(counter.textContent);
+      if (currentValue > 0) {
+        counter.textContent = currentValue - 1;
+        updateMinusButtonState(type);
+        updateMessage();
+      }
+    }
+
+    function incrementNiveauSinistre() {
+      const counter = document.getElementById("niveauSinistre");
+      const currentValue = parseInt(counter.textContent);
+      counter.textContent = currentValue + 1;
+      updateMessage();
+    }
+
+    function decrementNiveauSinistre() {
+      const counter = document.getElementById("niveauSinistre");
+      const currentValue = parseInt(counter.textContent);
+      counter.textContent = currentValue - 1;
+      updateMessage();
+    }
+
+    function updateMinusButtonState(type) {
+      const counter = document.getElementById(type);
+      const minusButton = document.getElementById(type + 'Minus');
+      if (counter && minusButton) {
+        try {
+          const value = parseInt(counter.textContent || '0');
+          minusButton.disabled = value === 0;
+        } catch (error) {
+          console.error('Error updating minus button state:', error);
+          minusButton.disabled = true;
+        }
+      }
+    }
+
+    function initializeButtons() {
+      try {
+        // Trouver tous les boutons moins dans la page sauf ceux avec la classe always-active
+        const minusButtons = document.querySelectorAll('button.counter-btn.minus:not(.always-active)');
+        minusButtons.forEach(button => {
+          const id = button.id;
+          if (id && id.endsWith('Minus')) {
+            const type = id.replace('Minus', '');
+            const counter = document.getElementById(type);
+            if (counter) {
+              const value = parseInt(counter.textContent || '0');
+              button.disabled = value === 0;
+            } else {
+              button.disabled = true;
+            }
+          }
+        });
+      } catch (error) {
+        console.error('Error initializing buttons:', error);
+      }
     }
   </script>
   <script>
