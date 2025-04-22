@@ -942,6 +942,28 @@
     .risk-section .details {
       margin-top: 8px;
     }
+
+    .function-buttons {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .function-btn {
+      flex: 1;
+      text-align: center;
+      padding: 10px;
+      font-size: 14px;
+    }
+
+    .function-notice {
+      font-style: italic;
+      color: #666;
+      margin-top: -10px;
+      margin-bottom: 15px;
+      font-size: 12px;
+    }
   </style>
 </head>
 <body>
@@ -959,6 +981,14 @@
 
     <!-- Étape 0 : Intervention -->
     <div id="step0" class="step active">
+      <label>Fonction</label>
+      <div class="function-buttons">
+        <button type="button" class="toggle-btn function-btn" onclick="selectFunction(this, 'CATE')">CATE</button>
+        <button type="button" class="toggle-btn function-btn" onclick="selectFunction(this, 'CDG')">CDG</button>
+      </div>
+      <input type="hidden" id="fonction" value="">
+      <p class="function-notice">Affiche les infos à passer dans le message radio, selon votre fonction.</p>
+
       <label for="interventionNumber">Intervention numéro</label>
       <input type="text" id="interventionNumber" class="form-control" onkeypress="return event.charCode >= 48 && event.charCode <= 57" pattern="[0-9]*" onchange="updateMessage()">
 
@@ -1266,7 +1296,7 @@
           </div>
           <input type="hidden" id="isoleVehicule">
           <div id="isoleVehiculeDetails" class="hidden">
-            <input type="text" placeholder="Préciser l'environnement" id="precisionsIsoleVehicule">
+            <input type="text" placeholder="Préciser à quoi peut se propager le feu" id="precisionsIsoleVehicule">
           </div>
         </div>
 
@@ -2228,30 +2258,39 @@
       }
     }
 
-    function selectToggle(field, button) {
-      console.log('selectToggle called with field:', field);
-      const container = document.getElementById(`${field}Container`);
-      const buttons = container.querySelectorAll('.toggle-btn');
-      const detailsContainer = document.getElementById(`${field}Details`);
-      
-      console.log('container:', container);
-      console.log('detailsContainer:', detailsContainer);
-      
-      // Désélectionner tous les boutons d'abord
-      buttons.forEach(btn => btn.classList.remove('selected'));
+    function selectToggle(fieldId, btn) {
+      // Désélectionner tous les boutons du même groupe
+      const container = document.getElementById(fieldId + 'Container');
+      container.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('selected'));
       
       // Sélectionner le bouton cliqué
-      button.classList.add('selected');
-      document.getElementById(field).value = button.getAttribute('data-value');
+      btn.classList.add('selected');
+      
+      // Mettre à jour la valeur cachée
+      document.getElementById(fieldId).value = btn.dataset.value;
       
       // Gérer l'affichage des détails
-      if (detailsContainer) {
-        if (button.getAttribute('data-value') === 'Oui') {
+      const detailsContainer = document.getElementById(fieldId + 'Details');
+      if (fieldId === 'isoleVehicule') {
+        // Pour le cas isolé, on affiche les détails quand "Non" est sélectionné
+        if (btn.dataset.value === 'Non') {
           detailsContainer.classList.remove('hidden');
         } else {
           detailsContainer.classList.add('hidden');
+          document.getElementById('precisionsIsoleVehicule').value = '';
+        }
+      } else {
+        // Pour les autres cas, on affiche les détails quand "Oui" est sélectionné
+        if (btn.dataset.value === 'Oui') {
+          detailsContainer.classList.remove('hidden');
+        } else {
+          detailsContainer.classList.add('hidden');
+          const inputId = 'precisions' + fieldId.charAt(0).toUpperCase() + fieldId.slice(1);
+          document.getElementById(inputId).value = '';
         }
       }
+      
+      updateMessage();
     }
 
     function selectBatimentType(btn) {
@@ -2354,6 +2393,7 @@
       // Intervention info
       if (getVal("groupeHoraireAuto")) msg += `Groupe horaire: ${getVal("groupeHoraireAuto")}\n`;
       if (getVal("interventionNumber")) msg += `Intervention numéro: ${getVal("interventionNumber")}\n`;
+      if (getVal("fonction")) msg += `Fonction: ${getVal("fonction")}\n`;
       msg += "\n";
 
       // Location info
@@ -3183,6 +3223,31 @@
       if (value) {
         document.getElementById('surfaceSinistree').value = value;
       }
+    }
+
+    function selectFunction(btn, value) {
+      // Désélectionner tous les boutons de fonction
+      document.querySelectorAll('.function-btn').forEach(b => b.classList.remove('selected'));
+      
+      // Sélectionner le bouton cliqué
+      btn.classList.add('selected');
+      
+      // Mettre à jour la valeur cachée
+      document.getElementById('fonction').value = value;
+      
+      // Mettre à jour le message
+      updateMessage();
+    }
+
+    function handleIsolation(value) {
+      const detailsContainer = document.getElementById('isolationDetails');
+      if (value === 'Non') {
+        detailsContainer.classList.remove('hidden');
+      } else {
+        detailsContainer.classList.add('hidden');
+        document.getElementById('isolationPrecision').value = '';
+      }
+      updateMessage();
     }
   </script>
   <script>
