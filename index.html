@@ -272,10 +272,73 @@
 
     /* Style pour les sections de risque */
     .risk-section {
-      margin: 4px 0;
+      margin-top: 8px;
       padding: 8px;
       background: #f8f9fa;
       border-radius: 5px;
+    }
+
+    .risk-section:first-child {
+      margin-top: 16px;
+    }
+
+    .risk-section label {
+      font-size: var(--font-size);
+      font-weight: normal;
+      margin-bottom: 8px;
+      color: var(--text-color);
+      display: block;
+    }
+
+    .risk-section .toggle-btn {
+      margin-right: 8px;
+      display: inline-block;
+    }
+
+    .risk-section .toggle-btn:last-child {
+      margin-right: 0;
+    }
+
+    .risk-section .details {
+      margin-top: 8px;
+    }
+
+    /* Style pour les conteneurs de boutons */
+    #propagationBatimentContainer,
+    #isoleBatimentContainer,
+    #propagationVehiculeContainer,
+    #isoleVehiculeContainer {
+      display: flex;
+      flex-direction: row;
+      gap: 8px;
+    }
+
+    /* Style pour les éléments cachés */
+    .hidden {
+      display: none !important;
+    }
+
+    /* Style pour les éléments cachés */
+    .hidden {
+      display: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+      height: 0 !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      border: none !important;
+    }
+
+    /* Style pour les conteneurs de détails */
+    #propagationBatimentDetails,
+    #isoleBatimentDetails {
+      margin-top: 8px;
+      transition: all 0.3s ease;
+    }
+
+    #propagationBatimentDetails.hidden,
+    #isoleBatimentDetails.hidden {
+      display: none;
     }
 
     /* Style pour les sous-conteneurs */
@@ -809,6 +872,76 @@
     .navigation-buttons {
       margin-top: 32px;
     }
+
+    .surface-buttons {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .surface-btn {
+      padding: 10px;
+      border: 1px solid var(--primary-color);
+      border-radius: var(--border-radius);
+      background: rgba(0, 123, 255, 0.1);
+      color: var(--primary-color);
+      font-size: var(--font-size);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .surface-btn:hover {
+      background: rgba(0, 123, 255, 0.2);
+    }
+
+    .surface-btn.selected {
+      background: var(--primary-color);
+      color: white;
+    }
+
+    .surface-custom {
+      margin-bottom: 16px;
+    }
+
+    #customSurfaceInput {
+      margin-top: 8px;
+    }
+
+    #customSurfaceInput input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid var(--primary-color);
+      border-radius: var(--border-radius);
+      font-size: var(--font-size);
+    }
+
+    .risk-section {
+      margin-top: 8px;
+    }
+
+    .risk-section:first-child {
+      margin-top: 16px;
+    }
+
+    .risk-section h4 {
+      font-size: var(--font-size);
+      font-weight: normal;
+      margin-bottom: 8px;
+      color: var(--text-color);
+    }
+
+    .risk-section .toggle-btn {
+      margin-right: 8px;
+    }
+
+    .risk-section .toggle-btn:last-child {
+      margin-right: 0;
+    }
+
+    .risk-section .details {
+      margin-top: 8px;
+    }
   </style>
 </head>
 <body>
@@ -1126,7 +1259,7 @@
         </div>
 
         <div class="risk-section vehicle-risk-section">
-          <label>Véhicule Isolé</label>
+          <label>Isolé</label>
           <div id="isoleVehiculeContainer">
             <button type="button" class="toggle-btn" onclick="selectToggle('isoleVehicule', this)" data-value="Oui">Oui</button>
             <button type="button" class="toggle-btn" onclick="selectToggle('isoleVehicule', this)" data-value="Non">Non</button>
@@ -1205,6 +1338,7 @@
           <option>Usage industriel (usine, entrepôt, site seveso)</option>
           <option>ERP (école, hôpital, clinique, hôtel, EPHAD, Complexe sportif, salle de spectacle)</option>
           <option>Agricole</option>
+          <option>Désaffecté</option>
         </select>
 
         <label>Structure</label>
@@ -1217,14 +1351,48 @@
           <option>Mixte</option>
           </select>
 
-        <label>Surface totale estimée m²</label>
-        <input type="number" id="surfaceTotale" placeholder="Surface totale estimée en m²">
+        <label for="surfaceTotale">Surface totale estimée m²</label>
+        <div class="surface-buttons">
+          <button type="button" class="surface-btn" onclick="selectSurface(50)">50m²</button>
+          <button type="button" class="surface-btn" onclick="selectSurface(100)">100m²</button>
+          <button type="button" class="surface-btn" onclick="selectSurface(200)">200m²</button>
+          <button type="button" class="surface-btn" onclick="selectSurface(500)">500m²</button>
+          <button type="button" class="surface-btn" onclick="selectSurface(1000)">1000m²</button>
+          <button type="button" class="surface-btn" onclick="selectSurface(2000)">2000m²</button>
+        </div>
+        <div class="surface-custom">
+          <button type="button" class="toggle-btn" onclick="toggleCustomSurface()" id="toggleCustomSurfaceBtn">
+            Autre surface
+            <span class="toggle-icon">›</span>
+          </button>
+          <div id="customSurfaceInput" class="hidden">
+            <input type="number" id="customSurface" placeholder="Entrez la surface en m²" onchange="updateCustomSurface()">
+          </div>
+        </div>
+        <input type="hidden" id="surfaceTotale" value="">
 
-        <label>Surface sinistrée estimée m²</label>
-        <input type="number" id="surfaceSinistree" placeholder="Surface sinistrée estimée en m²">
+        <label for="surfaceSinistree">Surface sinistrée estimée m²</label>
+        <div class="surface-buttons">
+          <button type="button" class="surface-btn" onclick="selectSurfaceSinistree(50)">50m²</button>
+          <button type="button" class="surface-btn" onclick="selectSurfaceSinistree(100)">100m²</button>
+          <button type="button" class="surface-btn" onclick="selectSurfaceSinistree(200)">200m²</button>
+          <button type="button" class="surface-btn" onclick="selectSurfaceSinistree(500)">500m²</button>
+          <button type="button" class="surface-btn" onclick="selectSurfaceSinistree(1000)">1000m²</button>
+          <button type="button" class="surface-btn" onclick="selectSurfaceSinistree(2000)">2000m²</button>
+        </div>
+        <div class="surface-custom">
+          <button type="button" class="toggle-btn" onclick="toggleCustomSurfaceSinistree()" id="toggleCustomSurfaceSinistreeBtn">
+            Autre surface
+            <span class="toggle-icon">›</span>
+          </button>
+          <div id="customSurfaceSinistreeInput" class="hidden">
+            <input type="number" id="customSurfaceSinistree" placeholder="Entrez la surface en m²" onchange="updateCustomSurfaceSinistree()">
+          </div>
+        </div>
+        <input type="hidden" id="surfaceSinistree" value="">
 
         <div class="risk-section">
-          <h4>Risque de propagation</h4>
+          <label>Risque de propagation</label>
           <div id="propagationBatimentContainer">
             <button type="button" class="toggle-btn" onclick="selectToggle('propagationBatiment', this)" data-value="Oui">Oui</button>
             <button type="button" class="toggle-btn" onclick="selectToggle('propagationBatiment', this)" data-value="Non">Non</button>
@@ -1236,7 +1404,7 @@
         </div>
 
         <div class="risk-section">
-          <h4>Isolé</h4>
+          <label>Isolé</label>
           <div id="isoleBatimentContainer">
             <button type="button" class="toggle-btn" onclick="selectToggle('isoleBatiment', this)" data-value="Oui">Oui</button>
             <button type="button" class="toggle-btn" onclick="selectToggle('isoleBatiment', this)" data-value="Non">Non</button>
@@ -1685,7 +1853,7 @@
     <div class="app-info">
       <img src="icons/192.png" alt="MRP Icon" class="app-icon">
       <p class="app-name">MRP</p>
-      <p class="version-info">Version : 1.0.11</p>
+      <p class="version-info">Version : 1.0.12</p>
     </div>
     <p class="copyright">© Tael PINAULT 2025</p>
   </div>
@@ -2061,36 +2229,29 @@
     }
 
     function selectToggle(field, button) {
+      console.log('selectToggle called with field:', field);
       const container = document.getElementById(`${field}Container`);
       const buttons = container.querySelectorAll('.toggle-btn');
       const detailsContainer = document.getElementById(`${field}Details`);
       
-      buttons.forEach(btn => {
-        if (btn === button) {
-          btn.classList.add('selected');
-          document.getElementById(field).value = button.getAttribute('data-value');
-          // Gérer l'affichage des détails en fonction du type de section
-          if (detailsContainer) {
-            if (field === 'isoleVehicule') {
-              // Pour "Véhicule Isolé", afficher les détails si "Non" est sélectionné
-              if (button.getAttribute('data-value') === 'Non') {
-                detailsContainer.classList.remove('hidden');
-              } else {
-                detailsContainer.classList.add('hidden');
-              }
-            } else if (field === 'propagationVehicule') {
-              // Pour "Risque de propagation", afficher les détails si "Oui" est sélectionné
-              if (button.getAttribute('data-value') === 'Oui') {
-                detailsContainer.classList.remove('hidden');
-              } else {
-                detailsContainer.classList.add('hidden');
-              }
-            }
-          }
+      console.log('container:', container);
+      console.log('detailsContainer:', detailsContainer);
+      
+      // Désélectionner tous les boutons d'abord
+      buttons.forEach(btn => btn.classList.remove('selected'));
+      
+      // Sélectionner le bouton cliqué
+      button.classList.add('selected');
+      document.getElementById(field).value = button.getAttribute('data-value');
+      
+      // Gérer l'affichage des détails
+      if (detailsContainer) {
+        if (button.getAttribute('data-value') === 'Oui') {
+          detailsContainer.classList.remove('hidden');
         } else {
-          btn.classList.remove('selected');
+          detailsContainer.classList.add('hidden');
         }
-      });
+      }
     }
 
     function selectBatimentType(btn) {
@@ -2932,6 +3093,96 @@
           btn.classList.remove('selected');
         }
       });
+    }
+
+    function selectSurface(value) {
+      // Désélectionner tous les boutons de la première section de surface
+      const firstSurfaceSection = document.querySelector('label[for="surfaceTotale"]').nextElementSibling;
+      firstSurfaceSection.querySelectorAll('.surface-btn').forEach(btn => {
+        btn.classList.remove('selected');
+      });
+      
+      // Sélectionner le bouton cliqué
+      event.target.classList.add('selected');
+      
+      // Mettre à jour la valeur cachée
+      document.getElementById('surfaceTotale').value = value;
+
+      // Cacher le champ personnalisé s'il est visible
+      document.getElementById('customSurfaceInput').classList.add('hidden');
+      document.getElementById('toggleCustomSurfaceBtn').classList.remove('active');
+      document.getElementById('toggleCustomSurfaceBtn').querySelector('.toggle-icon').classList.remove('rotated');
+    }
+
+    function toggleCustomSurface() {
+      const input = document.getElementById('customSurfaceInput');
+      const btn = document.getElementById('toggleCustomSurfaceBtn');
+      const icon = btn.querySelector('.toggle-icon');
+      
+      input.classList.toggle('hidden');
+      btn.classList.toggle('active');
+      icon.classList.toggle('rotated');
+
+      // Si on ouvre le champ personnalisé, désélectionner tous les boutons de la première section
+      if (!input.classList.contains('hidden')) {
+        const firstSurfaceSection = document.querySelector('label[for="surfaceTotale"]').nextElementSibling;
+        firstSurfaceSection.querySelectorAll('.surface-btn').forEach(btn => {
+          btn.classList.remove('selected');
+        });
+        document.getElementById('surfaceTotale').value = '';
+      }
+    }
+
+    function updateCustomSurface() {
+      const value = document.getElementById('customSurface').value;
+      if (value) {
+        document.getElementById('surfaceTotale').value = value;
+      }
+    }
+
+    function selectSurfaceSinistree(value) {
+      // Désélectionner tous les boutons de la deuxième section de surface
+      const secondSurfaceSection = document.querySelector('label[for="surfaceSinistree"]').nextElementSibling;
+      secondSurfaceSection.querySelectorAll('.surface-btn').forEach(btn => {
+        btn.classList.remove('selected');
+      });
+      
+      // Sélectionner le bouton cliqué
+      event.target.classList.add('selected');
+      
+      // Mettre à jour la valeur cachée
+      document.getElementById('surfaceSinistree').value = value;
+
+      // Cacher le champ personnalisé s'il est visible
+      document.getElementById('customSurfaceSinistreeInput').classList.add('hidden');
+      document.getElementById('toggleCustomSurfaceSinistreeBtn').classList.remove('active');
+      document.getElementById('toggleCustomSurfaceSinistreeBtn').querySelector('.toggle-icon').classList.remove('rotated');
+    }
+
+    function toggleCustomSurfaceSinistree() {
+      const input = document.getElementById('customSurfaceSinistreeInput');
+      const btn = document.getElementById('toggleCustomSurfaceSinistreeBtn');
+      const icon = btn.querySelector('.toggle-icon');
+      
+      input.classList.toggle('hidden');
+      btn.classList.toggle('active');
+      icon.classList.toggle('rotated');
+
+      // Si on ouvre le champ personnalisé, désélectionner tous les boutons de la deuxième section
+      if (!input.classList.contains('hidden')) {
+        const secondSurfaceSection = document.querySelector('label[for="surfaceSinistree"]').nextElementSibling;
+        secondSurfaceSection.querySelectorAll('.surface-btn').forEach(btn => {
+          btn.classList.remove('selected');
+        });
+        document.getElementById('surfaceSinistree').value = '';
+      }
+    }
+
+    function updateCustomSurfaceSinistree() {
+      const value = document.getElementById('customSurfaceSinistree').value;
+      if (value) {
+        document.getElementById('surfaceSinistree').value = value;
+      }
     }
   </script>
   <script>
