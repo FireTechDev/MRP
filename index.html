@@ -3640,15 +3640,36 @@
   </script>
   <script>
     // Enregistrement du Service Worker
-    if ('serviceWorker' in navigator) {
+    if ('serviceWorker' in navigator && (window.location.protocol === 'https:' || window.location.protocol === 'http:')) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('/MRP/sw.js')
           .then(registration => {
             console.log('ServiceWorker registration successful');
+            
+            // Vérification automatique des mises à jour lors du lancement de l'application
+            // Fonctionne en mode PWA, HTTP et local
+            console.log('Vérification des mises à jour au lancement...');
+            checkForUpdates();
           })
           .catch(err => {
             console.log('ServiceWorker registration failed: ', err);
           });
+      });
+    } else {
+      // En cas d'ouverture via file:// ou protocole non pris en charge
+      window.addEventListener('load', () => {
+        console.log('Service Worker non disponible en mode file:// - Version actuelle: ' + APP_VERSION);
+        
+        // Mise à jour du statut pour indiquer qu'on est en mode local
+        const updateStatus = document.getElementById('updateStatus');
+        if (updateStatus) {
+          updateStatus.textContent = 'Vérification des mises à jour non disponible en mode local (file://)';
+          updateStatus.style.color = '#ffc107';
+          updateStatus.style.display = 'block';
+          setTimeout(() => {
+            updateStatus.style.display = 'none';
+          }, 5000);
+        }
       });
     }
   </script>
