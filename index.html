@@ -751,13 +751,16 @@
     /* Style pour les tags de suggestion */
     .suggestion-tag {
       display: inline-block;
-      background-color: rgba(0, 123, 255, 0.1);
-      color: var(--primary-color);
+      background-color: #e3f2fd;
+      color: #1976d2;
       padding: 2px 8px;
-      border-radius: 12px;
+      border-radius: 10px;
       font-size: 0.8em;
       margin-left: 8px;
-      border: 1px solid var(--primary-color);
+      border: 1px solid #1976d2;
+      white-space: nowrap;
+      vertical-align: middle;
+      line-height: 1.2;
     }
 
     /* Style pour le lien toggle */
@@ -780,17 +783,19 @@
 
     /* Style pour les boutons avec tags */
     .toggle-btn {
-      position: relative;
-      display: flex;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
+      padding: 8px 16px;
+      position: relative;
     }
 
     .toggle-btn .suggestion-tag {
-      position: absolute;
-      right: 8px;
-      margin: 0;
+      margin-left: 8px;
+      background-color: #e3f2fd;
+      color: #1976d2;
+      font-weight: 500;
     }
 
     /* Ajout du style pour la section des victimes */
@@ -2010,7 +2015,7 @@
     <div class="app-info">
       <img src="icons/192.png" alt="MRP Icon" class="app-icon">
       <p class="app-name">MRP</p>
-      <p class="version-info">Version : 1.0.12</p>
+      <p class="version-info">Version : 1.0.13</p>
     </div>
     <p class="copyright">© Tael PINAULT 2025</p>
   </div>
@@ -2414,13 +2419,14 @@
       
       // Gérer l'affichage des détails
       const detailsContainer = document.getElementById(fieldId + 'Details');
-      if (fieldId === 'isoleVehicule') {
+      if (fieldId.includes('isole')) {
         // Pour le cas isolé, on affiche les détails quand "Non" est sélectionné
         if (btn.dataset.value === 'Non') {
           detailsContainer.classList.remove('hidden');
         } else {
           detailsContainer.classList.add('hidden');
-          document.getElementById('precisionsIsoleVehicule').value = '';
+          const inputId = 'precisions' + fieldId.charAt(0).toUpperCase() + fieldId.slice(1);
+          document.getElementById(inputId).value = '';
         }
       } else {
         // Pour les autres cas, on affiche les détails quand "Oui" est sélectionné
@@ -2497,30 +2503,114 @@
       // Réinitialiser toutes les suggestions
       document.querySelectorAll('.suggestion-tag').forEach(tag => {
         tag.classList.add('hidden');
+        tag.textContent = ''; // Réinitialiser le texte
       });
 
       // Vérifier si AVP est sélectionné
       const motifDepart = document.getElementById('motifDepart').value;
       if (motifDepart === 'AVP') {
-        document.getElementById('DIRSOSuggestion').classList.remove('hidden');
-        document.getElementById('gendarmerieSuggestion').classList.remove('hidden');
-        document.getElementById('policeSuggestion').classList.remove('hidden');
+        const dirsoTag = document.getElementById('DIRSOSuggestion');
+        const gendarmerieTag = document.getElementById('gendarmerieSuggestion');
+        const policeTag = document.getElementById('policeSuggestion');
+        
+        dirsoTag.textContent = 'Suggéré';
+        gendarmerieTag.textContent = 'Suggéré';
+        policeTag.textContent = 'Suggéré';
+        
+        dirsoTag.classList.remove('hidden');
+        gendarmerieTag.classList.remove('hidden');
+        policeTag.classList.remove('hidden');
       }
 
-      // Vérifier s'il y a des victimes
+      // Récupérer le nombre de victimes
       const UA = parseInt(document.getElementById('UA').textContent) || 0;
       const UR = parseInt(document.getElementById('UR').textContent) || 0;
       const DCD = parseInt(document.getElementById('DCD').textContent) || 0;
       
+      // Vérifier s'il y a des victimes pour le SMUR
       if (UA > 0 || UR > 0 || DCD > 0) {
-        document.getElementById('SMURSuggestion').classList.remove('hidden');
+        const smurTag = document.getElementById('SMURSuggestion');
+        smurTag.textContent = 'Suggéré';
+        smurTag.classList.remove('hidden');
       }
 
       // Vérifier si c'est une chute de ligne HTB
       const autreTypeIntervention = document.getElementById('autreTypeIntervention').value;
-      const typeLigne = document.getElementById('typeLigne').value;
+      const typeLigne = document.querySelector('#typeLigneContainer .toggle-btn.selected')?.textContent;
       if (autreTypeIntervention === 'Chute de ligne électrique' && typeLigne === 'HTB') {
-        document.getElementById('RTESuggestion').classList.remove('hidden');
+        const rteTag = document.getElementById('RTESuggestion');
+        rteTag.textContent = 'Suggéré';
+        rteTag.classList.remove('hidden');
+      }
+
+      // Calculer le nombre de VSAV suggérés
+      const vsavTag = document.getElementById('VSAVSuggestion');
+      const vsavCount = UA + UR; // 1 VSAV par victime UA ou UR
+      if (vsavCount > 0) {
+        vsavTag.textContent = `${vsavCount} suggéré(s)`;
+        vsavTag.classList.remove('hidden');
+      } else if (UA > 0) {
+        // Toujours suggérer au moins 1 VSAV si UA > 0
+        vsavTag.textContent = '1 suggéré';
+        vsavTag.classList.remove('hidden');
+      }
+
+      // Mettre à jour les autres moyens pompiers
+      const fptTag = document.getElementById('FPTSuggestion');
+      const epaTag = document.getElementById('EPASuggestion');
+      const chefGroupeTag = document.getElementById('chefGroupeSuggestion');
+      const vehiculeSpecifiqueTag = document.getElementById('vehiculeSpecifiqueSuggestion');
+
+      // Récupérer les valeurs actuelles
+      const fptCount = parseInt(document.getElementById('FPT').textContent) || 0;
+      const epaCount = parseInt(document.getElementById('EPA').textContent) || 0;
+      const chefGroupeCount = parseInt(document.getElementById('chefGroupe').textContent) || 0;
+      const vehiculeSpecifiqueCount = parseInt(document.getElementById('vehiculeSpecifique').textContent) || 0;
+
+      // Logique pour l'EPA - uniquement pour bâtiment R+2 ou plus
+      const selectedBatiment = document.querySelector('#typeBatimentContainer .toggle-btn.selected')?.dataset.value;
+      const rPlusCount = parseInt(document.getElementById('RPlus').textContent) || 0;
+      if (selectedBatiment === 'R+' && rPlusCount >= 2) {
+        epaTag.textContent = '1 suggéré';
+        epaTag.classList.remove('hidden');
+      }
+
+      // Logique pour le FPT - uniquement si surface > 200m² et feu
+      const surface = parseInt(document.getElementById('surfaceSinistree').value) || 0;
+      const nature = document.querySelector('.nature-toggle.selected')?.dataset.value || '';
+      const autreNature = document.getElementById('autreTypeIntervention').value;
+      const typeIntervention = nature || autreNature;
+      
+      // Vérifier si c'est un feu et si la surface est > 200m²
+      if (surface > 200 && (
+        typeIntervention === 'Feu de bâtiment' || 
+        typeIntervention === 'Feu de véhicule' ||
+        typeIntervention === 'Autre type de feu' ||
+        typeIntervention === 'Fumée suspecte' ||
+        typeIntervention === 'Odeur de brulé'
+      )) {
+        if (fptCount > 0) {
+          fptTag.textContent = `${fptCount} suggéré(s)`;
+        } else {
+          fptTag.textContent = 'Suggéré';
+        }
+        fptTag.classList.remove('hidden');
+      }
+
+      if (chefGroupeCount > 0) {
+        chefGroupeTag.textContent = `${chefGroupeCount} suggéré(s)`;
+        chefGroupeTag.classList.remove('hidden');
+      } else {
+        chefGroupeTag.textContent = 'Suggéré';
+        chefGroupeTag.classList.remove('hidden');
+      }
+
+      if (vehiculeSpecifiqueCount > 0) {
+        vehiculeSpecifiqueTag.textContent = `${vehiculeSpecifiqueCount} suggéré(s)`;
+        vehiculeSpecifiqueTag.classList.remove('hidden');
+      } else {
+        vehiculeSpecifiqueTag.textContent = 'Suggéré';
+        vehiculeSpecifiqueTag.classList.remove('hidden');
       }
     }
 
@@ -3111,7 +3201,7 @@
     }
 
     // Version de l'application
-    const APP_VERSION = '1.0.11';
+    const APP_VERSION = '1.0.13';
 
     // Fonction pour vérifier les mises à jour
     function checkForUpdates() {
