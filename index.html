@@ -2015,7 +2015,7 @@
     <div class="app-info">
       <img src="icons/192.png" alt="MRP Icon" class="app-icon">
       <p class="app-name">MRP</p>
-      <p class="version-info">Version : 1.0.13</p>
+      <p class="version-info">Version : 1.0.14</p>
     </div>
     <p class="copyright">© Tael PINAULT 2025</p>
   </div>
@@ -2558,11 +2558,20 @@
         rteTag.classList.remove('hidden');
       }
 
+      // Récupérer les valeurs de tous les moyens pompiers
+      const vsavCount = parseInt(document.getElementById('VSAV').textContent) || 0;
+      const fptCount = parseInt(document.getElementById('FPT').textContent) || 0;
+      const epaCount = parseInt(document.getElementById('EPA').textContent) || 0;
+      const vlsmCount = parseInt(document.getElementById('VLSM').textContent) || 0;
+      const vidCount = parseInt(document.getElementById('VID').textContent) || 0;
+      const chefGroupeCount = parseInt(document.getElementById('chefGroupe').textContent) || 0;
+      const vehiculeSpecifiqueCount = parseInt(document.getElementById('vehiculeSpecifique').textContent) || 0;
+
       // Calculer le nombre de VSAV suggérés
       const vsavTag = document.getElementById('VSAVSuggestion');
-      const vsavCount = UA + UR; // 1 VSAV par victime UA ou UR
-      if (vsavCount > 0) {
-        vsavTag.textContent = `${vsavCount} suggéré(s)`;
+      const uaPlusUr = UA + UR; // 1 VSAV par victime UA ou UR
+      if (uaPlusUr > 0) {
+        vsavTag.textContent = `${uaPlusUr} suggéré(s)`;
         vsavTag.classList.remove('hidden');
       } else if (UA > 0) {
         // Toujours suggérer au moins 1 VSAV si UA > 0
@@ -2575,12 +2584,6 @@
       const epaTag = document.getElementById('EPASuggestion');
       const chefGroupeTag = document.getElementById('chefGroupeSuggestion');
       const vehiculeSpecifiqueTag = document.getElementById('vehiculeSpecifiqueSuggestion');
-
-      // Récupérer les valeurs actuelles
-      const fptCount = parseInt(document.getElementById('FPT').textContent) || 0;
-      const epaCount = parseInt(document.getElementById('EPA').textContent) || 0;
-      const chefGroupeCount = parseInt(document.getElementById('chefGroupe').textContent) || 0;
-      const vehiculeSpecifiqueCount = parseInt(document.getElementById('vehiculeSpecifique').textContent) || 0;
 
       // Logique pour l'EPA - uniquement pour bâtiment R+2 ou plus
       const selectedBatiment = document.querySelector('#typeBatimentContainer .toggle-btn.selected')?.dataset.value;
@@ -2612,19 +2615,20 @@
         fptTag.classList.remove('hidden');
       }
 
-      if (chefGroupeCount > 0) {
-        chefGroupeTag.textContent = `${chefGroupeCount} suggéré(s)`;
-        chefGroupeTag.classList.remove('hidden');
-      } else {
-        chefGroupeTag.textContent = 'Suggéré';
+      // Ne suggérer le chef de groupe que s'il y a plus de 2 véhicules pompiers
+      const totalVehiculesPompiers = fptCount + epaCount + vsavCount + vlsmCount + vidCount;
+      if (totalVehiculesPompiers > 2) {
+        if (chefGroupeCount > 0) {
+          chefGroupeTag.textContent = `${chefGroupeCount} suggéré(s)`;
+        } else {
+          chefGroupeTag.textContent = 'Suggéré';
+        }
         chefGroupeTag.classList.remove('hidden');
       }
 
+      // Ne plus mettre de suggestion par défaut sur renfort spécifique
       if (vehiculeSpecifiqueCount > 0) {
         vehiculeSpecifiqueTag.textContent = `${vehiculeSpecifiqueCount} suggéré(s)`;
-        vehiculeSpecifiqueTag.classList.remove('hidden');
-      } else {
-        vehiculeSpecifiqueTag.textContent = 'Suggéré';
         vehiculeSpecifiqueTag.classList.remove('hidden');
       }
     }
@@ -2793,6 +2797,38 @@
       }
       msg += "\n";
 
+      // Ajouter les prévisions du chef de groupe si présentes
+      const prevoisBtn = document.getElementById('togglePrevoisBtn');
+      const fonction = getVal("fonction");
+      if (fonction === 'CDG' && prevoisBtn.classList.contains('active')) {
+        msg += "[ JE PREVOIS ]\n";
+        document.querySelectorAll('#prevoisActions .toggle-btn.selected').forEach(btn => {
+          // Nettoyer le texte de l'action pour supprimer les tags "suggéré"
+          const action = btn.textContent.replace(/Suggéré/g, '').trim();
+          const target = btn.getAttribute('data-target');
+          if (target) {
+            const details = document.getElementById(target);
+            if (details) {
+              msg += `${action}\n`;
+              const precisionInput = details.querySelector('input[type="text"]');
+              if (precisionInput && precisionInput.value) {
+                msg += `Précisions: ${precisionInput.value}\n`;
+              }
+            }
+          } else {
+            msg += `${action}\n`;
+          }
+        });
+        
+        // Ajouter les précisions générales si présentes
+        const precisionsPrevois = getVal("precisionsPrevois");
+        if (precisionsPrevois) {
+          msg += `Précisions supplémentaires: ${precisionsPrevois}\n`;
+        }
+        
+        msg += "\n";
+      }
+
       // Victimes info
       msg += "[ VICTIMES ]\n";
       const victimTypes = {
@@ -2882,7 +2918,8 @@
       const actionContainers = ['actionsContainer', 'incendieContainer', 'secoursRoutierContainer'];
       actionContainers.forEach(containerId => {
         document.querySelectorAll(`#${containerId} .toggle-btn.selected`).forEach(btn => {
-          const action = btn.textContent;
+          // Nettoyer le texte de l'action pour supprimer les tags "suggéré"
+          const action = btn.textContent.replace(/Suggéré/g, '').trim();
           const target = btn.getAttribute('data-target');
           
           // Si l'action a des détails
@@ -2933,28 +2970,6 @@
         });
       });
 
-      // Ajouter les prévisions du chef de groupe si présentes
-      const prevoisBtn = document.getElementById('togglePrevoisBtn');
-      if (prevoisBtn.classList.contains('active')) {
-        msg += "\nJE PREVOIS:\n";
-        document.querySelectorAll('#prevoisActions .toggle-btn.selected').forEach(btn => {
-          const action = btn.textContent;
-          const target = btn.getAttribute('data-target');
-          if (target) {
-            const details = document.getElementById(target);
-            if (details) {
-              msg += `${action}\n`;
-              const precisionInput = details.querySelector('input[type="text"]');
-              if (precisionInput && precisionInput.value) {
-                msg += `Précisions: ${precisionInput.value}\n`;
-              }
-            }
-          } else {
-            msg += `${action}\n`;
-          }
-        });
-      }
-
       // Ajouter les moyens demandés
       msg += "\n[ JE DEMANDE ]\n";
       const moyensTypes = {
@@ -2983,7 +2998,9 @@
 
       // Ajouter les autres services demandés
       document.querySelectorAll('#autresServices .toggle-btn.selected').forEach(btn => {
-        msg += `${btn.textContent}\n`;
+        // Extraire uniquement le texte principal du bouton, sans les tags de suggestion
+        const buttonText = btn.textContent.replace(/Suggéré/g, '').trim();
+        msg += `${buttonText}\n`;
       });
 
       msg += "\n[ FIN DE MESSAGE, COMMENT REÇU PARLEZ. ]";
@@ -3176,14 +3193,29 @@
 
     // Modifier window.onload pour inclure l'initialisation des écouteurs de route
     window.onload = function() {
-      setCurrentTime();
+      setCurrentTime(); // Collect time zone at app launch
       setupGPSInfoReset();
       updateRouteFields();
       initializeRouteEventListeners();
+      initializeMinusButtons();
+      
       // Masquer le bouton Précédent sur l'étape INTER au chargement
       const prevButton = document.querySelector('#step0 .prev-btn');
       if (prevButton) {
         prevButton.style.display = 'none';
+      }
+      
+      // Masquer la section "Je prévois" par défaut au démarrage
+      const prevoisBtn = document.getElementById('togglePrevoisBtn');
+      const prevoisFields = document.getElementById('prevoisFields');
+      if (prevoisBtn && prevoisFields) {
+        // Vérifier si une fonction est déjà sélectionnée
+        const fonction = document.getElementById('fonction').value;
+        if (fonction !== 'CDG') {
+          // Si ce n'est pas CDG ou si aucune fonction n'est sélectionnée, masquer la section
+          prevoisBtn.style.display = 'none';
+          prevoisFields.classList.add('hidden');
+        }
       }
     }
 
@@ -3259,7 +3291,7 @@
     }
 
     // Version de l'application
-    const APP_VERSION = '1.0.13';
+    const APP_VERSION = '1.0.14';
 
     // Fonction pour vérifier les mises à jour
     function checkForUpdates(isAutoCheck = false) {
@@ -3278,20 +3310,37 @@
       
       // Détecter si l'utilisateur est sur iOS
       const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+      console.log('Environnement iOS détecté:', isIOS);
       
       if ('serviceWorker' in navigator) {
+        console.log('ServiceWorker disponible, vérification des mises à jour...');
         navigator.serviceWorker.getRegistration().then(registration => {
           if (registration) {
+            console.log('ServiceWorker enregistré:', registration.scope);
             // Créer un timestamp unique pour le cache-busting
             const timestamp = new Date().getTime();
             
+            // Obtenir le chemin de base à partir du scope du service worker
+            const swScope = registration.scope;
+            const basePath = swScope.endsWith('/') ? swScope : swScope + '/';
+            console.log('Chemin de base pour le service worker:', basePath);
+            
+            // Construire l'URL du service worker en utilisant le chemin relatif
+            const swUrl = (basePath.endsWith('/MRP/') || basePath.endsWith('/MRP')) 
+              ? '/MRP/sw.js' 
+              : (basePath + 'sw.js');
+            console.log('URL du service worker:', swUrl);
+            
             // Vérifier la version actuelle du service worker
-            fetch(`/MRP/sw.js?v=${timestamp}`)
+            fetch(`${swUrl}?v=${timestamp}`)
               .then(response => {
+                console.log('Réponse de la requête sw.js:', response.status, response.ok);
                 if (response.ok) {
                   return response.text().then(swContent => {
+                    console.log('Contenu du service worker récupéré', swContent.substring(0, 100) + '...');
                     const versionMatch = swContent.match(/const APP_VERSION = ['"]([^'"]+)['"]/);
                     const swVersion = versionMatch ? versionMatch[1] : null;
+                    console.log('Version du service worker:', swVersion, 'Version actuelle:', APP_VERSION);
                     
                     if (swVersion && swVersion === APP_VERSION) {
                       // Version à jour
@@ -3313,15 +3362,18 @@
                       
                       // Vider le cache
                       caches.keys().then(cacheNames => {
+                        console.log('Suppression des caches:', cacheNames);
                         return Promise.all(
                           cacheNames.map(cacheName => caches.delete(cacheName))
                         );
                       }).then(() => {
                         // Mettre à jour le service worker
+                        console.log('Mise à jour du service worker...');
                         registration.update().then(() => {
                           if (isIOS) {
                             // Sur iOS, forcer le rechargement de la page
                             updateStatus.textContent = 'Mise à jour terminée. Rechargement de l\'application...';
+                            console.log('iOS: Rechargement de la page pour appliquer les mises à jour');
                             setTimeout(() => {
                               window.location.reload(true);
                             }, 2000);
@@ -3337,6 +3389,7 @@
                     }
                   });
                 } else {
+                  console.error('Erreur lors de la récupération du service worker:', response.status, response.statusText);
                   throw new Error('Service worker non disponible');
                 }
               })
@@ -3349,8 +3402,12 @@
                   updateStatus.style.display = 'none';
                 }, 3000);
               });
+          } else {
+            console.error('Aucun service worker enregistré');
           }
         });
+      } else {
+        console.error('ServiceWorker non pris en charge par ce navigateur');
       }
     }
 
@@ -3581,9 +3638,9 @@
     }
 
     // Appeler la fonction d'initialisation au chargement de la page
-    window.onload = function() {
+    /* window.onload = function() {
       initializeMinusButtons();
-    };
+    }; */
 
     function updateMessage() {
       const messageTextarea = document.getElementById('messageText');
