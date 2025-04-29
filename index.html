@@ -3432,10 +3432,8 @@
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.getRegistration().then(registration => {
           if (registration) {
-            // Vérifier les mises à jour toutes les 5 minutes
-            setInterval(() => {
-              registration.update();
-            }, 5 * 60 * 1000);
+            // Vérification unique au démarrage
+            checkForUpdates(true);
           }
         });
       }
