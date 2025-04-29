@@ -2359,11 +2359,6 @@
 
     function updateVehicleDetails(id) {
       let details = document.getElementById(id + "Details");
-      // ... existing code ...
-    }
-
-    function updateVehicleDetails(id) {
-      let details = document.getElementById(id + "Details");
       let value = parseInt(document.getElementById(id).textContent);
       if (details) {
         if (value > 0) {
@@ -2371,6 +2366,12 @@
         } else {
           details.classList.add("hidden");
         }
+      }
+      
+      // Ajouter/mettre à jour les champs de sexe et âge pour les victimes
+      const victimeTypes = ["UA", "UR", "DCD", "incarcerees", "intoxiquees", "indemnes", "impliques"];
+      if (victimeTypes.includes(id)) {
+        updateVictimeInfoFields(id, value);
       }
     }
 
@@ -2789,14 +2790,65 @@
         "impliques": "Impliqué"
       };
 
-      let hasVictims = false;
+      // Collecter toutes les informations sur les victimes
+      let totalVictimes = 0;
+      const allVictimDetails = [];
+      
       Object.entries(victimTypes).forEach(([id, label]) => {
         const count = parseInt(document.getElementById(id)?.textContent || "0");
         if (count > 0) {
-          hasVictims = true;
-          msg += `${count} ${label}\n`;
+          totalVictimes += count;
+          
+          // Extraire le type court (UA, UR, etc.) du label
+          const typeLabel = label.startsWith("Victime") ? label.substring(8).trim() : label;
+          
+          // Collecter les détails de chaque victime
+          for (let i = 1; i <= count; i++) {
+            // Récupérer les informations de sexe et d'âge
+            const sexeInput = document.getElementById(`${id}-${i}-sexe`);
+            const ageInput = document.getElementById(`${id}-${i}-age`);
+            const sexe = sexeInput ? sexeInput.value : '';
+            const age = ageInput ? ageInput.value : '';
+            
+            let detail = "";
+            // Construire la description de la victime
+            if (sexe === 'M') {
+              detail += "1 VSM";
+            } else if (sexe === 'F') {
+              detail += "1 VSF";
+            } else {
+              detail += "1 Victime";
+            }
+            
+            // Ajouter l'âge si disponible
+            if (age) {
+              detail += ` ${age} ans`;
+            }
+            
+            // Ajouter le type de victime à la fin
+            detail += ` ${typeLabel}`;
+            
+            allVictimDetails.push(detail);
+          }
         }
       });
+
+      // Générer le message pour les victimes
+      if (totalVictimes > 0) {
+        // Afficher le total des victimes
+        if (totalVictimes === 1) {
+          msg += `1 Victime`;
+        } else {
+          msg += `${totalVictimes} Victimes`;
+        }
+        
+        // Ajouter les détails de chaque victime
+        if (allVictimDetails.length > 0) {
+          msg += ", " + allVictimDetails.join(", ");
+        }
+        
+        msg += "\n";
+      }
 
       // Ajouter les précisions sur les victimes si présentes
       let precisionVictimes = getVal("precisionVictimes");
@@ -2804,7 +2856,7 @@
         msg += `Précisions sur les victimes: ${precisionVictimes}\n`;
       }
       
-      if (hasVictims) {
+      if (totalVictimes > 0) {
         msg += "\n";
       }
 
@@ -3643,6 +3695,235 @@
       } catch (error) {
         console.error('Error initializing buttons:', error);
       }
+    }
+
+    // Fonction pour créer ou mettre à jour les champs de sexe et âge pour les victimes
+    function updateVictimeInfoFields(id, count) {
+      // Trouver le conteneur parent de cette victime
+      const victimeContainer = document.getElementById(id).closest('.vehicle-count');
+      
+      // Identifier ou créer le conteneur pour les infos supplémentaires
+      let infoContainer = document.getElementById(`${id}InfoContainer`);
+      if (!infoContainer) {
+        infoContainer = document.createElement('div');
+        infoContainer.id = `${id}InfoContainer`;
+        infoContainer.className = 'victime-info-container';
+        infoContainer.style.marginTop = '10px';
+        infoContainer.style.padding = '5px';
+        infoContainer.style.border = '1px solid #eee';
+        infoContainer.style.borderRadius = '5px';
+        
+        // Ajouter le conteneur après les boutons de compteur
+        victimeContainer.appendChild(infoContainer);
+      }
+      
+      // Si le compteur est à 0, cacher le conteneur
+      if (count <= 0) {
+        infoContainer.style.display = 'none';
+        infoContainer.innerHTML = '';
+        return;
+      }
+      
+      infoContainer.style.display = 'block';
+      
+      // Sauvegarder les valeurs existantes
+      const existingValues = {};
+      for (let i = 1; i <= Math.max(count, infoContainer.querySelectorAll('.victime-info').length); i++) {
+        const sexeInput = document.getElementById(`${id}-${i}-sexe`);
+        const ageInput = document.getElementById(`${id}-${i}-age`);
+        existingValues[i] = {
+          sexe: sexeInput ? sexeInput.value : '',
+          age: ageInput ? ageInput.value : ''
+        };
+      }
+      
+      // Mettre à jour le HTML du conteneur pour qu'il corresponde au nombre de victimes
+      infoContainer.innerHTML = '';
+      
+      // Créer les champs pour chaque victime
+      for (let i = 1; i <= count; i++) {
+        const victimeInfo = document.createElement('div');
+        victimeInfo.className = 'victime-info';
+        victimeInfo.style.marginBottom = '10px';
+        victimeInfo.style.padding = '5px';
+        victimeInfo.style.backgroundColor = '#f9f9f9';
+        
+        // Titre de la victime
+        const victimeTitle = document.createElement('div');
+        // Modification du titre de la victime pour afficher "Victime n°X" 
+        victimeTitle.textContent = `Victime n°${i}`;
+        // Suppression du style gras
+        victimeTitle.style.marginBottom = '5px';
+        // victimeTitle.style.fontWeight = 'bold'; // Suppression du style gras
+        
+        // Conteneur pour les boutons de sexe
+        const sexeContainer = document.createElement('div');
+        sexeContainer.style.display = 'flex';
+        sexeContainer.style.flexDirection = 'column';
+        sexeContainer.style.marginBottom = '12px';
+        sexeContainer.style.width = '100%';
+        
+        // Boutons pour le sexe
+        const buttonContainer = document.createElement('div');
+        buttonContainer.style.display = 'flex';
+        buttonContainer.style.flexDirection = 'column';
+        buttonContainer.style.gap = '5px';
+        buttonContainer.style.width = '100%';
+        
+        const maleBtn = document.createElement('button');
+        maleBtn.type = 'button';
+        maleBtn.className = 'secondary-btn';
+        maleBtn.textContent = 'Masculin';
+        maleBtn.onclick = function() { selectSexe(this, `${id}-${i}`, 'M'); };
+        maleBtn.style.width = '100%';
+        maleBtn.style.height = '40px';
+        maleBtn.style.backgroundColor = '#d4e6f6';
+        maleBtn.style.color = '#0066cc';
+        maleBtn.style.border = '1px solid #ccc';
+        maleBtn.style.borderRadius = '5px';
+        maleBtn.style.fontSize = '16px';
+        maleBtn.style.textAlign = 'center';
+        
+        const femaleBtn = document.createElement('button');
+        femaleBtn.type = 'button';
+        femaleBtn.className = 'secondary-btn';
+        femaleBtn.textContent = 'Féminin';
+        femaleBtn.onclick = function() { selectSexe(this, `${id}-${i}`, 'F'); };
+        femaleBtn.style.width = '100%';
+        femaleBtn.style.height = '40px';
+        femaleBtn.style.backgroundColor = '#fce4ec';
+        femaleBtn.style.color = '#e91e63';
+        femaleBtn.style.border = '1px solid #ccc';
+        femaleBtn.style.borderRadius = '5px';
+        femaleBtn.style.fontSize = '16px';
+        femaleBtn.style.textAlign = 'center';
+        
+        buttonContainer.appendChild(maleBtn);
+        buttonContainer.appendChild(femaleBtn);
+        sexeContainer.appendChild(buttonContainer);
+        
+        // Conteneur pour l'âge
+        const ageContainer = document.createElement('div');
+        ageContainer.style.display = 'flex';
+        ageContainer.style.flexDirection = 'column';
+        ageContainer.style.width = '100%';
+        
+        // Input pour l'âge
+        const ageInput = document.createElement('input');
+        ageInput.type = 'number';
+        ageInput.id = `${id}-${i}-age`;
+        ageInput.min = '0';
+        ageInput.max = '120';
+        ageInput.placeholder = 'Âge en années';
+        ageInput.style.width = '100%';
+        ageInput.style.height = '40px';
+        ageInput.style.textAlign = 'center';
+        ageInput.style.fontSize = '16px';
+        ageInput.style.padding = '5px';
+        ageInput.style.border = '1px solid #ccc';
+        ageInput.style.borderRadius = '5px';
+        ageInput.style.boxSizing = 'border-box';
+        ageInput.onchange = function() { updateMessage(); };
+        
+        // Restaurer les valeurs existantes
+        if (existingValues[i]) {
+          // Créer un champ caché pour le sexe s'il y a une valeur
+          if (existingValues[i].sexe) {
+            const hiddenSexe = document.createElement('input');
+            hiddenSexe.type = 'hidden';
+            hiddenSexe.id = `${id}-${i}-sexe`;
+            hiddenSexe.value = existingValues[i].sexe;
+            victimeInfo.appendChild(hiddenSexe);
+            
+            // Mettre à jour le style du bouton correspondant
+            if (existingValues[i].sexe === 'M') {
+              maleBtn.classList.add('selected');
+              maleBtn.style.backgroundColor = '#0066cc';
+              maleBtn.style.color = 'white';
+              maleBtn.style.fontWeight = 'bold';
+              maleBtn.style.border = '1px solid #0066cc';
+            } else {
+              femaleBtn.classList.add('selected');
+              femaleBtn.style.backgroundColor = '#FF80AB';
+              femaleBtn.style.color = 'white';
+              femaleBtn.style.fontWeight = 'bold';
+              femaleBtn.style.border = '1px solid #FF80AB';
+            }
+          }
+          
+          // Restaurer la valeur de l'âge
+          ageInput.value = existingValues[i].age;
+        }
+        
+        ageContainer.appendChild(ageInput);
+        
+        // Assembler tous les éléments
+        victimeInfo.appendChild(victimeTitle);
+        victimeInfo.appendChild(sexeContainer);
+        victimeInfo.appendChild(ageContainer);
+        
+        // Ajouter cette victime au conteneur
+        infoContainer.appendChild(victimeInfo);
+        
+        // Ajouter un séparateur sauf pour la dernière victime
+        if (i < count) {
+          const separator = document.createElement('hr');
+          separator.style.margin = '10px 0';
+          separator.style.border = '0';
+          separator.style.borderTop = '1px solid #eee';
+          infoContainer.appendChild(separator);
+        }
+      }
+    }
+
+    // Fonction pour sélectionner le sexe d'une victime
+    function selectSexe(button, victimeId, sexe) {
+      // Trouver le conteneur parent
+      const container = button.closest('.victime-info');
+      // Désélectionner tous les boutons de sexe dans ce conteneur
+      container.querySelectorAll('button').forEach(btn => {
+        if (btn.textContent === 'Masculin' || btn.textContent === 'Féminin') {
+          btn.classList.remove('selected');
+          if (btn.textContent === 'Masculin') {
+            btn.style.backgroundColor = '#d4e6f6';
+            btn.style.color = '#0066cc';
+            btn.style.fontWeight = 'normal';
+            btn.style.border = '1px solid #ccc';
+          } else {
+            btn.style.backgroundColor = '#fce4ec';
+            btn.style.color = '#e91e63';
+            btn.style.fontWeight = 'normal';
+            btn.style.border = '1px solid #ccc';
+          }
+        }
+      });
+      
+      // Sélectionner le bouton cliqué
+      button.classList.add('selected');
+      if (sexe === 'M') {
+        button.style.backgroundColor = '#0066cc';
+        button.style.color = 'white';
+        button.style.fontWeight = 'bold';
+        button.style.border = '1px solid #0066cc';
+      } else {
+        button.style.backgroundColor = '#FF80AB';
+        button.style.color = 'white';
+        button.style.fontWeight = 'bold';
+        button.style.border = '1px solid #FF80AB';
+      }
+      
+      // Stocker la valeur dans un champ caché pour pouvoir la récupérer plus tard
+      let hiddenInput = document.getElementById(`${victimeId}-sexe`);
+      if (!hiddenInput) {
+        hiddenInput = document.createElement('input');
+        hiddenInput.type = 'hidden';
+        hiddenInput.id = `${victimeId}-sexe`;
+        container.appendChild(hiddenInput);
+      }
+      hiddenInput.value = sexe;
+      
+      // Mettre à jour le message
+      updateMessage();
     }
   </script>
   <script>
