@@ -1879,7 +1879,7 @@
 
       <div class="navigation-buttons">
         <button type="button" class="prev-btn" onclick="goToStep(3)">← Précédent</button>
-        <button type="button" onclick="goToStep(5)">Suivant →</button>
+        <button type="button" onclick="displayGeneratedMessage()">Suivant →</button>
       </div>
     </div>
 
@@ -1992,7 +1992,7 @@
 
       <div class="navigation-buttons">
         <button type="button" class="prev-btn" onclick="goToStep(4)">← Précédent</button>
-        <button type="button" onclick="generateMessage()">Suivant →</button>
+        <button type="button" onclick="displayGeneratedMessage()">Suivant →</button>
       </div>
     </div>
 
@@ -2114,6 +2114,20 @@
       }
       
       if (step === 5) updateSuggestions();
+      
+      // Si on clique directement sur l'étape "message" (step 6), générer le message
+      if (step === 6) {
+        // Générer le message avant d'afficher l'étape
+        const messageTextarea = document.getElementById("message");
+        if (messageTextarea) {
+          messageTextarea.value = generateMessage();
+          // Ajuster la hauteur du textarea
+          setTimeout(() => {
+            messageTextarea.style.height = "auto";
+            messageTextarea.style.height = messageTextarea.scrollHeight + "px";
+          }, 0);
+        }
+      }
     }
 
     function updateProgress() {
@@ -2622,7 +2636,8 @@
       // Intervention info
       if (getVal("groupeHoraireAuto")) msg += `Groupe horaire: ${getVal("groupeHoraireAuto")}\n`;
       if (getVal("interventionNumber")) msg += `Intervention numéro: ${getVal("interventionNumber")}\n`;
-      if (getVal("fonction")) msg += `Fonction: ${getVal("fonction")}\n`;
+      // Suppression de l'affichage de la fonction (CATE ou CDG)
+      // if (getVal("fonction")) msg += `Fonction: ${getVal("fonction")}\n`;
       msg += "\n";
 
       // Location info
@@ -2973,17 +2988,8 @@
 
       msg += "\n[ FIN DE MESSAGE, COMMENT REÇU PARLEZ. ]";
       
-      // Mettre à jour le textarea avec le message en texte brut
-      const messageTextarea = document.getElementById("message");
-      messageTextarea.value = msg;
-      
-      // Ajuster la hauteur du textarea
-      setTimeout(() => {
-        messageTextarea.style.height = "auto";
-        messageTextarea.style.height = messageTextarea.scrollHeight + "px";
-      }, 0);
-      
-      goToStep(6);
+      // Retourner le message au lieu d'aller directement à l'étape 6
+      return msg;
     }
 
     function copyMessage() {
@@ -3924,6 +3930,44 @@
       
       // Mettre à jour le message
       updateMessage();
+    }
+
+    function displayGeneratedMessage() {
+      // Générer le message
+      const msg = generateMessage();
+      
+      // Naviguer vers l'étape 6
+      document.querySelector(`.step.active`).classList.replace("active", "hidden");
+      document.querySelector(`#step6`).classList.replace("hidden", "active");
+      
+      // Mettre à jour la classe active des éléments de progression
+      document.querySelectorAll('.progress-step').forEach((el, index) => {
+        if (index === 6) {
+          el.classList.add('active');
+        } else {
+          el.classList.remove('active');
+        }
+      });
+      
+      currentStep = 6;
+      updateProgress();
+      
+      // Mettre à jour le textarea avec le message
+      const messageTextarea = document.getElementById("message");
+      if (messageTextarea) {
+        messageTextarea.value = msg;
+        // Ajuster la hauteur du textarea
+        setTimeout(() => {
+          messageTextarea.style.height = "auto";
+          messageTextarea.style.height = messageTextarea.scrollHeight + "px";
+        }, 0);
+      }
+      
+      // Faire défiler vers le haut de la page
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
     }
   </script>
   <script>
