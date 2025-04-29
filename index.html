@@ -1040,8 +1040,8 @@
     }
 
     .secondary-btn.selected {
-      background: white;
-      color: var(--primary-color);
+      background-color: var(--primary-color);
+      color: white;
       font-weight: 500;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
@@ -1053,6 +1053,19 @@
       background: transparent;
       border-radius: 5px;
     }
+
+    /* CSS pour la section "Je prévois" */
+    #prevoisSection h3 {
+      margin-top: 30px;
+    }
+
+    .copyright {
+      margin-top: 20px;
+      font-size: 12px;
+      color: #999;
+    }
+
+    /* Ajout des styles pour le nouveau compteur */
   </style>
 </head>
 <body>
@@ -1072,14 +1085,14 @@
     <div id="step0" class="step active">
       <label>Fonction</label>
       <div class="function-buttons">
-        <button type="button" class="toggle-btn function-btn" onclick="selectFunction(this, 'CATE')">CATE</button>
-        <button type="button" class="toggle-btn function-btn" onclick="selectFunction(this, 'CDG')">CDG</button>
+        <button type="button" class="toggle-btn function-btn" onclick="selectFonction(this, 'CATE')">CATE</button>
+        <button type="button" class="toggle-btn function-btn" onclick="selectFonction(this, 'CDG')">CDG</button>
       </div>
       <input type="hidden" id="fonction" value="">
       <p class="function-notice">Affiche les infos à passer dans le message radio, selon votre fonction.</p>
 
-      <label for="interventionNumber">Intervention numéro</label>
-      <input type="text" id="interventionNumber" class="form-control" onkeypress="return event.charCode >= 48 && event.charCode <= 57" pattern="[0-9]*" onchange="updateMessage()">
+      <label for="interventionNumber">Numéro intervention</label>
+      <input type="number" id="interventionNumber" class="form-control" min="0" inputMode="numeric" pattern="[0-9]*" step="1" onchange="updateMessage()" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
 
       <label for="motifDepart">Motif de départ</label>
       <select id="motifDepart">
@@ -1090,6 +1103,7 @@
         <option>Chute de ligne électrique</option>
         <option>Odeur de brulé</option>
         <option>Fumée suspecte</option>
+        <option>Feu de cheminée</option>
         <option>Fuite de Gaz procédure classique</option>
         <option>Fuite de Gaz procédure renforcée</option>
         <option>Déclenchement alarme</option>
@@ -1132,10 +1146,11 @@
         <span id="gpsInfoCommune" class="gps-info hidden">Position approximative basée sur le GPS du navigateur.</span>
       </div>
 
-      <button type="button" id="toggleRouteBtn" class="toggle-btn" onclick="toggleRouteInfo()">
+      <button type="button" id="toggleRouteBtn" class="toggle-btn" style="margin-top: 15px;" onclick="toggleRouteInfo()">
         Informations route
         <span class="toggle-icon">›</span>
       </button>
+      <p class="function-notice" style="margin-top: 10px;">Facultatif pour le message d'ambiance</p>
 
       <div id="routeInfo" class="sub-container hidden">
       <label for="typeRoute">Type de route</label>
@@ -1148,17 +1163,21 @@
         <option>Rocade extérieure</option>
       </select>
 
-      <label for="numeroRoute">Numéro de route</label>
-      <input type="text" id="numeroRoute" class="form-control" onkeypress="return event.charCode >= 48 && event.charCode <= 57" pattern="[0-9]*" placeholder="Saisissez numéro de route">
+      <label for="sens">Sens</label>
+      <input type="text" id="sens" placeholder="Saisissez un sens">
+
+      <div id="numeroRouteContainer">
+        <label for="numeroRoute">Numéro de route</label>
+        <input type="number" id="numeroRoute" class="form-control" min="0" inputMode="numeric" pattern="[0-9]*" step="1" placeholder="Saisissez numéro de route" onchange="updateMessage()" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+      </div>
 
       <label for="nomEchangeur">Nom de l'échangeur</label>
       <input type="text" id="nomEchangeur" placeholder="Saisissez le nom de l'échangeur">
 
-      <label for="pk">PK</label>
-      <input type="text" id="pk" class="form-control" onkeypress="return event.charCode >= 48 && event.charCode <= 57" pattern="[0-9]*" placeholder="Saisissez numéro PK">
-
-      <label for="sens">Sens</label>
-      <input type="text" id="sens" placeholder="Saisissez un sens">
+      <div id="pkContainer">
+        <label for="pk">Point kilométrique</label>
+        <input type="number" id="pk" class="form-control" min="0" inputMode="numeric" pattern="[0-9]*" step="1" placeholder="Saisissez numéro PK" onchange="updateMessage()" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+      </div>
       </div>
 
       <div class="navigation-buttons">
@@ -1188,6 +1207,7 @@
           <option value="Fuite de gaz procédure renforcée">Fuite de gaz procédure renforcée</option>
           <option value="Fumée suspecte">Fumée suspecte</option>
           <option value="Odeur de brulé">Odeur de brulé</option>
+          <option value="Feu de cheminée">Feu de cheminée</option>
           <option value="Autre type de feu">Autre type de feu</option>
         </select>
       </div>
@@ -1311,10 +1331,12 @@
             <option>Alternée</option>
             <option>Ralentie</option>
           </select>
+          <p class="function-notice" style="margin-top: 10px;">Facultatif pour le message d'ambiance</p>
 
         <div id="circulationDetails" class="hidden">
+          <!-- Nombre de voies impactées -->
           <label>Nombre de voies impactées</label>
-          <input type="text" placeholder="Préciser le nombre de voies impactées" id="voiesImpactees" onkeypress="return event.charCode >= 48 && event.charCode <= 57" pattern="[0-9]*">
+          <input type="number" placeholder="Préciser le nombre de voies impactées" id="voiesImpactees" min="0" inputMode="numeric" pattern="[0-9]*" step="1" onchange="updateMessage()" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
 
           <label>Sens de circulation</label>
           <input type="text" placeholder="Préciser le sens de circulation" id="sensCirculation">
@@ -1349,7 +1371,7 @@
 
         <div id="codeMatiereTMDContainer" class="hidden">
           <label>Préciser code matière</label>
-          <input type="text" id="codeMatiereTMD" placeholder="Entrez le code matière" onkeypress="return event.charCode >= 48 && event.charCode <= 57" pattern="[0-9]*">
+          <input type="number" id="codeMatiereTMD" placeholder="Entrez le code matière" min="0" inputMode="numeric" pattern="[0-9]*" step="1" onchange="updateMessage()" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
           <div class="info-text">Rappel "X devant code matière" = Pas d'eau</div>
         </div>
 
@@ -1502,7 +1524,7 @@
             <span class="toggle-icon">›</span>
           </button>
           <div id="customSurfaceInput" class="hidden">
-            <input type="number" id="customSurface" placeholder="Entrez la surface en m²" onchange="updateCustomSurface()">
+            <input type="number" id="customSurface" placeholder="Entrez la surface en m²" min="0" inputMode="numeric" pattern="[0-9]*" step="1" onchange="updateCustomSurface()" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
           </div>
         </div>
         <input type="hidden" id="surfaceTotale" value="">
@@ -1522,7 +1544,7 @@
             <span class="toggle-icon">›</span>
           </button>
           <div id="customSurfaceSinistreeInput" class="hidden">
-            <input type="number" id="customSurfaceSinistree" placeholder="Entrez la surface en m²" onchange="updateCustomSurfaceSinistree()">
+            <input type="number" id="customSurfaceSinistree" placeholder="Entrez la surface en m²" min="0" inputMode="numeric" pattern="[0-9]*" step="1" onchange="updateCustomSurfaceSinistree()" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
           </div>
         </div>
         <input type="hidden" id="surfaceSinistree" value="">
@@ -1721,55 +1743,7 @@
 
     <!-- Étape 4 : Je fais -->
     <div id="step4" class="step hidden">
-      <!-- Nouvelle section "Je prévois" -->
-      <button type="button" class="toggle-btn" onclick="togglePrevois()" id="togglePrevoisBtn">
-        Je prévois (Chef de groupe)
-        <span class="toggle-icon">›</span>
-      </button>
-
-      <div id="prevoisFields" class="sub-container hidden">
-        <div id="prevoisActions">
-          <button type="button" class="toggle-btn" onclick="toggleActionDetails(this)" data-target="augmentationVictimes">Augmentation du nombre de victimes</button>
-          <div id="augmentationVictimes" class="action-details hidden">
-            <input type="text" id="preciserAugmentationVictimes" placeholder="Préciser l'augmentation du nombre de victimes">
-          </div>
-
-          <button type="button" class="toggle-btn" onclick="toggleActionDetails(this)" data-target="aggravationVictimes">Aggravation de l'état des victimes</button>
-          <div id="aggravationVictimes" class="action-details hidden">
-            <input type="text" id="preciserAggravationVictimes" placeholder="Préciser l'aggravation de l'état des victimes">
-          </div>
-
-          <button type="button" class="toggle-btn" onclick="toggleActionDetails(this)" data-target="interventionLongue">Intervention de longue durée</button>
-          <div id="interventionLongue" class="action-details hidden">
-            <input type="text" id="preciserInterventionLongue" placeholder="Préciser l'intervention de longue durée">
-          </div>
-
-          <button type="button" class="toggle-btn" onclick="toggleActionDetails(this)" data-target="pollution">Pollution</button>
-          <div id="pollution" class="action-details hidden">
-            <input type="text" id="preciserPollution" placeholder="Préciser la pollution">
-          </div>
-
-          <button type="button" class="toggle-btn" onclick="toggleActionDetails(this)" data-target="feu">Feu</button>
-          <div id="feu" class="action-details hidden">
-            <input type="text" id="preciserFeu" placeholder="Préciser le feu">
-          </div>
-
-          <button type="button" class="toggle-btn" onclick="toggleActionDetails(this)" data-target="effondrement">Effondrement</button>
-          <div id="effondrement" class="action-details hidden">
-            <input type="text" id="preciserEffondrement" placeholder="Préciser l'effondrement">
-          </div>
-
-          <button type="button" class="toggle-btn" onclick="toggleActionDetails(this)" data-target="explosion">Explosion</button>
-          <div id="explosion" class="action-details hidden">
-            <input type="text" id="preciserExplosion" placeholder="Préciser l'explosion">
-          </div>
-        </div>
-        <div class="field-group">
-          <label for="precisionsPrevois">Préciser</label>
-          <textarea id="precisionsPrevois" placeholder="Précisions sur les prévisions"></textarea>
-        </div>
-      </div>
-
+      <!-- Contenu existant sans la section "Je prévois" -->
       <h3>Victimes</h3>
       <hr>
       <div id="actionsContainer">
@@ -1783,7 +1757,7 @@
         <button type="button" class="toggle-btn" onclick="toggleActionDetails(this)" data-target="priseEnCharge">Prise en charge des victimes</button>
         <div id="priseEnCharge" class="action-details hidden">
           <input type="text" id="preciserPriseEnCharge" placeholder="Préciser la prise en charge">
-          <input type="number" id="nombreVictimesPriseEnCharge" placeholder="Nombre de victimes">
+          <input type="number" id="nombreVictimesPriseEnCharge" placeholder="Nombre de victimes" min="0" inputMode="numeric" pattern="[0-9]*" step="1" onchange="updateMessage()" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
           <input type="text" id="parEquipage" placeholder="Par équipage (VSAV...)">
         </div>
 
@@ -1791,7 +1765,7 @@
         <button type="button" class="toggle-btn" onclick="toggleActionDetails(this)" data-target="miseEnSecurite">Mise en sécurité des victimes</button>
         <div id="miseEnSecurite" class="action-details hidden">
           <input type="text" id="preciserMiseEnSecurite" placeholder="Préciser la mise en sécurité">
-          <input type="number" id="nombrePersonnesMiseEnSecurite" placeholder="Nombre de personnes">
+          <input type="number" id="nombrePersonnesMiseEnSecurite" placeholder="Nombre de personnes" min="0" inputMode="numeric" pattern="[0-9]*" step="1" onchange="updateMessage()" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
           <input type="text" id="pointRassemblement" placeholder="Point de rassemblement des victimes">
         </div>
       </div>
@@ -1876,6 +1850,56 @@
         <!-- Je poursuis reconnaissance -->
         <button type="button" class="toggle-btn" onclick="toggleButton(this)">Je poursuis reconnaissance</button>
       </div>
+
+      <!-- Section "Je prévois" déplacée à la fin et transformée en label+divider -->
+      <div id="prevoisSection" class="hidden">
+        <h3>Je prévois</h3>
+        <hr>
+        <div id="prevoisFields">
+          <div id="prevoisActions">
+            <button type="button" class="toggle-btn" onclick="toggleActionDetails(this)" data-target="augmentationVictimes">Augmentation du nombre de victimes</button>
+            <div id="augmentationVictimes" class="action-details hidden">
+              <input type="text" id="preciserAugmentationVictimes" placeholder="Préciser l'augmentation du nombre de victimes">
+            </div>
+
+            <button type="button" class="toggle-btn" onclick="toggleActionDetails(this)" data-target="aggravationVictimes">Aggravation de l'état des victimes</button>
+            <div id="aggravationVictimes" class="action-details hidden">
+              <input type="text" id="preciserAggravationVictimes" placeholder="Préciser l'aggravation de l'état des victimes">
+            </div>
+
+            <button type="button" class="toggle-btn" onclick="toggleActionDetails(this)" data-target="interventionLongue">Intervention de longue durée</button>
+            <div id="interventionLongue" class="action-details hidden">
+              <input type="text" id="preciserInterventionLongue" placeholder="Préciser l'intervention de longue durée">
+            </div>
+
+            <button type="button" class="toggle-btn" onclick="toggleActionDetails(this)" data-target="pollution">Pollution</button>
+            <div id="pollution" class="action-details hidden">
+              <input type="text" id="preciserPollution" placeholder="Préciser la pollution">
+            </div>
+
+            <button type="button" class="toggle-btn" onclick="toggleActionDetails(this)" data-target="feu">Feu</button>
+            <div id="feu" class="action-details hidden">
+              <input type="text" id="preciserFeu" placeholder="Préciser le feu">
+            </div>
+
+            <button type="button" class="toggle-btn" onclick="toggleActionDetails(this)" data-target="effondrement">Effondrement</button>
+            <div id="effondrement" class="action-details hidden">
+              <input type="text" id="preciserEffondrement" placeholder="Préciser l'effondrement">
+            </div>
+
+            <button type="button" class="toggle-btn" onclick="toggleActionDetails(this)" data-target="explosion">Explosion</button>
+            <div id="explosion" class="action-details hidden">
+              <input type="text" id="preciserExplosion" placeholder="Préciser l'explosion">
+            </div>
+          </div>
+          <div class="field-group">
+            <label for="precisionsPrevois">Préciser</label>
+            <textarea id="precisionsPrevois" placeholder="Précisions sur les prévisions"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <p class="function-notice" style="margin-top: 20px; margin-bottom: 15px;">Facultatif pour le message d'ambiance, en dehors des réactions immédiates</p>
 
       <div class="navigation-buttons">
         <button type="button" class="prev-btn" onclick="goToStep(3)">← Précédent</button>
@@ -2305,7 +2329,7 @@
       } else if (value.startsWith("Fuite de gaz")) {
         document.getElementById("batimentFields").classList.remove("hidden");
         document.getElementById("infoFuiteGaz").classList.remove("hidden");
-      } else if (["Fumée suspecte", "Odeur de brulé", "Autre type de feu"].includes(value)) {
+      } else if (["Fumée suspecte", "Odeur de brulé", "Feu de cheminée", "Autre type de feu"].includes(value)) {
         document.getElementById("batimentFields").classList.remove("hidden");
       }
     }
@@ -2798,9 +2822,8 @@
       msg += "\n";
 
       // Ajouter les prévisions du chef de groupe si présentes
-      const prevoisBtn = document.getElementById('togglePrevoisBtn');
       const fonction = getVal("fonction");
-      if (fonction === 'CDG' && prevoisBtn.classList.contains('active')) {
+      if (fonction === 'CDG' && document.getElementById('prevoisSection').classList.contains('hidden') === false) {
         msg += "[ JE PREVOIS ]\n";
         document.querySelectorAll('#prevoisActions .toggle-btn.selected').forEach(btn => {
           // Nettoyer le texte de l'action pour supprimer les tags "suggéré"
@@ -3123,22 +3146,21 @@
       const pkField = document.getElementById('pk').parentElement;
       const sensField = document.getElementById('sens').parentElement;
       const nomEchangeurField = document.getElementById('nomEchangeur').parentElement;
+      const numeroRouteField = document.getElementById('numeroRouteContainer');
       
       // Réinitialiser l'affichage de tous les champs
-      pkField.style.display = 'none';
+      // Ne plus masquer PK et numeroRoute
       sensField.style.display = 'none';
       nomEchangeurField.style.display = 'none';
       
       // Afficher les champs appropriés selon le type de route
       switch(typeRoute) {
         case 'Autoroute':
-          pkField.style.display = 'block';
           sensField.style.display = 'block';
           nomEchangeurField.style.display = 'block';
           break;
         case 'Route nationale':
         case 'Route départementale':
-          pkField.style.display = 'block';
           sensField.style.display = 'block';
           break;
         case 'Rocade intérieure':
@@ -3206,15 +3228,13 @@
       }
       
       // Masquer la section "Je prévois" par défaut au démarrage
-      const prevoisBtn = document.getElementById('togglePrevoisBtn');
-      const prevoisFields = document.getElementById('prevoisFields');
-      if (prevoisBtn && prevoisFields) {
+      const prevoisSection = document.getElementById('prevoisSection');
+      if (prevoisSection) {
         // Vérifier si une fonction est déjà sélectionnée
         const fonction = document.getElementById('fonction').value;
         if (fonction !== 'CDG') {
           // Si ce n'est pas CDG ou si aucune fonction n'est sélectionnée, masquer la section
-          prevoisBtn.style.display = 'none';
-          prevoisFields.classList.add('hidden');
+          prevoisSection.classList.add('hidden');
         }
       }
     }
@@ -3267,13 +3287,9 @@
 
     // Nouvelle fonction pour basculer entre les sections "Je prévois" et "Je fais"
     function togglePrevois() {
-      const prevoisFields = document.getElementById("prevoisFields");
-      const btn = document.getElementById("togglePrevoisBtn");
-      const icon = btn.querySelector(".toggle-icon");
-      
-      prevoisFields.classList.toggle("hidden");
-      btn.classList.toggle("active");
-      icon.classList.toggle("rotated");
+      // Cette fonction n'est plus utilisée, mais elle est conservée pour compatibilité
+      // avec d'éventuels appels existants ailleurs dans le code
+      console.log("La fonction togglePrevois n'est plus nécessaire.");
     }
 
     // Nouvelle fonction pour basculer les détails des actions
@@ -3582,8 +3598,8 @@
       }
     }
 
-    function selectFunction(btn, value) {
-      // Désélectionner tous les boutons de fonction
+    function selectFonction(btn, value) {
+      // Réinitialiser tous les boutons
       document.querySelectorAll('.function-btn').forEach(b => b.classList.remove('selected'));
       
       // Sélectionner le bouton cliqué
@@ -3593,22 +3609,14 @@
       document.getElementById('fonction').value = value;
       
       // Gérer l'affichage de la section "Je prévois"
-      const prevoisFields = document.getElementById("prevoisFields");
-      const prevoisBtn = document.getElementById("togglePrevoisBtn");
-      const icon = prevoisBtn.querySelector(".toggle-icon");
+      const prevoisSection = document.getElementById("prevoisSection");
       
       if (value === 'CDG') {
-        // Si CDG est sélectionné, déplier la section
-        prevoisFields.classList.remove("hidden");
-        prevoisBtn.classList.add("active");
-        icon.classList.add("rotated");
-        prevoisBtn.style.display = "block";
-      } else if (value === 'CATE') {
-        // Si CATE est sélectionné, masquer le bouton et la section
-        prevoisFields.classList.add("hidden");
-        prevoisBtn.classList.remove("active");
-        icon.classList.remove("rotated");
-        prevoisBtn.style.display = "none";
+        // Si CDG est sélectionné, afficher la section
+        prevoisSection.classList.remove("hidden");
+      } else {
+        // Sinon, masquer la section
+        prevoisSection.classList.add("hidden");
       }
       
       // Mettre à jour le message
@@ -3878,6 +3886,9 @@
         ageInput.min = '0';
         ageInput.max = '120';
         ageInput.placeholder = 'Âge en années';
+        ageInput.inputMode = 'numeric';  // Affichera un clavier numérique sur mobile
+        ageInput.pattern = '[0-9]*';     // Force les valeurs numériques
+        ageInput.step = '1';             // Incréments de 1
         ageInput.style.width = '100%';
         ageInput.style.height = '40px';
         ageInput.style.textAlign = 'center';
@@ -3887,6 +3898,13 @@
         ageInput.style.borderRadius = '5px';
         ageInput.style.boxSizing = 'border-box';
         ageInput.onchange = function() { updateMessage(); };
+        
+        // Ajouter une validation pour n'accepter que des nombres
+        ageInput.oninput = function() {
+          // Remplace tout ce qui n'est pas un nombre par une chaîne vide
+          this.value = this.value.replace(/[^0-9]/g, '');
+          updateMessage();
+        };
         
         // Restaurer les valeurs existantes
         if (existingValues[i]) {
