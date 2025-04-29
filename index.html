@@ -2034,7 +2034,7 @@
   </div>
   <div class="update-container">
     <p class="offline-info"><i>L'application fonctionne même hors ligne.</i></p>
-    <a href="#" id="updateLink" class="update-link" onclick="checkForUpdates(); return false;">Vérifier si l'app est à jour</a>
+    <a href="#" id="updateLink" class="update-link" onclick="console.log('Bouton de mise à jour cliqué'); checkForUpdates(); return false;">Vérifier si l'app est à jour</a>
     <p id="updateStatus" class="update-status"></p>
     <div class="app-info">
       <img src="icons/192.png" alt="MRP Icon" class="app-icon">
@@ -3311,6 +3311,8 @@
 
     // Fonction pour vérifier les mises à jour
     function checkForUpdates(isAutoCheck = false) {
+      console.log('checkForUpdates appelé, isAutoCheck =', isAutoCheck);
+      
       const updateStatus = document.getElementById('updateStatus');
       updateStatus.style.display = 'none';
       
@@ -3342,9 +3344,7 @@
             console.log('Chemin de base pour le service worker:', basePath);
             
             // Construire l'URL du service worker en utilisant le chemin relatif
-            const swUrl = (basePath.endsWith('/MRP/') || basePath.endsWith('/MRP')) 
-              ? '/MRP/sw.js' 
-              : (basePath + 'sw.js');
+            const swUrl = new URL('sw.js', registration.scope).href;
             console.log('URL du service worker:', swUrl);
             
             // Vérifier la version actuelle du service worker
