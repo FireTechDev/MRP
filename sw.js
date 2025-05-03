@@ -1,5 +1,5 @@
 // Version de l'application
-const APP_VERSION = '1.0.14';
+const APP_VERSION = '1.0.15';
 
 const CACHE_NAME = 'mrp-cache-v1';
 const urlsToCache = [
@@ -20,6 +20,8 @@ self.addEventListener('install', event => {
         return cache.addAll(urlsToCache);
       })
   );
+  // Forcer l'activation immédiate du nouveau service worker
+  self.skipWaiting();
 });
 
 // Activation du Service Worker
@@ -34,6 +36,9 @@ self.addEventListener('activate', event => {
           }
         })
       );
+    }).then(() => {
+      // Forcer la prise de contrôle de tous les clients
+      return self.clients.claim();
     })
   );
 });
