@@ -3307,7 +3307,7 @@
     }
 
     // Version de l'application
-    const APP_VERSION = '1.0.14';
+    const APP_VERSION = '1.0.15';
 
     // Fonction pour vérifier les mises à jour
     function checkForUpdates(isAutoCheck = false) {
@@ -3335,57 +3335,60 @@
         navigator.serviceWorker.getRegistration().then(registration => {
           if (registration) {
             console.log('ServiceWorker enregistré:', registration.scope);
-            // Créer un timestamp unique pour le cache-busting
-            const timestamp = new Date().getTime();
             
-            // Obtenir le chemin de base à partir du scope du service worker
-            const swScope = registration.scope;
-            const basePath = swScope.endsWith('/') ? swScope : swScope + '/';
-            console.log('Chemin de base pour le service worker:', basePath);
-            
-            // Construire l'URL du service worker en utilisant le chemin relatif
-            const swUrl = new URL('sw.js', registration.scope).href;
-            console.log('URL du service worker:', swUrl);
-            
-            // Vérifier la version actuelle du service worker
-            fetch(`${swUrl}?v=${timestamp}`)
-              .then(response => {
-                console.log('Réponse de la requête sw.js:', response.status, response.ok);
-                if (response.ok) {
-                  return response.text().then(swContent => {
-                    console.log('Contenu du service worker récupéré', swContent.substring(0, 100) + '...');
-                    const versionMatch = swContent.match(/const APP_VERSION = ['"]([^'"]+)['"]/);
-                    const swVersion = versionMatch ? versionMatch[1] : null;
-                    console.log('Version du service worker:', swVersion, 'Version actuelle:', APP_VERSION);
-                    
-                    if (swVersion && swVersion === APP_VERSION) {
-                      // Version à jour
-                      updateStatus.textContent = 'Application à jour et disponible hors-ligne';
-                      updateStatus.style.color = '#28a745';
-                      updateStatus.style.display = 'block';
+            // Vider le cache avant de vérifier les mises à jour
+            caches.keys().then(cacheNames => {
+              console.log('Suppression des caches:', cacheNames);
+              return Promise.all(
+                cacheNames.map(cacheName => caches.delete(cacheName))
+              );
+            }).then(() => {
+              // Créer un timestamp unique pour le cache-busting
+              const timestamp = new Date().getTime();
+              
+              // Obtenir le chemin de base à partir du scope du service worker
+              const swScope = registration.scope;
+              const basePath = swScope.endsWith('/') ? swScope : swScope + '/';
+              console.log('Chemin de base pour le service worker:', basePath);
+              
+              // Construire l'URL du service worker en utilisant le chemin relatif
+              const swUrl = new URL('sw.js', registration.scope).href;
+              console.log('URL du service worker:', swUrl);
+              
+              // Vérifier la version actuelle du service worker
+              fetch(`${swUrl}?v=${timestamp}`)
+                .then(response => {
+                  console.log('Réponse de la requête sw.js:', response.status, response.ok);
+                  if (response.ok) {
+                    return response.text().then(swContent => {
+                      console.log('Contenu du service worker récupéré', swContent.substring(0, 100) + '...');
+                      const versionMatch = swContent.match(/const APP_VERSION = ['"]([^'"]+)['"]/);
+                      const swVersion = versionMatch ? versionMatch[1] : null;
+                      console.log('Version du service worker:', swVersion, 'Version actuelle:', APP_VERSION);
                       
-                      // Si c'est une vérification automatique, masquer le message après quelques secondes
-                      if (isAutoCheck) {
-                        setTimeout(() => {
-                          updateStatus.style.display = 'none';
-                        }, 3000);
-                      }
-                    } else {
-                      // Nouvelle version disponible
-                      updateStatus.textContent = 'Une mise à jour est disponible. Mise à jour en cours...';
-                      updateStatus.style.color = '#ffc107';
-                      updateStatus.style.display = 'block';
-                      
-                      // Vider le cache
-                      caches.keys().then(cacheNames => {
-                        console.log('Suppression des caches:', cacheNames);
-                        return Promise.all(
-                          cacheNames.map(cacheName => caches.delete(cacheName))
-                        );
-                      }).then(() => {
-                        // Mettre à jour le service worker
-                        console.log('Mise à jour du service worker...');
+                      if (swVersion && swVersion === APP_VERSION) {
+                        // Version à jour
+                        updateStatus.textContent = 'Application à jour et disponible hors-ligne';
+                        updateStatus.style.color = '#28a745';
+                        updateStatus.style.display = 'block';
+                        
+                        // Si c'est une vérification automatique, masquer le message après quelques secondes
+                        if (isAutoCheck) {
+                          setTimeout(() => {
+                            updateStatus.style.display = 'none';
+                          }, 3000);
+                        }
+                      } else {
+                        // Nouvelle version disponible
+                        updateStatus.textContent = 'Une mise à jour est disponible. Mise à jour en cours...';
+                        updateStatus.style.color = '#ffc107';
+                        updateStatus.style.display = 'block';
+                        
+                        // Forcer la mise à jour du service worker
                         registration.update().then(() => {
+                          // Envoyer un message au service worker pour forcer l'activation
+                          registration.active.postMessage({ type: 'SKIP_WAITING' });
+                          
                           if (isIOS) {
                             // Sur iOS, forcer le rechargement de la page
                             updateStatus.textContent = 'Mise à jour terminée. Rechargement de l\'application...';
@@ -3394,30 +3397,30 @@
                               window.location.reload(true);
                             }, 2000);
                           } else {
-                            // Sur les autres plateformes, le service worker se mettra à jour automatiquement
-                            updateStatus.textContent = 'Mise à jour terminée. L\'application se mettra à jour automatiquement.';
+                            // Sur les autres plateformes, forcer le rechargement après un court délai
+                            updateStatus.textContent = 'Mise à jour terminée. Rechargement de l\'application...';
                             setTimeout(() => {
-                              updateStatus.style.display = 'none';
-                            }, 3000);
+                              window.location.reload(true);
+                            }, 2000);
                           }
                         });
-                      });
-                    }
-                  });
-                } else {
-                  console.error('Erreur lors de la récupération du service worker:', response.status, response.statusText);
-                  throw new Error('Service worker non disponible');
-                }
-              })
-              .catch(error => {
-                console.error('Erreur lors de la vérification:', error);
-                updateStatus.textContent = 'Erreur lors de la vérification des mises à jour';
-                updateStatus.style.color = '#dc3545';
-                updateStatus.style.display = 'block';
-                setTimeout(() => {
-                  updateStatus.style.display = 'none';
-                }, 3000);
-              });
+                      }
+                    });
+                  } else {
+                    console.error('Erreur lors de la récupération du service worker:', response.status, response.statusText);
+                    throw new Error('Service worker non disponible');
+                  }
+                })
+                .catch(error => {
+                  console.error('Erreur lors de la vérification:', error);
+                  updateStatus.textContent = 'Erreur lors de la vérification des mises à jour';
+                  updateStatus.style.color = '#dc3545';
+                  updateStatus.style.display = 'block';
+                  setTimeout(() => {
+                    updateStatus.style.display = 'none';
+                  }, 3000);
+                });
+            });
           } else {
             console.error('Aucun service worker enregistré');
           }
