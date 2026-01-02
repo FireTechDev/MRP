@@ -155,8 +155,20 @@
     }
 
     /* Fix pour le champ groupe horaire sur iOS */
-    #groupeHoraireAuto {
+    .form-group {
+      width: 100%;
       max-width: 100%;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+    
+    #groupeHoraireAuto {
+      width: 100% !important;
+      max-width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+      -webkit-appearance: none;
+      appearance: none;
       overflow: hidden;
     }
 
