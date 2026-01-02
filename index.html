@@ -2039,7 +2039,7 @@
     <div class="app-info">
       <img src="icons/192.png" alt="MRP Icon" class="app-icon">
       <p class="app-name">MRP</p>
-      <p class="version-info">Version : 1.0.15</p>
+      <p class="version-info">Version : 1.0.16</p>
     </div>
     <p class="copyright">© Tael PINAULT 2025</p>
   </div>
@@ -2619,9 +2619,11 @@
 
       // Logique pour le FPT - uniquement si surface > 200m² et feu
       const surface = parseInt(document.getElementById('surfaceSinistree').value) || 0;
-      const nature = document.querySelector('.nature-toggle.selected')?.dataset.value || '';
+      const natureBtn = document.querySelector('.nature-toggle.selected');
+      const nature = natureBtn?.dataset.value || '';
       const autreNature = document.getElementById('autreTypeIntervention').value;
-      const typeIntervention = nature || autreNature;
+      // Si "Autre" est sélectionné, utiliser la valeur de autreTypeIntervention
+      const typeIntervention = (nature === "Autre") ? autreNature : (nature || autreNature);
       
       // Vérifier si c'est un feu et si la surface est > 200m²
       if (surface > 200 && (
@@ -2686,7 +2688,8 @@
       // Get selected nature
       let natureBtn = document.querySelector(".nature-toggle.selected");
       let autreNature = getVal("autreTypeIntervention");
-      let nature = natureBtn ? natureBtn.dataset.value : autreNature;
+      // Si "Autre" est sélectionné, utiliser la valeur de autreTypeIntervention
+      let nature = (natureBtn && natureBtn.dataset.value === "Autre") ? autreNature : (natureBtn ? natureBtn.dataset.value : autreNature);
       
       if (nature) {
         msg += `Un ${nature}\n`;
@@ -3307,7 +3310,7 @@
     }
 
     // Version de l'application
-    const APP_VERSION = '1.0.15';
+    const APP_VERSION = '1.0.16';
 
     // Fonction pour vérifier les mises à jour
     function checkForUpdates(isAutoCheck = false) {
