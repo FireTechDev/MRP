@@ -38,6 +38,7 @@
       word-wrap: normal;
       direction: ltr;
       -webkit-font-feature-settings: 'liga';
+      font-feature-settings: 'liga';
       -webkit-font-smoothing: antialiased;
     }
 
@@ -405,7 +406,13 @@
     }
 
     .result {
-      composes: info-text;
+      background: #e9ecef;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      font-size: 14px;
+      line-height: 1.4;
+      white-space: pre-line;
       margin-top: 15px;
       white-space: pre-wrap;
       font-family: var(--font-family);
@@ -781,6 +788,12 @@
       line-height: 1.2;
     }
 
+    .engaged-tag {
+      background-color: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffc107;
+    }
+
     /* Style pour le lien toggle */
     .link-toggle {
       color: var(--primary-color);
@@ -1125,13 +1138,140 @@
         <option>Fuite de Gaz procédure classique</option>
         <option>Fuite de Gaz procédure renforcée</option>
         <option>Déclenchement alarme</option>
+        <option>Intoxication au monoxyde de carbone (CO)</option>
+        <option>Personne bloquée dans un ascenseur</option>
         <option>Autre type d'intervention</option>
       </select>
 
-      <div class="form-group">
-        <label for="groupeHoraireAuto">Groupe horaire</label>
-        <input type="time" id="groupeHoraireAuto" name="groupeHoraireAuto" onchange="updateMessage()">
-        <button type="button" class="secondary-btn" onclick="setCurrentTime()">Actualiser l'heure</button>
+      <div style="margin-top: 15px;">
+        <button type="button" class="toggle-btn function-btn" onclick="toggleMoyensDepart()" style="font-size: 18px;">Moyens au départ</button>
+      </div>
+
+      <div id="moyensDepartContainer" class="hidden" style="margin-top: 15px;">
+        <div id="moyensDepart">
+          <!-- VSAV -->
+          <div class="vehicle-count">
+            <div class="vehicle-count-header">
+              <label>VSAV</label>
+              <div class="counter-container">
+                <button type="button" class="counter-btn minus" onclick="decrementVehicle('VSAVDepart')" id="VSAVDepartMinus">−</button>
+                <span class="counter-value" id="VSAVDepart">0</span>
+                <button type="button" class="counter-btn plus" onclick="incrementVehicle('VSAVDepart')">+</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- FPT -->
+          <div class="vehicle-count">
+            <div class="vehicle-count-header">
+              <label>FPT</label>
+              <div class="counter-container">
+                <button type="button" class="counter-btn minus" onclick="decrementVehicle('FPTDepart')" id="FPTDepartMinus">−</button>
+                <span class="counter-value" id="FPTDepart">0</span>
+                <button type="button" class="counter-btn plus" onclick="incrementVehicle('FPTDepart')">+</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- FPTSR -->
+          <div class="vehicle-count">
+            <div class="vehicle-count-header">
+              <label>FPTSR</label>
+              <div class="counter-container">
+                <button type="button" class="counter-btn minus" onclick="decrementVehicle('FPTSRDepart')" id="FPTSRDepartMinus">−</button>
+                <span class="counter-value" id="FPTSRDepart">0</span>
+                <button type="button" class="counter-btn plus" onclick="incrementVehicle('FPTSRDepart')">+</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- VSR -->
+          <div class="vehicle-count">
+            <div class="vehicle-count-header">
+              <label>VSR</label>
+              <div class="counter-container">
+                <button type="button" class="counter-btn minus" onclick="decrementVehicle('VSRDepart')" id="VSRDepartMinus">−</button>
+                <span class="counter-value" id="VSRDepart">0</span>
+                <button type="button" class="counter-btn plus" onclick="incrementVehicle('VSRDepart')">+</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- EPA -->
+          <div class="vehicle-count">
+            <div class="vehicle-count-header">
+              <label>EPA</label>
+              <div class="counter-container">
+                <button type="button" class="counter-btn minus" onclick="decrementVehicle('EPADepart')" id="EPADepartMinus">−</button>
+                <span class="counter-value" id="EPADepart">0</span>
+                <button type="button" class="counter-btn plus" onclick="incrementVehicle('EPADepart')">+</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- VID -->
+          <div class="vehicle-count">
+            <div class="vehicle-count-header">
+              <label>VID</label>
+              <div class="counter-container">
+                <button type="button" class="counter-btn minus" onclick="decrementVehicle('VIDDepart')" id="VIDDepartMinus">−</button>
+                <span class="counter-value" id="VIDDepart">0</span>
+                <button type="button" class="counter-btn plus" onclick="incrementVehicle('VIDDepart')">+</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Chef de groupe -->
+          <div class="vehicle-count">
+            <div class="vehicle-count-header">
+              <label>Chef de groupe</label>
+              <div class="counter-container">
+                <button type="button" class="counter-btn minus" onclick="decrementVehicle('chefGroupeDepart')" id="chefGroupeDepartMinus">−</button>
+                <span class="counter-value" id="chefGroupeDepart">0</span>
+                <button type="button" class="counter-btn plus" onclick="incrementVehicle('chefGroupeDepart')">+</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- SMUR -->
+          <div class="vehicle-count">
+            <div class="vehicle-count-header">
+              <label>SMUR</label>
+              <div class="counter-container">
+                <button type="button" class="counter-btn minus" onclick="decrementVehicle('SMURDepart')" id="SMURDepartMinus">−</button>
+                <span class="counter-value" id="SMURDepart">0</span>
+                <button type="button" class="counter-btn plus" onclick="incrementVehicle('SMURDepart')">+</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- ISP -->
+          <div class="vehicle-count">
+            <div class="vehicle-count-header">
+              <label>ISP</label>
+              <div class="counter-container">
+                <button type="button" class="counter-btn minus" onclick="decrementVehicle('ISPDepart')" id="ISPDepartMinus">−</button>
+                <span class="counter-value" id="ISPDepart">0</span>
+                <button type="button" class="counter-btn plus" onclick="incrementVehicle('ISPDepart')">+</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Renfort spécifique -->
+          <div class="vehicle-count">
+            <div class="vehicle-count-header">
+              <label>Renfort spécifique</label>
+              <div class="counter-container">
+                <button type="button" class="counter-btn minus" onclick="decrementVehicle('vehiculeSpecifiqueDepart')" id="vehiculeSpecifiqueDepartMinus">−</button>
+                <span class="counter-value" id="vehiculeSpecifiqueDepart">0</span>
+                <button type="button" class="counter-btn plus" onclick="incrementVehicle('vehiculeSpecifiqueDepart')">+</button>
+              </div>
+            </div>
+            <div id="vehiculeSpecifiqueDepartDetails" class="vehicle-count-details hidden">
+              <input type="text" placeholder="Préciser le renfort spécifique" id="vehiculeSpecifiqueDepartText">
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="navigation-buttons">
@@ -1226,6 +1366,8 @@
           <option value="Fumée suspecte">Fumée suspecte</option>
           <option value="Odeur de brulé">Odeur de brulé</option>
           <option value="Feu de cheminée">Feu de cheminée</option>
+          <option value="Intoxication au monoxyde de carbone (CO)">Intoxication au monoxyde de carbone (CO)</option>
+          <option value="Personne bloquée dans un ascenseur">Personne bloquée dans un ascenseur</option>
           <option value="Autre type de feu">Autre type de feu</option>
         </select>
       </div>
@@ -1921,7 +2063,7 @@
 
       <div class="navigation-buttons">
         <button type="button" class="prev-btn" onclick="goToStep(3)">← Précédent</button>
-        <button type="button" onclick="displayGeneratedMessage()">Suivant →</button>
+        <button type="button" onclick="goToStep(5)">Suivant →</button>
       </div>
     </div>
 
@@ -1933,7 +2075,7 @@
         <!-- VSAV -->
         <div class="vehicle-count">
           <div class="vehicle-count-header">
-            <label>VSAV <span class="suggestion-tag hidden" id="VSAVSuggestion"></span></label>
+            <label>VSAV <span class="suggestion-tag hidden" id="VSAVSuggestion"></span><span class="suggestion-tag engaged-tag hidden" id="VSAVEngaged"></span></label>
             <div class="counter-container">
               <button type="button" class="counter-btn minus" onclick="decrementVehicle('VSAV')" id="VSAVMinus">−</button>
               <span class="counter-value" id="VSAV">0</span>
@@ -1945,7 +2087,7 @@
         <!-- FPT -->
         <div class="vehicle-count">
           <div class="vehicle-count-header">
-            <label>FPT <span class="suggestion-tag hidden" id="FPTSuggestion"></span></label>
+            <label>FPT <span class="suggestion-tag hidden" id="FPTSuggestion"></span><span class="suggestion-tag engaged-tag hidden" id="FPTEngaged"></span></label>
             <div class="counter-container">
               <button type="button" class="counter-btn minus" onclick="decrementVehicle('FPT')" id="FPTMinus">−</button>
               <span class="counter-value" id="FPT">0</span>
@@ -1954,10 +2096,34 @@
           </div>
         </div>
 
+        <!-- FPTSR -->
+        <div class="vehicle-count">
+          <div class="vehicle-count-header">
+            <label>FPTSR <span class="suggestion-tag engaged-tag hidden" id="FPTSREngaged"></span></label>
+            <div class="counter-container">
+              <button type="button" class="counter-btn minus" onclick="decrementVehicle('FPTSR')" id="FPTSRMinus">−</button>
+              <span class="counter-value" id="FPTSR">0</span>
+              <button type="button" class="counter-btn plus" onclick="incrementVehicle('FPTSR')">+</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- VSR -->
+        <div class="vehicle-count">
+          <div class="vehicle-count-header">
+            <label>VSR <span class="suggestion-tag engaged-tag hidden" id="VSREngaged"></span></label>
+            <div class="counter-container">
+              <button type="button" class="counter-btn minus" onclick="decrementVehicle('VSR')" id="VSRMinus">−</button>
+              <span class="counter-value" id="VSR">0</span>
+              <button type="button" class="counter-btn plus" onclick="incrementVehicle('VSR')">+</button>
+            </div>
+          </div>
+        </div>
+
         <!-- EPA -->
         <div class="vehicle-count">
           <div class="vehicle-count-header">
-            <label>EPA <span class="suggestion-tag hidden" id="EPASuggestion"></span></label>
+            <label>EPA <span class="suggestion-tag hidden" id="EPASuggestion"></span><span class="suggestion-tag engaged-tag hidden" id="EPAEngaged"></span></label>
             <div class="counter-container">
               <button type="button" class="counter-btn minus" onclick="decrementVehicle('EPA')" id="EPAMinus">−</button>
               <span class="counter-value" id="EPA">0</span>
@@ -1966,22 +2132,10 @@
           </div>
         </div>
 
-        <!-- VLSM -->
-        <div class="vehicle-count">
-          <div class="vehicle-count-header">
-            <label>VLSM</label>
-            <div class="counter-container">
-              <button type="button" class="counter-btn minus" onclick="decrementVehicle('VLSM')" id="VLSMMinus">−</button>
-              <span class="counter-value" id="VLSM">0</span>
-              <button type="button" class="counter-btn plus" onclick="incrementVehicle('VLSM')">+</button>
-            </div>
-          </div>
-        </div>
-
         <!-- VID -->
         <div class="vehicle-count">
           <div class="vehicle-count-header">
-            <label>VID</label>
+            <label>VID <span class="suggestion-tag engaged-tag hidden" id="VIDEngaged"></span></label>
             <div class="counter-container">
               <button type="button" class="counter-btn minus" onclick="decrementVehicle('VID')" id="VIDMinus">−</button>
               <span class="counter-value" id="VID">0</span>
@@ -1993,7 +2147,7 @@
         <!-- Chef de groupe -->
         <div class="vehicle-count">
           <div class="vehicle-count-header">
-            <label>Chef de groupe <span class="suggestion-tag hidden" id="chefGroupeSuggestion"></span></label>
+            <label>Chef de groupe <span class="suggestion-tag hidden" id="chefGroupeSuggestion"></span><span class="suggestion-tag engaged-tag hidden" id="chefGroupeEngaged"></span></label>
             <div class="counter-container">
               <button type="button" class="counter-btn minus" onclick="decrementVehicle('chefGroupe')" id="chefGroupeMinus">−</button>
               <span class="counter-value" id="chefGroupe">0</span>
@@ -2002,10 +2156,34 @@
           </div>
         </div>
 
+        <!-- SMUR -->
+        <div class="vehicle-count">
+          <div class="vehicle-count-header">
+            <label>SMUR</label>
+            <div class="counter-container">
+              <button type="button" class="counter-btn minus" onclick="decrementVehicle('SMUR')" id="SMURMinus">−</button>
+              <span class="counter-value" id="SMUR">0</span>
+              <button type="button" class="counter-btn plus" onclick="incrementVehicle('SMUR')">+</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ISP -->
+        <div class="vehicle-count">
+          <div class="vehicle-count-header">
+            <label>ISP <span class="suggestion-tag engaged-tag hidden" id="ISPEngaged"></span></label>
+            <div class="counter-container">
+              <button type="button" class="counter-btn minus" onclick="decrementVehicle('ISP')" id="ISPMinus">−</button>
+              <span class="counter-value" id="ISP">0</span>
+              <button type="button" class="counter-btn plus" onclick="incrementVehicle('ISP')">+</button>
+            </div>
+          </div>
+        </div>
+
         <!-- Renfort spécifique -->
         <div class="vehicle-count">
           <div class="vehicle-count-header">
-            <label>Renfort spécifique <span class="suggestion-tag hidden" id="vehiculeSpecifiqueSuggestion"></span></label>
+            <label>Renfort spécifique <span class="suggestion-tag hidden" id="vehiculeSpecifiqueSuggestion"></span><span class="suggestion-tag engaged-tag hidden" id="vehiculeSpecifiqueEngaged"></span></label>
             <div class="counter-container">
               <button type="button" class="counter-btn minus" onclick="decrementVehicle('vehiculeSpecifique')" id="vehiculeSpecifiqueMinus">−</button>
               <span class="counter-value" id="vehiculeSpecifique">0</span>
@@ -2021,10 +2199,10 @@
       <h3>Autres services</h3>
       <hr>
       <div id="autresServices">
+        <button type="button" class="toggle-btn" id="action-SMUR" onclick="toggleButton(this)">SMUR <span class="suggestion-tag hidden" id="SMURSuggestion"></span><span class="suggestion-tag engaged-tag hidden" id="SMUREngaged"></span></button>
         <button type="button" class="toggle-btn" id="action-ENEDIS" onclick="toggleButton(this)">ENEDIS</button>
         <button type="button" class="toggle-btn" id="action-RTE" onclick="toggleButton(this)">RTE <span class="suggestion-tag hidden" id="RTESuggestion"></span></button>
         <button type="button" class="toggle-btn" id="action-GRDF" onclick="toggleButton(this)">GRDF</button>
-        <button type="button" class="toggle-btn" id="action-SMUR" onclick="toggleButton(this)">SMUR <span class="suggestion-tag hidden" id="SMURSuggestion"></span></button>
         <button type="button" class="toggle-btn" id="action-gendarmerie" onclick="toggleButton(this)">Gendarmerie <span class="suggestion-tag hidden" id="gendarmerieSuggestion"></span></button>
         <button type="button" class="toggle-btn" id="action-police" onclick="toggleButton(this)">Police nationale <span class="suggestion-tag hidden" id="policeSuggestion"></span></button>
         <button type="button" class="toggle-btn" id="action-police-municipale" onclick="toggleButton(this)">Police municipale</button>
@@ -2040,8 +2218,13 @@
 
     <!-- Étape 6 : Message généré -->
     <div id="step6" class="step hidden">
+      <div class="form-group">
+        <label for="groupeHoraireAuto">Groupe horaire</label>
+        <input type="time" id="groupeHoraireAuto" name="groupeHoraireAuto" onchange="updateMessage()">
+        <button type="button" class="secondary-btn" onclick="setCurrentTime()">Actualiser l'heure</button>
+      </div>
       <textarea id="message" class="result" readonly contenteditable="true"></textarea>
-      <textarea id="additionalInfo" placeholder="Ajouter une information supplémentaire manuellement" style="width: 100%; margin-top: 10px; padding: 10px; min-height: 60px;"></textarea>
+      <textarea id="additionalInfo" placeholder="Ajouter une information supplémentaire (présence de moyens sur les lieux, secours suffisants, durée d'intervention, difficultées rencontrées..)" style="width: 100%; margin-top: 10px; padding: 10px; min-height: 100px;"></textarea>
       <div class="navigation-buttons">
         <button type="button" class="prev-btn" onclick="goToStep(5)">← Précédent</button>
         <button type="button" onclick="copyMessage()">Copier le message</button>
@@ -2057,7 +2240,7 @@
     <div class="app-info">
       <img src="icons/192.png" alt="MRP Icon" class="app-icon">
       <p class="app-name">MRP</p>
-      <p class="version-info">Version : 1.0.16</p>
+      <p class="version-info">Version : 1.0.17</p>
     </div>
     <p class="copyright">© Tael PINAULT 2025</p>
   </div>
@@ -2136,6 +2319,8 @@
           case 'Fuite de Gaz procédure classique':
           case 'Fuite de Gaz procédure renforcée':
           case 'Déclenchement alarme':
+          case 'Intoxication au monoxyde de carbone (CO)':
+          case 'Personne bloquée dans un ascenseur':
           case 'Autre type d\'intervention':
             const autreButton = document.querySelector('.nature-toggle[data-value="Autre"]');
             if (autreButton) {
@@ -2378,7 +2563,12 @@
       });
       
       // Compteurs de moyens pompiers
-      ['VSAV', 'FPT', 'EPA', 'chefGroupe', 'vehiculeSpecifique'].forEach(id => {
+      ['VSAV', 'FPT', 'FPTSR', 'VSR', 'EPA', 'chefGroupe', 'SMUR', 'ISP', 'vehiculeSpecifique'].forEach(id => {
+        updateMinusButtonState(id);
+      });
+      
+      // Compteurs de moyens au départ
+      ['VSAVDepart', 'FPTDepart', 'FPTSRDepart', 'VSRDepart', 'EPADepart', 'VIDDepart', 'chefGroupeDepart', 'SMURDepart', 'ISPDepart', 'vehiculeSpecifiqueDepart'].forEach(id => {
         updateMinusButtonState(id);
       });
     });
@@ -2562,6 +2752,12 @@
         tag.classList.add('hidden');
         tag.textContent = ''; // Réinitialiser le texte
       });
+      
+      // Réinitialiser tous les tags "déjà engagé"
+      document.querySelectorAll('.engaged-tag').forEach(tag => {
+        tag.classList.add('hidden');
+        tag.textContent = '';
+      });
 
       // Vérifier si AVP est sélectionné
       const motifDepart = document.getElementById('motifDepart').value;
@@ -2604,9 +2800,9 @@
       const vsavCount = parseInt(document.getElementById('VSAV').textContent) || 0;
       const fptCount = parseInt(document.getElementById('FPT').textContent) || 0;
       const epaCount = parseInt(document.getElementById('EPA').textContent) || 0;
-      const vlsmCount = parseInt(document.getElementById('VLSM').textContent) || 0;
       const vidCount = parseInt(document.getElementById('VID').textContent) || 0;
       const chefGroupeCount = parseInt(document.getElementById('chefGroupe').textContent) || 0;
+      const ispCount = parseInt(document.getElementById('ISP').textContent) || 0;
       const vehiculeSpecifiqueCount = parseInt(document.getElementById('vehiculeSpecifique').textContent) || 0;
 
       // Calculer le nombre de VSAV suggérés
@@ -2660,7 +2856,7 @@
       }
 
       // Ne suggérer le chef de groupe que s'il y a plus de 2 véhicules pompiers
-      const totalVehiculesPompiers = fptCount + epaCount + vsavCount + vlsmCount + vidCount;
+      const totalVehiculesPompiers = fptCount + epaCount + vsavCount + vidCount + chefGroupeCount + ispCount;
       if (totalVehiculesPompiers > 2) {
         if (chefGroupeCount > 0) {
           chefGroupeTag.textContent = `${chefGroupeCount} suggéré(s)`;
@@ -2675,6 +2871,31 @@
         vehiculeSpecifiqueTag.textContent = `${vehiculeSpecifiqueCount} suggéré(s)`;
         vehiculeSpecifiqueTag.classList.remove('hidden');
       }
+
+      // Afficher les tags "déjà engagé" pour les moyens au départ
+      const moyensEngages = {
+        'VSAV': 'VSAVDepart',
+        'FPT': 'FPTDepart',
+        'FPTSR': 'FPTSRDepart',
+        'VSR': 'VSRDepart',
+        'EPA': 'EPADepart',
+        'VID': 'VIDDepart',
+        'chefGroupe': 'chefGroupeDepart',
+        'SMUR': 'SMURDepart',
+        'ISP': 'ISPDepart',
+        'vehiculeSpecifique': 'vehiculeSpecifiqueDepart'
+      };
+
+      Object.entries(moyensEngages).forEach(([moyen, idDepart]) => {
+        const countDepart = parseInt(document.getElementById(idDepart)?.textContent || '0');
+        if (countDepart > 0) {
+          const engagedTag = document.getElementById(`${moyen}Engaged`);
+          if (engagedTag) {
+            engagedTag.textContent = `${countDepart} déjà engagé${countDepart > 1 ? 's' : ''}`;
+            engagedTag.classList.remove('hidden');
+          }
+        }
+      });
     }
 
     function generateMessage() {
@@ -2888,6 +3109,7 @@
       // Collecter toutes les informations sur les victimes
       let totalVictimes = 0;
       const allVictimDetails = [];
+      const victimCountsByType = {}; // Pour regrouper les victimes sans détails
       
       Object.entries(victimTypes).forEach(([id, label]) => {
         const count = parseInt(document.getElementById(id)?.textContent || "0");
@@ -2897,6 +3119,8 @@
           // Extraire le type court (UA, UR, etc.) du label
           const typeLabel = label.startsWith("Victime") ? label.substring(8).trim() : label;
           
+          let victimsWithDetails = 0;
+          
           // Collecter les détails de chaque victime
           for (let i = 1; i <= count; i++) {
             // Récupérer les informations de sexe et d'âge
@@ -2905,44 +3129,80 @@
             const sexe = sexeInput ? sexeInput.value : '';
             const age = ageInput ? ageInput.value : '';
             
-            let detail = "";
-            // Construire la description de la victime
-            if (sexe === 'M') {
-              detail += "1 VSM";
-            } else if (sexe === 'F') {
-              detail += "1 VSF";
-            } else {
-              detail += "1 Victime";
+            // Si la victime a des détails (sexe ou âge), afficher les détails individuels
+            if (sexe || age) {
+              let detail = "";
+              // Construire la description de la victime
+              if (sexe === 'M') {
+                detail += "1 VSM";
+              } else if (sexe === 'F') {
+                detail += "1 VSF";
+              } else {
+                detail += "1 Victime";
+              }
+              
+              // Ajouter l'âge si disponible
+              if (age) {
+                detail += ` ${age} ans`;
+              }
+              
+              // Ajouter le type de victime à la fin
+              detail += ` ${typeLabel}`;
+              
+              allVictimDetails.push(detail);
+              victimsWithDetails++;
             }
-            
-            // Ajouter l'âge si disponible
-            if (age) {
-              detail += ` ${age} ans`;
+          }
+          
+          // Si certaines victimes n'ont pas de détails, les regrouper
+          const victimsWithoutDetails = count - victimsWithDetails;
+          if (victimsWithoutDetails > 0) {
+            if (!victimCountsByType[typeLabel]) {
+              victimCountsByType[typeLabel] = 0;
             }
-            
-            // Ajouter le type de victime à la fin
-            detail += ` ${typeLabel}`;
-            
-            allVictimDetails.push(detail);
+            victimCountsByType[typeLabel] += victimsWithoutDetails;
           }
         }
       });
 
       // Générer le message pour les victimes
       if (totalVictimes > 0) {
-        // Afficher le total des victimes
+        // Cas spécial : une seule victime
         if (totalVictimes === 1) {
-          msg += `1 Victime`;
+          // Si la victime a des détails, afficher directement les détails
+          if (allVictimDetails.length > 0) {
+            msg += allVictimDetails[0] + "\n";
+          } else {
+            // Sinon, afficher le type de victime
+            const typeKeys = Object.keys(victimCountsByType);
+            if (typeKeys.length > 0) {
+              msg += `1 Victime ${typeKeys[0]}\n`;
+            } else {
+              msg += `1 Victime\n`;
+            }
+          }
         } else {
-          msg += `${totalVictimes} Victimes`;
+          // Plusieurs victimes : afficher le total avec "au total, dont"
+          msg += `${totalVictimes} Victimes au total, dont`;
+          
+          // Ajouter les compteurs groupés pour les victimes sans détails
+          const countMessages = [];
+          Object.entries(victimCountsByType).forEach(([type, count]) => {
+            if (count === 1) {
+              countMessages.push(`1 Victime ${type}`);
+            } else {
+              countMessages.push(`${count} Victimes ${type}`);
+            }
+          });
+          
+          // Combiner les détails individuels et les compteurs groupés
+          const allMessages = [...countMessages, ...allVictimDetails];
+          if (allMessages.length > 0) {
+            msg += ", " + allMessages.join(", ");
+          }
+          
+          msg += "\n";
         }
-        
-        // Ajouter les détails de chaque victime
-        if (allVictimDetails.length > 0) {
-          msg += ", " + allVictimDetails.join(", ");
-        }
-        
-        msg += "\n";
       }
 
       // Ajouter les précisions sur les victimes si présentes
@@ -3019,8 +3279,11 @@
       const moyensTypes = {
         "VSAV": "VSAV",
         "FPT": "FPT",
+        "FPTSR": "FPTSR",
+        "VSR": "VSR",
         "EPA": "EPA",
         "chefGroupe": "Chef de groupe",
+        "ISP": "ISP",
         "vehiculeSpecifique": "Véhicule spécifique"
       };
 
@@ -3103,7 +3366,7 @@
       });
 
       // Réinitialiser les compteurs de moyens pompiers
-      ['VSAV', 'FPT', 'EPA', 'chefGroupe', 'vehiculeSpecifique'].forEach(id => {
+      ['VSAV', 'FPT', 'FPTSR', 'VSR', 'EPA', 'chefGroupe', 'SMUR', 'ISP', 'vehiculeSpecifique'].forEach(id => {
         let counter = document.getElementById(id);
         if (counter) counter.textContent = '0';
       });
@@ -3142,6 +3405,12 @@
       document.querySelectorAll(".step").forEach(e => e.classList.add("hidden"));
       document.getElementById("step0").classList.replace("hidden", "active");
       updateProgress();
+      
+      // Sélectionner CATE par défaut
+      const cateButton = document.querySelector('.function-btn[onclick*="CATE"]');
+      if (cateButton) {
+        selectFonction(cateButton, 'CATE');
+      }
     }
 
     function toggleRouteInfo() {
@@ -3248,6 +3517,12 @@
         prevButton.style.display = 'none';
       }
       
+      // Sélectionner CATE par défaut au chargement
+      const cateButton = document.querySelector('.function-btn[onclick*="CATE"]');
+      if (cateButton) {
+        selectFonction(cateButton, 'CATE');
+      }
+      
       // Masquer la section "Je prévois" par défaut au démarrage
       const prevoisSection = document.getElementById('prevoisSection');
       if (prevoisSection) {
@@ -3327,8 +3602,17 @@
       }
     }
 
+    function toggleMoyensDepart() {
+      const container = document.getElementById('moyensDepartContainer');
+      const button = document.querySelector('button[onclick="toggleMoyensDepart()"]');
+      if (container && button) {
+        container.classList.toggle("hidden");
+        button.classList.toggle("selected");
+      }
+    }
+
     // Version de l'application
-    const APP_VERSION = '1.0.16';
+    const APP_VERSION = '1.0.17';
 
     // Fonction pour vérifier les mises à jour
     function checkForUpdates(isAutoCheck = false) {
@@ -3673,9 +3957,15 @@
     }; */
 
     function updateMessage() {
-      const messageTextarea = document.getElementById('messageText');
+      const messageTextarea = document.getElementById('message');
       if (messageTextarea) {
-        messageTextarea.value = generateMessage();
+        const msg = generateMessage();
+        messageTextarea.value = msg;
+        // Ajuster la hauteur du textarea
+        setTimeout(() => {
+          messageTextarea.style.height = "auto";
+          messageTextarea.style.height = messageTextarea.scrollHeight + "px";
+        }, 0);
       }
     }
 
