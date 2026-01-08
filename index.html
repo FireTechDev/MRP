@@ -2231,9 +2231,8 @@
       <textarea id="additionalInfo" placeholder="Ajouter une information supplémentaire (présence de moyens sur les lieux, secours suffisants, durée d'intervention, difficultées rencontrées..)" style="width: 100%; margin-top: 10px; padding: 10px; min-height: 100px;"></textarea>
       <div class="navigation-buttons">
         <button type="button" class="prev-btn" onclick="goToStep(5)">← Précédent</button>
-        <button type="button" onclick="copyMessage()">Copier le message</button>
-        <button type="button" onclick="sendMail()">Envoyer par mail</button>
-        <button type="button" class="reset-btn" onclick="resetForm()">Recommencer le message</button>
+        <button type="button" onclick="shareMessage()">Partager le message</button>
+        <button type="button" class="reset-btn" onclick="confirmResetForm()">Recommencer le message</button>
       </div>
     </div>
   </div>
@@ -3390,8 +3389,14 @@
       document.body.removeChild(textArea);
     }
 
-    function sendMail() {
+    function shareMessage() {
       let msg = document.getElementById("message").value;
+      // Ajouter les informations supplémentaires si présentes
+      const additionalInfo = document.getElementById("additionalInfo")?.value || "";
+      if (additionalInfo.trim()) {
+        msg += "\n\n" + additionalInfo;
+      }
+      
       // Convertir le texte brut en texte brut
       msg = msg.replace(/\n/g, '\n')
                .replace(/<br>/g, '\n')
@@ -3399,8 +3404,46 @@
                .replace(/<\/b>/g, '')
                .replace(/<i>/g, '')
                .replace(/<\/i>/g, '');
-      let sub = encodeURIComponent("Message Radio Pompier");
-      window.location.href = `mailto:?subject=${sub}&body=${encodeURIComponent(msg)}`;
+      
+      const title = 'Message Radio Pompier';
+      const numeroIntervention = document.getElementById('interventionNumber')?.value || '';
+      const text = numeroIntervention ? `Intervention #${numeroIntervention}\n\n${msg}` : msg;
+
+      // Utiliser l'API Web Share si disponible (iOS/Android)
+      if (navigator.share) {
+        navigator.share({
+          title: title,
+          text: text
+        }).then(() => {
+          console.log('Message partagé avec succès');
+        }).catch((error) => {
+          console.log('Erreur lors du partage:', error);
+          // Fallback : copier dans le presse-papier
+          copyMessageToClipboard(msg);
+        });
+      } else {
+        // Fallback : copier dans le presse-papier
+        copyMessageToClipboard(msg);
+      }
+    }
+
+    function copyMessageToClipboard(text) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => {
+          alert('Message copié dans le presse-papier');
+        }).catch((error) => {
+          console.error('Erreur lors de la copie:', error);
+          fallbackCopyToClipboard(text);
+        });
+      } else {
+        fallbackCopyToClipboard(text);
+      }
+    }
+
+    function confirmResetForm() {
+      if (confirm('Êtes-vous sûr de vouloir recommencer le message ? Toutes les données saisies seront perdues.')) {
+        resetForm();
+      }
     }
 
     function resetForm() {
