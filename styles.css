@@ -1226,6 +1226,10 @@
       color: #999;
     }
 
+    .dark-mode .page-content p {
+      color: #b0b0b0;
+    }
+
     .dark-mode .page-content select {
       background: #2d2d2d;
       color: #e0e0e0;

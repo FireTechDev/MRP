@@ -1105,6 +1105,61 @@ copyToClipboard(url);
   }
 }
 
+function copyShareUrl() {
+  const url = 'https://firetechdev.github.io/';
+  const copyStatus = document.getElementById('copyStatus');
+  
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(url).then(() => {
+      if (copyStatus) {
+        copyStatus.textContent = 'Lien copié dans le presse-papier !';
+        copyStatus.style.display = 'block';
+        setTimeout(() => {
+          copyStatus.style.display = 'none';
+        }, 3000);
+      }
+    }).catch((error) => {
+      console.error('Erreur lors de la copie:', error);
+      fallbackCopyToClipboardForShare(url, copyStatus);
+    });
+  } else {
+    fallbackCopyToClipboardForShare(url, copyStatus);
+  }
+}
+
+function fallbackCopyToClipboardForShare(text, statusElement) {
+  const textArea = document.createElement('textarea');
+  textArea.value = text;
+  textArea.style.position = 'fixed';
+  textArea.style.left = '-999999px';
+  document.body.appendChild(textArea);
+  textArea.select();
+  
+  try {
+    document.execCommand('copy');
+    if (statusElement) {
+      statusElement.textContent = 'Lien copié dans le presse-papier !';
+      statusElement.style.display = 'block';
+      setTimeout(() => {
+        statusElement.style.display = 'none';
+      }, 3000);
+    }
+  } catch (error) {
+    console.error('Erreur lors de la copie:', error);
+    if (statusElement) {
+      statusElement.textContent = 'Erreur lors de la copie';
+      statusElement.style.color = '#f44336';
+      statusElement.style.display = 'block';
+      setTimeout(() => {
+        statusElement.style.display = 'none';
+        statusElement.style.color = '#4caf50';
+      }, 3000);
+    }
+  } finally {
+    document.body.removeChild(textArea);
+  }
+}
+
 function copyToClipboard(text) {
   if (navigator.clipboard && navigator.clipboard.writeText) {
 navigator.clipboard.writeText(text).then(() => {
@@ -2401,12 +2456,14 @@ document.addEventListener('keydown', function(event) {
 function showHomePage() {
   const termsPage = document.getElementById('termsPage');
   const settingsPage = document.getElementById('settingsPage');
+  const sharePage = document.getElementById('sharePage');
   const container = document.querySelector('.container');
   
   if (container) {
     // Cacher toutes les pages
     if (termsPage) termsPage.classList.add('hidden');
     if (settingsPage) settingsPage.classList.add('hidden');
+    if (sharePage) sharePage.classList.add('hidden');
     // Afficher le container principal
     container.style.display = 'block';
     // Fermer le menu
@@ -2417,12 +2474,14 @@ function showHomePage() {
 function showTermsPage() {
   const termsPage = document.getElementById('termsPage');
   const settingsPage = document.getElementById('settingsPage');
+  const sharePage = document.getElementById('sharePage');
   const container = document.querySelector('.container');
   
   if (termsPage && container) {
     // Cacher le container principal et les autres pages
     container.style.display = 'none';
     if (settingsPage) settingsPage.classList.add('hidden');
+    if (sharePage) sharePage.classList.add('hidden');
     // Afficher la page Conditions d'utilisation
     termsPage.classList.remove('hidden');
     // Fermer le menu
@@ -2433,12 +2492,14 @@ function showTermsPage() {
 function showSettingsPage() {
   const settingsPage = document.getElementById('settingsPage');
   const termsPage = document.getElementById('termsPage');
+  const sharePage = document.getElementById('sharePage');
   const container = document.querySelector('.container');
   
   if (settingsPage && container) {
     // Cacher le container principal et les autres pages
     container.style.display = 'none';
     if (termsPage) termsPage.classList.add('hidden');
+    if (sharePage) sharePage.classList.add('hidden');
     // Afficher la page Réglages
     settingsPage.classList.remove('hidden');
     // Mettre à jour le sélecteur avec la valeur sauvegardée
@@ -2446,6 +2507,29 @@ function showSettingsPage() {
     const themeSelect = document.getElementById('themeSelect');
     if (themeSelect) {
       themeSelect.value = savedTheme;
+    }
+    // Fermer le menu
+    closeMenu();
+  }
+}
+
+function showSharePage() {
+  const sharePage = document.getElementById('sharePage');
+  const termsPage = document.getElementById('termsPage');
+  const settingsPage = document.getElementById('settingsPage');
+  const container = document.querySelector('.container');
+  
+  if (sharePage && container) {
+    // Cacher le container principal et les autres pages
+    container.style.display = 'none';
+    if (termsPage) termsPage.classList.add('hidden');
+    if (settingsPage) settingsPage.classList.add('hidden');
+    // Afficher la page Partager l'application
+    sharePage.classList.remove('hidden');
+    // Réinitialiser le message de statut
+    const copyStatus = document.getElementById('copyStatus');
+    if (copyStatus) {
+      copyStatus.style.display = 'none';
     }
     // Fermer le menu
     closeMenu();

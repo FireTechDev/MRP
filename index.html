@@ -55,7 +55,7 @@
           <span class="material-icons">description</span>
           <span>Conditions d'utilisation</span>
         </a>
-        <a href="#" class="side-menu-item" onclick="closeMenu(); shareApplication(); return false;">
+        <a href="#" class="side-menu-item" onclick="showSharePage(); return false;">
           <span class="material-icons">ios_share</span>
           <span>Partager l'application</span>
         </a>
@@ -1256,6 +1256,33 @@
           <option value="light">Clair</option>
           <option value="dark">Sombre</option>
         </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Page Partager l'application -->
+  <div id="sharePage" class="page hidden">
+    <div class="page-content">
+      <button class="back-button" onclick="goBack()">
+        <span class="material-icons">arrow_back</span>
+        <span>Retour</span>
+      </button>
+      <h1>Partager l'application</h1>
+      
+      <div style="margin-top: 24px;">
+        <p style="margin-bottom: 16px; color: #666;">Partagez MRP avec vos collègues pour faciliter la génération de messages radio.</p>
+        
+        <button type="button" class="primary-btn" onclick="shareApplication()" style="width: 100%; padding: 14px; font-size: 16px; margin-bottom: 12px;">
+          <span class="material-icons" style="vertical-align: middle; margin-right: 8px; font-size: 20px;">ios_share</span>
+          Partager via l'application
+        </button>
+        
+        <button type="button" class="secondary-btn" onclick="copyShareUrl()" style="width: 100%; padding: 14px; font-size: 16px;">
+          <span class="material-icons" style="vertical-align: middle; margin-right: 8px; font-size: 20px;">content_copy</span>
+          Copier le lien
+        </button>
+        
+        <p id="copyStatus" style="margin-top: 12px; color: #4caf50; font-size: 14px; display: none;"></p>
       </div>
     </div>
   </div>
