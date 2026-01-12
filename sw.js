@@ -1,10 +1,12 @@
 // Version de l'application
 const APP_VERSION = '1.0.18';
 
-const CACHE_NAME = 'mrp-cache-v1';
+const CACHE_NAME = 'mrp-cache-v2';
 const urlsToCache = [
   '/MRP/',
   '/MRP/index.html',
+  '/MRP/styles.css',
+  '/MRP/script.js',
   '/MRP/manifest.json',
   '/MRP/icon-192x192.png',
   '/MRP/icon-512x512.png',

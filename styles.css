@@ -1,0 +1,1118 @@
+    @font-face {
+      font-family: 'Material Icons';
+      font-style: normal;
+      font-weight: 400;
+      src: url('icons/material-icons.woff2') format('woff2');
+    }
+
+    .material-icons {
+      font-family: 'Material Icons';
+      font-weight: normal;
+      font-style: normal;
+      font-size: 24px;
+      line-height: 1;
+      letter-spacing: normal;
+      text-transform: none;
+      display: inline-block;
+      white-space: nowrap;
+      word-wrap: normal;
+      direction: ltr;
+      -webkit-font-feature-settings: 'liga';
+      font-feature-settings: 'liga';
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .progress-step::before {
+      content: '';
+      width: 24px;
+      height: 24px;
+      background: transparent;
+      border-radius: 50%;
+      margin-bottom: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Material Icons';
+      font-size: 22px;
+      line-height: 1;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .progress-step[data-step="inter"]::before {
+      content: 'description';
+    }
+
+    .progress-step[data-step="je-suis"]::before {
+      content: 'my_location';
+    }
+
+    .progress-step[data-step="je-vois"]::before {
+      content: 'visibility';
+    }
+
+    .progress-step[data-step="victimes"]::before {
+      content: 'personal_injury';
+    }
+
+    .progress-step[data-step="je-fais"]::before {
+      content: 'touch_app';
+    }
+
+    .progress-step[data-step="je-demande"]::before {
+      content: 'local_fire_department';
+    }
+
+    .progress-step[data-step="message"]::before {
+      content: 'phone_android';
+    }
+
+    :root {
+      --primary-color: #007BFF;
+      --secondary-color: #6c757d;
+      --background-color: #f8f9fa;
+      --text-color: #333;
+      --border-color: #dee2e6;
+      --danger-color: red;
+      --container-bg: #fff;
+      --box-shadow: 0 0 8px rgba(0,0,0,0.2);
+      --border-radius: 8px;
+      --font-family: Arial, sans-serif;
+      --font-size: 18px;
+      --padding: 15px;
+      --margin: 10px;
+    }
+
+    /* Base styles */
+    body {
+      font-family: var(--font-family);
+      margin: 0;
+      padding: var(--margin);
+      padding-bottom: 0; /* Le padding est géré par le container */
+      background: var(--background-color);
+      font-size: var(--font-size);
+      line-height: 1.5;
+    }
+
+    /* Layout */
+    .container {
+      max-width: 100%;
+      margin: 0;
+      background: transparent;
+      padding: var(--padding);
+      padding-bottom: 75px; /* Espace pour le menu flottant en bas */
+      box-shadow: none;
+      border-radius: 0;
+    }
+
+    /* Typography */
+    h1, h3, h4 {
+      margin: 15px 0 10px;
+      color: #333;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 1.2rem;
+      margin: 0.5rem 0;
+    }
+
+    h3 {
+      font-size: 1rem;
+      font-weight: 500;
+    }
+
+    h4 {
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    /* Form elements */
+    input, select, textarea, button, .toggle-btn {
+      width: 100%;
+      padding: var(--padding);
+      margin: 8px 0;
+      box-sizing: border-box;
+      font-size: var(--font-size);
+      border-radius: 5px;
+      font-family: var(--font-family);
+    }
+
+    /* Fix pour le champ groupe horaire sur iOS */
+    .form-group {
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+    
+    #groupeHoraireAuto {
+      width: 100% !important;
+      max-width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+      -webkit-appearance: none;
+      appearance: none;
+      overflow: hidden;
+    }
+
+    button, .toggle-btn {
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-align: center;
+    }
+
+    button {
+      background-color: var(--primary-color);
+      color: #fff;
+    }
+
+    .toggle-btn {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      background: rgba(0, 123, 255, 0.05);
+      color: var(--primary-color);
+      border: 1px solid var(--primary-color);
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+
+    .toggle-btn:hover {
+      background: rgba(0, 123, 255, 0.1);
+    }
+
+    .toggle-btn.selected, #toggleRouteBtn.active {
+      background-color: var(--primary-color);
+      color: white;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .prev-btn { background-color: grey; }
+    .reset-btn { background-color: var(--danger-color); }
+    
+    /* Masquer le bouton Précédent sur l'étape INTER */
+    #step0 .prev-btn {
+      display: none;
+    }
+    
+    /* Progress bar - Menu flottant en bas */
+    .progress-bar {
+      display: flex;
+      justify-content: space-between;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #ffffff;
+      padding: 10px 4px 8px 4px;
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.15);
+      z-index: 1000;
+      border-top: 1px solid #e0e0e0;
+      margin: 0;
+      max-width: 100%;
+      box-sizing: border-box;
+      min-height: 60px;
+      align-items: center;
+    }
+
+    .progress-step {
+      flex: 1;
+      padding: 4px 2px;
+      text-align: center;
+      font-size: 10px;
+      font-weight: 500;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      white-space: nowrap;
+      text-transform: lowercase;
+      color: #666;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      transition: all 0.2s ease;
+      background: transparent;
+      min-width: 0;
+    }
+
+    .progress-step.active {
+      color: var(--primary-color);
+      background: rgba(0, 123, 255, 0.1);
+    }
+    
+    .progress-step:active {
+      background: rgba(0, 123, 255, 0.2);
+    }
+
+    .progress-step::before {
+      color: #666;
+      transition: color 0.2s ease;
+    }
+    
+    .progress-step.active::before {
+      color: var(--primary-color);
+    }
+
+    @media (max-width: 480px) {
+      .progress-bar {
+        padding: 8px 2px 6px 2px;
+        min-height: 56px;
+      }
+      
+      .progress-step {
+        font-size: 9px;
+        padding: 2px 1px;
+      }
+      
+      .progress-step::before {
+        font-size: 20px;
+        width: 22px;
+        height: 22px;
+      }
+    }
+
+    /* Controls */
+    .number-control {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .number-control button {
+      width: 30%;
+    }
+
+    .number-control input {
+      width: 40%;
+      text-align: center;
+    }
+
+    /* States and containers */
+    .hidden { display: none !important; }
+    
+    .step {
+      display: none;
+      animation: fadeIn 0.5s;
+    }
+
+    .step.active { display: block; }
+
+    /* Style pour les sections de risque */
+    .risk-section {
+      margin-top: 8px;
+      padding: 8px;
+      background: #f8f9fa;
+      border-radius: 5px;
+    }
+
+    .risk-section:first-child {
+      margin-top: 16px;
+    }
+
+    .risk-section label {
+      font-size: var(--font-size);
+      font-weight: normal;
+      margin-bottom: 8px;
+      color: var(--text-color);
+      display: block;
+    }
+
+    .risk-section .toggle-btn {
+      margin-right: 8px;
+      display: inline-block;
+    }
+
+    .risk-section .toggle-btn:last-child {
+      margin-right: 0;
+    }
+
+    .risk-section .details {
+      margin-top: 8px;
+    }
+
+    /* Style pour les conteneurs de boutons */
+    #propagationBatimentContainer,
+    #isoleBatimentContainer,
+    #propagationVehiculeContainer,
+    #isoleVehiculeContainer {
+      display: flex;
+      flex-direction: row;
+      gap: 8px;
+    }
+
+    /* Style pour les éléments cachés */
+    .hidden {
+      display: none !important;
+    }
+
+    /* Style pour les éléments cachés */
+    .hidden {
+      display: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+      height: 0 !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      border: none !important;
+    }
+
+    /* Style pour les conteneurs de détails */
+    #propagationBatimentDetails,
+    #isoleBatimentDetails {
+      margin-top: 8px;
+      transition: all 0.3s ease;
+    }
+
+    #propagationBatimentDetails.hidden,
+    #isoleBatimentDetails.hidden {
+      display: none;
+    }
+
+    /* Style pour les sous-conteneurs */
+    .sub-container {
+      margin: 20px 0;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 5px;
+      border: 1px solid #e9ecef;
+    }
+
+    /* Style spécifique pour le formulaire AVP */
+    #avpFields {
+      background: white;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    /* Toggle elements */
+    .toggle-btn.selected, #toggleRouteBtn.active {
+      background-color: var(--primary-color);
+      color: white;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .toggle-icon {
+      display: inline-block;
+      font-size: 20px;
+      font-weight: bold;
+      margin-left: 5px;
+      transition: transform 0.3s;
+    }
+
+    .toggle-icon.rotated {
+      transform: rotate(90deg);
+    }
+
+    /* Info elements */
+    .info-text {
+      background: #e9ecef;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      font-size: 14px;
+      line-height: 1.4;
+      white-space: pre-line;
+    }
+
+    .result {
+      background: #e9ecef;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      font-size: 14px;
+      line-height: 1.4;
+      white-space: pre-line;
+      margin-top: 15px;
+      white-space: pre-wrap;
+      font-family: var(--font-family);
+      font-size: var(--font-size);
+      line-height: 1.5;
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .progress-step {
+        font-size: 10px;
+        padding: 3px;
+      }
+      
+      input, select, textarea, button {
+        font-size: 16px;
+      }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    /* Update button styles */
+    .update-container {
+      text-align: center;
+      margin: 20px auto;
+      max-width: 600px;
+      color: #666;
+      font-size: 14px;
+    }
+    
+    .offline-info {
+      margin-bottom: 5px;
+    }
+    
+    .update-link, .share-link {
+      color: #007BFF;
+      text-decoration: none;
+      font-size: 13px;
+    }
+    
+    .update-link:hover, .share-link:hover {
+      text-decoration: underline;
+    }
+    
+    .share-link {
+      margin-top: 5px;
+    }
+    
+    .update-status {
+      margin-top: 5px;
+      color: #28a745;
+      font-size: 13px;
+      display: none;
+    }
+    
+    .version-info {
+      color: #666;
+      font-size: 13px;
+      margin-left: 5px;
+    }
+
+    /* Toggle buttons for address confirmation */
+    .address-toggle-container {
+      display: flex;
+      width: 100%;
+      margin: 8px 0;
+      border: 1px solid var(--primary-color);
+      border-radius: 5px;
+      overflow: hidden;
+      background: #f8f9fa;
+    }
+
+    .address-toggle-btn {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      background: transparent;
+      color: #999;
+      font-size: var(--font-size);
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.3s ease;
+      position: relative;
+      margin: 0;
+    }
+
+    .address-toggle-btn.selected {
+      background: white;
+      color: var(--primary-color);
+      font-weight: 500;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .address-toggle-btn:not(.selected) {
+      background: transparent;
+    }
+
+    .address-toggle-btn:first-child {
+      border-right: 1px solid var(--primary-color);
+    }
+
+    .gps-btn {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      background: rgba(0, 123, 255, 0.05);
+      border: 1px solid var(--primary-color);
+      border-radius: var(--border-radius);
+      color: var(--primary-color);
+      font-size: var(--font-size);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+
+    .gps-btn:hover {
+      background: rgba(0, 123, 255, 0.1);
+    }
+
+    .secondary-btn {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      background: rgba(0, 123, 255, 0.05);
+      border: 1px solid var(--primary-color);
+      border-radius: var(--border-radius);
+      color: var(--primary-color);
+      font-size: var(--font-size);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+
+    .secondary-btn:hover {
+      background: rgba(0, 123, 255, 0.1);
+    }
+
+    .gps-icon {
+      margin-right: 5px;
+    }
+
+    .gps-info {
+      font-size: 12px;
+      color: #666;
+      margin-top: -5px;
+      margin-bottom: 5px;
+      font-style: italic;
+    }
+
+    /* Style spécifique pour les boutons des sections victimes, je fais, je demande */
+    #victimsToggleContainer .toggle-btn,
+    #actionsContainer .toggle-btn,
+    #demandeActions .toggle-btn,
+    #prevoisActions .toggle-btn,
+    #natureInterventionContainer .toggle-btn {
+      background: rgba(0, 123, 255, 0.05);
+      color: var(--primary-color);
+      border: 1px solid var(--primary-color);
+    }
+
+    #victimsToggleContainer .toggle-btn:hover,
+    #actionsContainer .toggle-btn:hover,
+    #demandeActions .toggle-btn:hover,
+    #prevoisActions .toggle-btn:hover,
+    #natureInterventionContainer .toggle-btn:hover {
+      background: rgba(0, 123, 255, 0.1);
+    }
+
+    #victimsToggleContainer .toggle-btn.selected,
+    #actionsContainer .toggle-btn.selected,
+    #demandeActions .toggle-btn.selected,
+    #prevoisActions .toggle-btn.selected,
+    #natureInterventionContainer .toggle-btn.selected {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    /* Style pour le bouton "Je prévois" */
+    #togglePrevoisBtn {
+      background: rgba(0, 123, 255, 0.05);
+      color: var(--primary-color);
+      border: 1px solid var(--primary-color);
+    }
+
+    #togglePrevoisBtn:hover {
+      background: rgba(0, 123, 255, 0.1);
+    }
+
+    #togglePrevoisBtn.active {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    .copyright {
+      margin-top: 20px;
+      font-size: 12px;
+      color: #999;
+    }
+
+    /* Ajout des styles pour le nouveau compteur */
+    .vehicle-count {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 10px;
+      padding: 5px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .vehicle-count-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      margin-bottom: 8px;
+    }
+
+    .vehicle-count label {
+      margin: 0;
+      color: #333;
+      font-size: 16px;
+      font-weight: normal;
+      flex: 1;
+    }
+
+    .vehicle-count .counter-container {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .vehicle-count .counter-btn {
+      width: 32px;
+      height: 32px;
+      border: none;
+      background: #007BFF;
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: all 0.2s ease;
+      padding: 0;
+      line-height: 1;
+    }
+
+    .vehicle-count .counter-btn:hover {
+      background: #0056b3;
+    }
+
+    .vehicle-count .counter-btn.minus {
+      background-color: #007BFF;
+    }
+
+    .vehicle-count .counter-btn.minus:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .vehicle-count .counter-btn.minus.always-active {
+      background-color: #007BFF;
+      color: white;
+      cursor: pointer;
+    }
+
+    .vehicle-count .counter-btn.minus.always-active:disabled {
+      opacity: 1;
+      cursor: pointer;
+      background-color: #007BFF;
+      color: white;
+    }
+
+    .vehicle-count .counter-btn.plus {
+      background-color: #007BFF;
+    }
+
+    .vehicle-count .counter-value {
+      font-size: 24px;
+      font-weight: bold;
+      color: #333;
+      border: none;
+      background: transparent;
+      width: auto;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+      min-width: 30px;
+    }
+
+    .vehicle-count .counter-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+
+    .vehicle-count-details {
+      width: 100%;
+      margin-top: 8px;
+    }
+
+    .vehicle-count-details select {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+
+    #vehiculeLegerDetails,
+    #poidsLourdDetails,
+    #deuxRouesDetails,
+    #busDetails {
+      margin-top: 10px;
+      width: 100%;
+      clear: both;
+      display: block;
+    }
+
+    #vehiculeLegerDetails input,
+    #poidsLourdDetails input,
+    #deuxRouesDetails input,
+    #busDetails input {
+      width: 100%;
+      margin-top: 10px;
+      display: block;
+    }
+
+    /* Style pour les sections de risque */
+    .risk-section {
+      margin: 8px 0;
+      padding: 8px;
+      background: #f8f9fa;
+      border-radius: 5px;
+    }
+
+    .risk-section h4 {
+      margin-bottom: 5px;
+      color: #333;
+    }
+
+    #propagationVehiculeContainer,
+    #isoleVehiculeContainer {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 5px;
+    }
+
+    #propagationVehiculeDetails,
+    #isoleVehiculeDetails {
+      margin-top: 5px;
+    }
+
+    #propagationVehiculeDetails input,
+    #isoleVehiculeDetails input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    /* Style pour les tags de suggestion */
+    .suggestion-tag {
+      display: inline-block;
+      background-color: #e3f2fd;
+      color: #1976d2;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 0.8em;
+      margin-left: 8px;
+      border: 1px solid #1976d2;
+      white-space: nowrap;
+      vertical-align: middle;
+      line-height: 1.2;
+    }
+
+    .engaged-tag {
+      background-color: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffc107;
+    }
+
+    /* Style pour le lien toggle */
+    .link-toggle {
+      color: var(--primary-color);
+      text-decoration: none;
+      cursor: pointer;
+      display: inline-block;
+      margin: 10px 0;
+    }
+
+    .link-toggle:hover {
+      text-decoration: underline;
+    }
+
+    .vehicle-count label {
+      display: flex;
+      align-items: center;
+    }
+
+    /* Style pour les boutons avec tags */
+    .toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 8px 16px;
+      position: relative;
+    }
+
+    .toggle-btn .suggestion-tag {
+      margin-left: 8px;
+      background-color: #e3f2fd;
+      color: #1976d2;
+      font-weight: 500;
+    }
+
+    /* Ajout du style pour la section des victimes */
+    #victimsFields {
+      background-color: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+
+    /* Ajout du style pour la section des moyens pompiers */
+    #moyensPompiers {
+      background-color: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+
+    .app-info {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 20px 0;
+    }
+
+    .app-icon {
+      width: 64px;
+      height: 64px;
+      margin-bottom: 10px;
+      border-radius: 50%;
+      object-fit: cover;
+      background-color: white;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .app-name {
+      font-size: 24px;
+      font-weight: bold;
+      margin: 5px 0;
+    }
+
+    .version-info {
+      font-size: 14px;
+      color: #666;
+      margin: 5px 0;
+    }
+
+    .update-container {
+      text-align: center;
+      margin-top: 20px;
+      padding: 20px;
+    }
+
+    .offline-info {
+      margin-bottom: 10px;
+    }
+
+    .update-link {
+      display: block;
+      margin: 10px 0;
+      color: #0066cc;
+      text-decoration: none;
+    }
+
+    .copyright {
+      margin-top: 20px;
+      font-size: 12px;
+      color: #666;
+    }
+
+    /* Style pour les sections de risque dans le feu de véhicule */
+    .vehicle-risk-section {
+      margin: 2px 0;
+      padding: 8px;
+      background: transparent;
+      border-radius: 5px;
+    }
+
+    /* Style pour le formulaire Feu de véhicule */
+    #feuVehiculeFields {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Style pour le formulaire Feu de bâtiment */
+    #batimentFields {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Style pour le formulaire Chute de ligne électrique */
+    #chuteLigneFields {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Styles existants */
+    
+    .divider {
+      height: 1px;
+      background-color: #e0e0e0; /* Gris clair */
+      margin: 16px 0;
+    }
+
+    .next-button {
+      margin-top: 32px !important; /* Ajout d'espace au-dessus des boutons Suivant uniquement */
+    }
+
+    .navigation-buttons {
+      margin-top: 32px;
+    }
+
+    .surface-buttons {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .surface-btn {
+      padding: 10px;
+      border: 1px solid var(--primary-color);
+      border-radius: var(--border-radius);
+      background: rgba(0, 123, 255, 0.1);
+      color: var(--primary-color);
+      font-size: var(--font-size);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .surface-btn:hover {
+      background: rgba(0, 123, 255, 0.2);
+    }
+
+    .surface-btn.selected {
+      background: var(--primary-color);
+      color: white;
+    }
+
+    .surface-custom {
+      margin-bottom: 16px;
+    }
+
+    #customSurfaceInput {
+      margin-top: 8px;
+    }
+
+    #customSurfaceInput input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid var(--primary-color);
+      border-radius: var(--border-radius);
+      font-size: var(--font-size);
+    }
+
+    .risk-section {
+      margin-top: 8px;
+    }
+
+    .risk-section:first-child {
+      margin-top: 16px;
+    }
+
+    .risk-section h4 {
+      font-size: var(--font-size);
+      font-weight: normal;
+      margin-bottom: 8px;
+      color: var(--text-color);
+    }
+
+    .risk-section .toggle-btn {
+      margin-right: 8px;
+    }
+
+    .risk-section .toggle-btn:last-child {
+      margin-right: 0;
+    }
+
+    .risk-section .details {
+      margin-top: 8px;
+    }
+
+    .function-buttons {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .function-btn {
+      flex: 1;
+      text-align: center;
+      padding: 10px;
+      font-size: 14px;
+    }
+
+    .function-notice {
+      font-style: italic;
+      color: #666;
+      margin-top: -10px;
+      margin-bottom: 15px;
+      font-size: 12px;
+    }
+
+    .minus-btn:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+
+    .address-buttons {
+      display: flex;
+      width: 100%;
+      margin: 8px 0;
+      gap: 8px;
+    }
+
+    .secondary-btn {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      background: rgba(0, 123, 255, 0.05);
+      border: 1px solid var(--primary-color);
+      border-radius: var(--border-radius);
+      color: var(--primary-color);
+      font-size: var(--font-size);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+
+    .secondary-btn:hover {
+      background: rgba(0, 123, 255, 0.1);
+    }
+
+    .secondary-btn.selected {
+      background-color: var(--primary-color);
+      color: white;
+      font-weight: 500;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Style pour les sections de risque dans le feu de bâtiment */
+    .risk-section {
+      margin: 8px 0;
+      padding: 8px;
+      background: transparent;
+      border-radius: 5px;
+    }
+
+    /* CSS pour la section "Je prévois" */
+    #prevoisSection h3 {
+      margin-top: 30px;
+    }
+
+    .copyright {
+      margin-top: 20px;
+      font-size: 12px;
+      color: #999;
+    }
+
+    /* Ajout des styles pour le nouveau compteur */
