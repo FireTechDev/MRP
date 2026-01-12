@@ -355,6 +355,20 @@
     }
 
     .side-menu-footer .copyright {
+      color: #666;
+    }
+
+    .side-menu-footer .copyright a {
+      color: inherit;
+      text-decoration: underline;
+      transition: opacity 0.2s;
+    }
+
+    .side-menu-footer .copyright a:hover {
+      opacity: 0.7;
+    }
+
+    .side-menu-footer .copyright {
       font-size: 11px;
       margin-top: 12px;
     }
@@ -1220,6 +1234,14 @@
 
     .dark-mode .version-info {
       color: #b0b0b0;
+    }
+
+    .dark-mode .side-menu-footer .copyright a {
+      color: #b0b0b0;
+    }
+
+    .dark-mode .side-menu-footer .copyright a:hover {
+      opacity: 0.8;
     }
 
     .dark-mode .copyright {
