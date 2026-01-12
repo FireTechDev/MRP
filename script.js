@@ -2367,13 +2367,31 @@ function showAboutPage() {
 
 function showHomePage() {
   const aboutPage = document.getElementById('aboutPage');
+  const termsPage = document.getElementById('termsPage');
   const container = document.querySelector('.container');
   
-  if (aboutPage && container) {
-    // Cacher la page À propos
-    aboutPage.classList.add('hidden');
+  if (container) {
+    // Cacher toutes les pages
+    if (aboutPage) aboutPage.classList.add('hidden');
+    if (termsPage) termsPage.classList.add('hidden');
     // Afficher le container principal
     container.style.display = 'block';
+    // Fermer le menu
+    closeMenu();
+  }
+}
+
+function showTermsPage() {
+  const termsPage = document.getElementById('termsPage');
+  const container = document.querySelector('.container');
+  const aboutPage = document.getElementById('aboutPage');
+  
+  if (termsPage && container) {
+    // Cacher le container principal et la page À propos
+    container.style.display = 'none';
+    if (aboutPage) aboutPage.classList.add('hidden');
+    // Afficher la page Conditions d'utilisation
+    termsPage.classList.remove('hidden');
     // Fermer le menu
     closeMenu();
   }
