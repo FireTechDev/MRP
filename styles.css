@@ -162,7 +162,8 @@
     .burger-menu {
       display: flex;
       flex-direction: column;
-      justify-content: space-around;
+      justify-content: center;
+      align-items: center;
       width: 32px;
       height: 32px;
       min-width: 32px;
@@ -175,6 +176,7 @@
       transition: transform 0.3s ease;
       flex-shrink: 0;
       -webkit-tap-highlight-color: transparent;
+      gap: 4px;
     }
 
     .burger-menu span {
@@ -184,6 +186,8 @@
       border-radius: 2px;
       transition: all 0.3s ease;
       transform-origin: center;
+      display: block;
+      margin: 0;
     }
 
     .burger-menu.active span:nth-child(1) {
@@ -378,7 +382,7 @@
       background: transparent;
       padding: var(--padding);
       padding-top: 16px; /* Espace harmonieux sous la barre de menu */
-      padding-bottom: calc(75px + max(env(safe-area-inset-bottom), 8px) + 8px); /* Espace pour le menu flottant en bas + safe area + espace pour barre système */
+      padding-bottom: calc(100px + max(env(safe-area-inset-bottom), 8px) + 8px); /* Espace pour le menu flottant en bas + safe area + espace pour barre système + espace supplémentaire */
       box-shadow: none;
       border-radius: 0;
     }
@@ -1083,6 +1087,10 @@
 
     .dark-mode .prev-btn {
       background-color: #555;
+    }
+
+    .dark-mode .reset-btn {
+      background-color: var(--danger-color);
     }
 
     .dark-mode .result {
