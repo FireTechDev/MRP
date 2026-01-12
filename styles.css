@@ -99,7 +99,7 @@
       margin: 0;
       background: transparent;
       padding: var(--padding);
-      padding-bottom: calc(75px + env(safe-area-inset-bottom)); /* Espace pour le menu flottant en bas + safe area */
+      padding-bottom: calc(75px + max(env(safe-area-inset-bottom), 8px) + 8px); /* Espace pour le menu flottant en bas + safe area + espace pour barre système */
       box-shadow: none;
       border-radius: 0;
     }
@@ -207,7 +207,8 @@
       left: 0;
       right: 0;
       background: #ffffff;
-      padding: 12px 4px calc(12px + env(safe-area-inset-bottom)) 4px;
+      /* Padding bottom: 12px de base + safe area (min 8px) + 8px supplémentaire pour la barre système iOS */
+      padding: 12px 4px calc(12px + max(env(safe-area-inset-bottom), 8px) + 8px) 4px;
       box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.15);
       z-index: 1000;
       border-top: 1px solid #e0e0e0;
@@ -263,7 +264,7 @@
 
     @media (max-width: 480px) {
       .progress-bar {
-        padding: 12px 2px calc(12px + env(safe-area-inset-bottom)) 2px;
+        padding: 12px 2px calc(12px + max(env(safe-area-inset-bottom), 8px) + 8px) 2px;
         min-height: 49px;
       }
       
