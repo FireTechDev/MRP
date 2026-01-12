@@ -317,6 +317,60 @@
       font-weight: 500;
     }
 
+    /* Footer du menu latéral */
+    .side-menu-footer {
+      margin-top: auto;
+      padding: 16px;
+      border-top: 1px solid #e0e0e0;
+      background: #f8f9fa;
+    }
+
+    .side-menu-footer .update-container {
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+
+    .side-menu-footer .app-info {
+      margin: 15px 0;
+    }
+
+    .side-menu-footer .app-icon {
+      width: 48px;
+      height: 48px;
+    }
+
+    .side-menu-footer .app-name {
+      font-size: 18px;
+      margin: 8px 0;
+    }
+
+    .side-menu-footer .version-info {
+      font-size: 12px;
+      margin: 4px 0;
+    }
+
+    .side-menu-footer .copyright {
+      font-size: 11px;
+      margin-top: 12px;
+    }
+
+    .side-menu-footer .offline-info {
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+
+    .side-menu-footer .update-link {
+      font-size: 12px;
+      display: block;
+      margin: 8px 0;
+    }
+
+    .side-menu-footer .update-status {
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
     /* Layout */
     .container {
       max-width: 100%;

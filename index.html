@@ -51,10 +51,6 @@
           <span class="material-icons">home</span>
           <span>Accueil</span>
         </a>
-        <a href="#" class="side-menu-item" onclick="showAboutPage(); return false;">
-          <span class="material-icons">info</span>
-          <span>À propos</span>
-        </a>
         <a href="#" class="side-menu-item" onclick="showTermsPage(); return false;">
           <span class="material-icons">description</span>
           <span>Conditions d'utilisation</span>
@@ -64,6 +60,19 @@
           <span>Partager l'application</span>
         </a>
       </nav>
+      <div class="side-menu-footer">
+        <div class="update-container">
+          <p class="offline-info"><i>L'application fonctionne même hors ligne.</i></p>
+          <a href="#" id="updateLink" class="update-link" onclick="console.log('Bouton de mise à jour cliqué'); checkForUpdates(); return false;">Vérifier si l'app est à jour</a>
+          <p id="updateStatus" class="update-status"></p>
+          <div class="app-info">
+            <img src="icons/192.png" alt="MRP Icon" class="app-icon">
+            <p class="app-name">MRP</p>
+            <p class="version-info">Version : 1.0.20</p>
+          </div>
+          <p class="copyright">© Tael PINAULT 2025</p>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -1199,23 +1208,6 @@
       </div>
     </div>
   </div>
-  <!-- Page À propos -->
-  <div id="aboutPage" class="page hidden">
-    <div class="page-content">
-      <div class="update-container">
-        <p class="offline-info"><i>L'application fonctionne même hors ligne.</i></p>
-        <a href="#" id="updateLink" class="update-link" onclick="console.log('Bouton de mise à jour cliqué'); checkForUpdates(); return false;">Vérifier si l'app est à jour</a>
-        <p id="updateStatus" class="update-status"></p>
-        <div class="app-info">
-          <img src="icons/192.png" alt="MRP Icon" class="app-icon">
-          <p class="app-name">MRP</p>
-          <p class="version-info">Version : 1.0.20</p>
-        </div>
-        <p class="copyright">© Tael PINAULT 2025</p>
-      </div>
-    </div>
-  </div>
-
   <!-- Page Conditions d'utilisation -->
   <div id="termsPage" class="page hidden">
     <div class="page-content">

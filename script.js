@@ -2351,28 +2351,12 @@ document.addEventListener('keydown', function(event) {
 });
 
 // Navigation entre les pages
-function showAboutPage() {
-  const aboutPage = document.getElementById('aboutPage');
-  const container = document.querySelector('.container');
-  
-  if (aboutPage && container) {
-    // Cacher le container principal
-    container.style.display = 'none';
-    // Afficher la page À propos
-    aboutPage.classList.remove('hidden');
-    // Fermer le menu
-    closeMenu();
-  }
-}
-
 function showHomePage() {
-  const aboutPage = document.getElementById('aboutPage');
   const termsPage = document.getElementById('termsPage');
   const container = document.querySelector('.container');
   
   if (container) {
     // Cacher toutes les pages
-    if (aboutPage) aboutPage.classList.add('hidden');
     if (termsPage) termsPage.classList.add('hidden');
     // Afficher le container principal
     container.style.display = 'block';
