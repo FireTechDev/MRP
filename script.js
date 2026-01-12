@@ -1464,7 +1464,7 @@ button.classList.toggle("selected");
 }
 
 // Version de l'application
-const APP_VERSION = '1.0.18';
+const APP_VERSION = '1.0.19';
 
 // Fonction pour vérifier les mises à jour
 function checkForUpdates(isAutoCheck = false) {
