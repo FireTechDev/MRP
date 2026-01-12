@@ -87,11 +87,18 @@
       font-family: var(--font-family);
       margin: 0;
       padding: var(--margin);
-      padding-top: calc(56px + env(safe-area-inset-top)); /* Espace pour le header + safe area */
+      padding-top: 56px; /* Espace pour le header */
       padding-bottom: 0; /* Le padding est géré par le container */
       background: var(--background-color);
       font-size: var(--font-size);
       line-height: 1.5;
+    }
+
+    /* Support de la safe area iOS uniquement quand disponible */
+    @supports (padding: env(safe-area-inset-top)) {
+      body {
+        padding-top: calc(56px + env(safe-area-inset-top));
+      }
     }
 
     /* Header - Barre de navigation en haut */
