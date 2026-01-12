@@ -26,6 +26,6 @@ Aucune installation requise. Ouvrez simplement `index.html` dans un navigateur o
 
 ## Version
 
-1.0.19
+1.0.20
 
 Voir [CHANGELOG.md](CHANGELOG.md) pour l'historique complet des modifications.

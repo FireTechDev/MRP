@@ -5,6 +5,21 @@ Toutes les modifications notables de ce projet seront documentées dans ce fichi
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.0.20] - 2025-01-12
+
+### ✨ Nouvelles fonctionnalités
+- **Barre de navigation en haut** : Ajout d'une barre de menu fixe avec icône ronde et titre "Message radio pompier"
+- **Menu burger** : Menu latéral slide depuis la droite avec navigation
+- **Page À propos** : Nouvelle page accessible depuis le menu avec toutes les informations de l'application
+- **Navigation** : Système de navigation entre page principale et page À propos
+
+### 🎨 Améliorations
+- Icône de l'application en mode rond dans la barre de menu
+- Espacement harmonieux en haut de chaque page
+- Menu latéral avec animations fluides et support de la safe area iOS
+
+---
+
 ## [1.0.19] - 2025-01-12
 
 ### ✨ Améliorations
