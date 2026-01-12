@@ -111,15 +111,24 @@
       align-items: center;
       justify-content: space-between;
       min-height: 56px;
-      height: auto;
+      height: 56px;
       padding: 0 16px;
-      padding-top: max(env(safe-area-inset-top), 0px);
+      padding-top: 0;
       padding-bottom: 0;
       box-sizing: border-box;
       background: #ffffff;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       z-index: 999;
       border-bottom: 1px solid #e0e0e0;
+    }
+
+    /* Support de la safe area iOS uniquement quand disponible */
+    @supports (padding: env(safe-area-inset-top)) {
+      .app-header {
+        padding-top: env(safe-area-inset-top);
+        height: calc(56px + env(safe-area-inset-top));
+        min-height: calc(56px + env(safe-area-inset-top));
+      }
     }
 
     .header-left {
