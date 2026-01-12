@@ -103,9 +103,12 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      height: 56px;
+      min-height: 56px;
+      height: auto;
       padding: 0 16px;
-      padding-top: env(safe-area-inset-top);
+      padding-top: max(env(safe-area-inset-top), 0px);
+      padding-bottom: 0;
+      box-sizing: border-box;
       background: #ffffff;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       z-index: 999;
