@@ -2452,6 +2452,10 @@ function showSettingsPage() {
   }
 }
 
+function goBack() {
+  showHomePage();
+}
+
 // Fonction pour changer le thème
 function changeTheme(theme) {
   const body = document.body;
