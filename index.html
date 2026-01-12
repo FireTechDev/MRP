@@ -59,10 +59,13 @@
           <span class="material-icons">ios_share</span>
           <span>Partager l'application</span>
         </a>
+        <a href="#" class="side-menu-item" onclick="closeMenu(); console.log('Bouton de mise à jour cliqué'); checkForUpdates(); return false;">
+          <span class="material-icons">update</span>
+          <span>Vérifier si l'app est à jour</span>
+        </a>
       </nav>
       <div class="side-menu-footer">
         <div class="update-container">
-          <a href="#" id="updateLink" class="update-link" onclick="console.log('Bouton de mise à jour cliqué'); checkForUpdates(); return false;">Vérifier si l'app est à jour</a>
           <p id="updateStatus" class="update-status"></p>
           <div class="app-info">
             <img src="icons/192.png" alt="MRP Icon" class="app-icon">
