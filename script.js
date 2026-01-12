@@ -1458,8 +1458,18 @@ function toggleMoyensDepart() {
   const container = document.getElementById('moyensDepartContainer');
   const button = document.querySelector('button[onclick="toggleMoyensDepart()"]');
   if (container && button) {
-container.classList.toggle("hidden");
-button.classList.toggle("selected");
+    container.classList.toggle("hidden");
+    button.classList.toggle("selected");
+    
+    // Gérer la rotation du chevron
+    const icon = button.querySelector('.toggle-icon');
+    if (icon) {
+      if (container.classList.contains("hidden")) {
+        icon.classList.remove("rotated");
+      } else {
+        icon.classList.add("rotated");
+      }
+    }
   }
 }
 
