@@ -1208,12 +1208,17 @@
     }
 
     /* Containers des victimes (sexe et âge) */
+    .victime-info {
+      background: #f9f9f9;
+    }
+
     .dark-mode .victime-info-container {
       background: #2d2d2d !important;
       border-color: #404040 !important;
     }
 
     .dark-mode .victime-info {
+      background: #1a1a1a !important;
       color: #e0e0e0;
     }
 

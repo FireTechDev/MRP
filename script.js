@@ -2038,7 +2038,7 @@ const victimeInfo = document.createElement('div');
 victimeInfo.className = 'victime-info';
 victimeInfo.style.marginBottom = '10px';
 victimeInfo.style.padding = '5px';
-victimeInfo.style.backgroundColor = '#f9f9f9';
+// Le fond sera géré par CSS selon le thème
     
 // Titre de la victime
 const victimeTitle = document.createElement('div');
