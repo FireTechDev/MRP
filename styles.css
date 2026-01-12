@@ -952,6 +952,253 @@
       color: #999;
     }
 
+    /* Dark Mode */
+    .dark-mode {
+      --background-color: #1a1a1a;
+      --text-color: #e0e0e0;
+      --container-bg: #2d2d2d;
+      --border-color: #404040;
+      --box-shadow: 0 0 8px rgba(0,0,0,0.5);
+    }
+
+    .dark-mode body {
+      background: var(--background-color);
+      color: var(--text-color);
+    }
+
+    .dark-mode .app-header {
+      background: #2d2d2d;
+      border-bottom-color: #404040;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .dark-mode .app-header-title {
+      color: #e0e0e0;
+    }
+
+    .dark-mode .burger-menu span {
+      background: #e0e0e0;
+    }
+
+    .dark-mode .side-menu-content {
+      background: #2d2d2d;
+      box-shadow: -2px 0 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .dark-mode .side-menu-header {
+      border-bottom-color: #404040;
+    }
+
+    .dark-mode .side-menu-header h2 {
+      color: #e0e0e0;
+    }
+
+    .dark-mode .side-menu-close {
+      color: #b0b0b0;
+    }
+
+    .dark-mode .side-menu-item {
+      color: #e0e0e0;
+      border-bottom-color: #404040;
+    }
+
+    .dark-mode .side-menu-item:active {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .dark-mode .side-menu-item .material-icons {
+      color: #b0b0b0;
+    }
+
+    .dark-mode .side-menu-footer {
+      background: #252525;
+      border-top-color: #404040;
+    }
+
+    .dark-mode .progress-bar {
+      background: #2d2d2d;
+      border-top-color: #404040;
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .dark-mode .progress-step {
+      color: #b0b0b0;
+    }
+
+    .dark-mode .progress-step.active {
+      color: var(--primary-color);
+      background: rgba(0, 123, 255, 0.2);
+    }
+
+    .dark-mode .progress-step::before {
+      color: #b0b0b0;
+    }
+
+    .dark-mode .progress-step.active::before {
+      color: var(--primary-color);
+    }
+
+    .dark-mode .container {
+      background: transparent;
+    }
+
+    .dark-mode h1, .dark-mode h3, .dark-mode h4 {
+      color: #e0e0e0;
+    }
+
+    .dark-mode label {
+      color: #e0e0e0;
+    }
+
+    .dark-mode input, .dark-mode select, .dark-mode textarea {
+      background: #2d2d2d;
+      color: #e0e0e0;
+      border-color: #404040;
+    }
+
+    .dark-mode input:focus, .dark-mode select:focus, .dark-mode textarea:focus {
+      border-color: var(--primary-color);
+      outline: none;
+    }
+
+    .dark-mode .toggle-btn {
+      background: rgba(255, 255, 255, 0.05);
+      color: #e0e0e0;
+      border-color: #404040;
+    }
+
+    .dark-mode .toggle-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .dark-mode .toggle-btn.selected, .dark-mode #toggleRouteBtn.active {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    .dark-mode button {
+      background-color: var(--primary-color);
+      color: #fff;
+    }
+
+    .dark-mode .prev-btn {
+      background-color: #555;
+    }
+
+    .dark-mode .result {
+      background: #2d2d2d;
+      color: #e0e0e0;
+    }
+
+    .dark-mode .info-text {
+      background: #2d2d2d;
+      color: #e0e0e0;
+    }
+
+    .dark-mode .sub-container {
+      background: #2d2d2d;
+      border-color: #404040;
+    }
+
+    .dark-mode .risk-section {
+      background: #2d2d2d;
+    }
+
+    .dark-mode .vehicle-count {
+      border-bottom-color: #404040;
+    }
+
+    .dark-mode .vehicle-count label {
+      color: #e0e0e0;
+    }
+
+    .dark-mode .vehicle-count .counter-value {
+      color: #e0e0e0;
+    }
+
+    .dark-mode .surface-btn {
+      background: rgba(255, 255, 255, 0.05);
+      color: #e0e0e0;
+      border-color: #404040;
+    }
+
+    .dark-mode .surface-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .dark-mode .surface-btn.selected {
+      background: var(--primary-color);
+      color: white;
+    }
+
+    .dark-mode .address-toggle-container {
+      border-color: #404040;
+      background: #2d2d2d;
+    }
+
+    .dark-mode .address-toggle-btn {
+      color: #b0b0b0;
+    }
+
+    .dark-mode .address-toggle-btn.selected {
+      background: #1a1a1a;
+      color: var(--primary-color);
+    }
+
+    .dark-mode .address-toggle-btn:first-child {
+      border-right-color: #404040;
+    }
+
+    .dark-mode .gps-btn, .dark-mode .secondary-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: #404040;
+      color: #e0e0e0;
+    }
+
+    .dark-mode .gps-btn:hover, .dark-mode .secondary-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .dark-mode .gps-info {
+      color: #b0b0b0;
+    }
+
+    .dark-mode .function-notice {
+      color: #b0b0b0;
+    }
+
+    .dark-mode .update-container {
+      color: #b0b0b0;
+    }
+
+    .dark-mode .update-link, .dark-mode .share-link {
+      color: var(--primary-color);
+    }
+
+    .dark-mode .version-info {
+      color: #b0b0b0;
+    }
+
+    .dark-mode .copyright {
+      color: #999;
+    }
+
+    .dark-mode .page-content select {
+      background: #2d2d2d;
+      color: #e0e0e0;
+      border-color: #404040;
+    }
+
+    .dark-mode #avpFields,
+    .dark-mode #victimsFields,
+    .dark-mode #moyensPompiers,
+    .dark-mode #feuVehiculeFields,
+    .dark-mode #batimentFields,
+    .dark-mode #chuteLigneFields {
+      background: #2d2d2d;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
     /* Ajout des styles pour le nouveau compteur */
     .vehicle-count {
       display: flex;
