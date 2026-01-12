@@ -99,7 +99,7 @@
       margin: 0;
       background: transparent;
       padding: var(--padding);
-      padding-bottom: 75px; /* Espace pour le menu flottant en bas */
+      padding-bottom: calc(75px + env(safe-area-inset-bottom)); /* Espace pour le menu flottant en bas + safe area */
       box-shadow: none;
       border-radius: 0;
     }
@@ -207,20 +207,21 @@
       left: 0;
       right: 0;
       background: #ffffff;
-      padding: 10px 4px 8px 4px;
+      padding: 12px 4px calc(12px + env(safe-area-inset-bottom)) 4px;
       box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.15);
       z-index: 1000;
       border-top: 1px solid #e0e0e0;
       margin: 0;
       max-width: 100%;
       box-sizing: border-box;
-      min-height: 60px;
+      min-height: 49px;
+      height: auto;
       align-items: center;
     }
 
     .progress-step {
       flex: 1;
-      padding: 4px 2px;
+      padding: 8px 2px;
       text-align: center;
       font-size: 10px;
       font-weight: 500;
@@ -235,10 +236,11 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 2px;
+      gap: 4px;
       transition: all 0.2s ease;
       background: transparent;
       min-width: 0;
+      min-height: 44px;
     }
 
     .progress-step.active {
@@ -261,19 +263,21 @@
 
     @media (max-width: 480px) {
       .progress-bar {
-        padding: 8px 2px 6px 2px;
-        min-height: 56px;
+        padding: 12px 2px calc(12px + env(safe-area-inset-bottom)) 2px;
+        min-height: 49px;
       }
       
       .progress-step {
-        font-size: 9px;
-        padding: 2px 1px;
+        font-size: 10px;
+        padding: 8px 1px;
+        min-height: 44px;
+        gap: 4px;
       }
       
       .progress-step::before {
-        font-size: 20px;
-        width: 22px;
-        height: 22px;
+        font-size: 22px;
+        width: 24px;
+        height: 24px;
       }
     }
 
