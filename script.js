@@ -2064,7 +2064,7 @@ buttonContainer.style.width = '100%';
     
 const maleBtn = document.createElement('button');
 maleBtn.type = 'button';
-maleBtn.className = 'secondary-btn';
+maleBtn.className = 'secondary-btn sexe-btn sexe-masculin';
 maleBtn.textContent = 'Masculin';
 maleBtn.onclick = function() { selectSexe(this, `${id}-${i}`, 'M'); };
 maleBtn.style.width = '100%';
@@ -2078,7 +2078,7 @@ maleBtn.style.textAlign = 'center';
     
 const femaleBtn = document.createElement('button');
 femaleBtn.type = 'button';
-femaleBtn.className = 'secondary-btn';
+femaleBtn.className = 'secondary-btn sexe-btn sexe-feminin';
 femaleBtn.textContent = 'Féminin';
 femaleBtn.onclick = function() { selectSexe(this, `${id}-${i}`, 'F'); };
 femaleBtn.style.width = '100%';
@@ -2140,16 +2140,20 @@ if (existingValues[i]) {
     // Mettre à jour le style du bouton correspondant
     if (existingValues[i].sexe === 'M') {
       maleBtn.classList.add('selected');
-      maleBtn.style.backgroundColor = '#0066cc';
-      maleBtn.style.color = 'white';
+      if (!document.body.classList.contains('dark-mode')) {
+        maleBtn.style.backgroundColor = '#0066cc';
+        maleBtn.style.color = 'white';
+        maleBtn.style.border = '1px solid #0066cc';
+      }
       maleBtn.style.fontWeight = 'bold';
-      maleBtn.style.border = '1px solid #0066cc';
     } else {
       femaleBtn.classList.add('selected');
-      femaleBtn.style.backgroundColor = '#FF80AB';
-      femaleBtn.style.color = 'white';
+      if (!document.body.classList.contains('dark-mode')) {
+        femaleBtn.style.backgroundColor = '#FF80AB';
+        femaleBtn.style.color = 'white';
+        femaleBtn.style.border = '1px solid #FF80AB';
+      }
       femaleBtn.style.fontWeight = 'bold';
-      femaleBtn.style.border = '1px solid #FF80AB';
     }
   }
       
@@ -2186,32 +2190,41 @@ function selectSexe(button, victimeId, sexe) {
   container.querySelectorAll('button').forEach(btn => {
 if (btn.textContent === 'Masculin' || btn.textContent === 'Féminin') {
   btn.classList.remove('selected');
-  if (btn.textContent === 'Masculin') {
-    btn.style.backgroundColor = '#d4e6f6';
-    btn.style.color = '#0066cc';
-    btn.style.fontWeight = 'normal';
-    btn.style.border = '1px solid #ccc';
-  } else {
-    btn.style.backgroundColor = '#fce4ec';
-    btn.style.color = '#e91e63';
-    btn.style.fontWeight = 'normal';
-    btn.style.border = '1px solid #ccc';
+  // Les styles seront gérés par CSS selon le thème
+  if (!document.body.classList.contains('dark-mode')) {
+    if (btn.textContent === 'Masculin') {
+      btn.style.backgroundColor = '#d4e6f6';
+      btn.style.color = '#0066cc';
+      btn.style.fontWeight = 'normal';
+      btn.style.border = '1px solid #ccc';
+    } else {
+      btn.style.backgroundColor = '#fce4ec';
+      btn.style.color = '#e91e63';
+      btn.style.fontWeight = 'normal';
+      btn.style.border = '1px solid #ccc';
+    }
   }
 }
   });
   
   // Sélectionner le bouton cliqué
   button.classList.add('selected');
-  if (sexe === 'M') {
-button.style.backgroundColor = '#0066cc';
-button.style.color = 'white';
-button.style.fontWeight = 'bold';
-button.style.border = '1px solid #0066cc';
+  // Les styles seront gérés par CSS selon le thème
+  if (!document.body.classList.contains('dark-mode')) {
+    if (sexe === 'M') {
+      button.style.backgroundColor = '#0066cc';
+      button.style.color = 'white';
+      button.style.fontWeight = 'bold';
+      button.style.border = '1px solid #0066cc';
+    } else {
+      button.style.backgroundColor = '#FF80AB';
+      button.style.color = 'white';
+      button.style.fontWeight = 'bold';
+      button.style.border = '1px solid #FF80AB';
+    }
   } else {
-button.style.backgroundColor = '#FF80AB';
-button.style.color = 'white';
-button.style.fontWeight = 'bold';
-button.style.border = '1px solid #FF80AB';
+    // En dark mode, les styles CSS gèrent les couleurs
+    button.style.fontWeight = 'bold';
   }
   
   // Stocker la valeur dans un champ caché pour pouvoir la récupérer plus tard

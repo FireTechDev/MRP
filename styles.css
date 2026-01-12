@@ -1228,13 +1228,29 @@
       border-color: #404040 !important;
     }
 
-    .dark-mode .victime-info button {
-      background: rgba(255, 255, 255, 0.05) !important;
-      border-color: #404040 !important;
+    /* Boutons de sexe des victimes en dark mode */
+    .dark-mode .sexe-masculin:not(.selected) {
+      background: rgba(0, 102, 204, 0.2) !important;
+      color: #66b3ff !important;
+      border-color: #0066cc !important;
     }
 
-    .dark-mode .victime-info button:not(.selected) {
-      color: #b0b0b0 !important;
+    .dark-mode .sexe-masculin.selected {
+      background: #0066cc !important;
+      color: white !important;
+      border-color: #0066cc !important;
+    }
+
+    .dark-mode .sexe-feminin:not(.selected) {
+      background: rgba(255, 128, 171, 0.2) !important;
+      color: #ff80ab !important;
+      border-color: #FF80AB !important;
+    }
+
+    .dark-mode .sexe-feminin.selected {
+      background: #FF80AB !important;
+      color: white !important;
+      border-color: #FF80AB !important;
     }
 
     .dark-mode .victime-info hr {
