@@ -1573,12 +1573,29 @@ navigator.serviceWorker.getRegistration().then(registration => {
         })
         .catch(error => {
           console.error('Erreur lors de la vérification:', error);
-          updateStatus.textContent = 'Erreur lors de la vérification des mises à jour';
-          updateStatus.style.color = '#dc3545';
+          
+          // Détecter si l'erreur est due à l'absence de réseau
+          const isNetworkError = !navigator.onLine || 
+                                 error.message.includes('Failed to fetch') || 
+                                 error.message.includes('NetworkError') ||
+                                 error.message.includes('load failed') ||
+                                 error.name === 'TypeError' ||
+                                 error.name === 'NetworkError';
+          
+          if (isNetworkError) {
+            updateStatus.textContent = 'Mise à jour impossible : pas de réseau. Réessayez plus tard.';
+            updateStatus.style.color = '#ffc107';
+          } else {
+            updateStatus.textContent = 'Erreur lors de la vérification des mises à jour';
+            updateStatus.style.color = '#dc3545';
+          }
+          
           updateStatus.style.display = 'block';
-          setTimeout(() => {
-            updateStatus.style.display = 'none';
-          }, 3000);
+          if (!isAutoCheck) {
+            setTimeout(() => {
+              updateStatus.style.display = 'none';
+            }, 5000);
+          }
         });
     });
   } else {
