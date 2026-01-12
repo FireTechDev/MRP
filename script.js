@@ -2304,3 +2304,77 @@ function initSwipe() {
     });
   }
 }
+
+// Fonctions pour gérer le menu burger
+function toggleMenu() {
+  const sideMenu = document.getElementById('sideMenu');
+  const burgerMenu = document.getElementById('burgerMenu');
+  
+  if (sideMenu && burgerMenu) {
+    const isActive = sideMenu.classList.contains('active');
+    
+    if (isActive) {
+      closeMenu();
+    } else {
+      openMenu();
+    }
+  }
+}
+
+function openMenu() {
+  const sideMenu = document.getElementById('sideMenu');
+  const burgerMenu = document.getElementById('burgerMenu');
+  
+  if (sideMenu && burgerMenu) {
+    sideMenu.classList.add('active');
+    burgerMenu.classList.add('active');
+    document.body.style.overflow = 'hidden'; // Empêcher le scroll du body
+  }
+}
+
+function closeMenu() {
+  const sideMenu = document.getElementById('sideMenu');
+  const burgerMenu = document.getElementById('burgerMenu');
+  
+  if (sideMenu && burgerMenu) {
+    sideMenu.classList.remove('active');
+    burgerMenu.classList.remove('active');
+    document.body.style.overflow = ''; // Restaurer le scroll du body
+  }
+}
+
+// Fermer le menu en appuyant sur Escape
+document.addEventListener('keydown', function(event) {
+  if (event.key === 'Escape') {
+    closeMenu();
+  }
+});
+
+// Navigation entre les pages
+function showAboutPage() {
+  const aboutPage = document.getElementById('aboutPage');
+  const container = document.querySelector('.container');
+  
+  if (aboutPage && container) {
+    // Cacher le container principal
+    container.style.display = 'none';
+    // Afficher la page À propos
+    aboutPage.classList.remove('hidden');
+    // Fermer le menu
+    closeMenu();
+  }
+}
+
+function showHomePage() {
+  const aboutPage = document.getElementById('aboutPage');
+  const container = document.querySelector('.container');
+  
+  if (aboutPage && container) {
+    // Cacher la page À propos
+    aboutPage.classList.add('hidden');
+    // Afficher le container principal
+    container.style.display = 'block';
+    // Fermer le menu
+    closeMenu();
+  }
+}
