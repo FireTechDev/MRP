@@ -116,6 +116,8 @@
       display: flex;
       align-items: center;
       gap: 12px;
+      height: 56px;
+      flex-shrink: 0;
     }
 
     .app-header-icon {
@@ -131,6 +133,10 @@
       font-weight: 600;
       color: #333;
       line-height: 1.2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: calc(100vw - 120px);
     }
 
     /* Burger menu */
@@ -140,12 +146,16 @@
       justify-content: space-around;
       width: 32px;
       height: 32px;
+      min-width: 32px;
+      min-height: 32px;
       background: transparent;
       border: none;
       cursor: pointer;
       padding: 0;
       z-index: 1000;
       transition: transform 0.3s ease;
+      flex-shrink: 0;
+      -webkit-tap-highlight-color: transparent;
     }
 
     .burger-menu span {
