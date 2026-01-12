@@ -59,6 +59,10 @@
           <span class="material-icons">ios_share</span>
           <span>Partager l'application</span>
         </a>
+        <a href="#" class="side-menu-item" onclick="showSettingsPage(); return false;">
+          <span class="material-icons">settings</span>
+          <span>Réglages</span>
+        </a>
       </nav>
       <div class="side-menu-footer">
         <div class="update-container">
@@ -1230,6 +1234,21 @@
 
       <h3>5. Modifications</h3>
       <p>Nous nous réservons le droit de modifier ces conditions d'utilisation à tout moment. Les modifications prendront effet dès leur publication sur l'application.</p>
+    </div>
+  </div>
+
+  <!-- Page Réglages -->
+  <div id="settingsPage" class="page hidden">
+    <div class="page-content">
+      <h1>Réglages</h1>
+      
+      <div style="margin-top: 24px;">
+        <label for="themeSelect" style="display: block; margin-bottom: 8px; font-weight: 500;">Aspect</label>
+        <select id="themeSelect" onchange="changeTheme(this.value)" style="width: 100%; padding: 10px; font-size: 16px; border: 1px solid #ddd; border-radius: 5px; background: white; color: #333;">
+          <option value="light">Clair</option>
+          <option value="dark">Sombre</option>
+        </select>
+      </div>
     </div>
   </div>
 

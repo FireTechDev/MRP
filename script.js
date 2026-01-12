@@ -2307,6 +2307,13 @@ if (document.readyState === 'loading') {
   initSwipe();
 }
 
+// Appliquer le thème sauvegardé au chargement
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', applySavedTheme);
+} else {
+  applySavedTheme();
+}
+
 function initSwipe() {
   const container = document.querySelector('.container');
   if (container && typeof Hammer !== 'undefined') {
@@ -2380,11 +2387,13 @@ document.addEventListener('keydown', function(event) {
 // Navigation entre les pages
 function showHomePage() {
   const termsPage = document.getElementById('termsPage');
+  const settingsPage = document.getElementById('settingsPage');
   const container = document.querySelector('.container');
   
   if (container) {
     // Cacher toutes les pages
     if (termsPage) termsPage.classList.add('hidden');
+    if (settingsPage) settingsPage.classList.add('hidden');
     // Afficher le container principal
     container.style.display = 'block';
     // Fermer le menu
@@ -2394,16 +2403,61 @@ function showHomePage() {
 
 function showTermsPage() {
   const termsPage = document.getElementById('termsPage');
+  const settingsPage = document.getElementById('settingsPage');
   const container = document.querySelector('.container');
-  const aboutPage = document.getElementById('aboutPage');
   
   if (termsPage && container) {
-    // Cacher le container principal et la page À propos
+    // Cacher le container principal et les autres pages
     container.style.display = 'none';
-    if (aboutPage) aboutPage.classList.add('hidden');
+    if (settingsPage) settingsPage.classList.add('hidden');
     // Afficher la page Conditions d'utilisation
     termsPage.classList.remove('hidden');
     // Fermer le menu
     closeMenu();
   }
+}
+
+function showSettingsPage() {
+  const settingsPage = document.getElementById('settingsPage');
+  const termsPage = document.getElementById('termsPage');
+  const container = document.querySelector('.container');
+  
+  if (settingsPage && container) {
+    // Cacher le container principal et les autres pages
+    container.style.display = 'none';
+    if (termsPage) termsPage.classList.add('hidden');
+    // Afficher la page Réglages
+    settingsPage.classList.remove('hidden');
+    // Mettre à jour le sélecteur avec la valeur sauvegardée
+    const savedTheme = localStorage.getItem('mrp-theme') || 'light';
+    const themeSelect = document.getElementById('themeSelect');
+    if (themeSelect) {
+      themeSelect.value = savedTheme;
+    }
+    // Fermer le menu
+    closeMenu();
+  }
+}
+
+// Fonction pour changer le thème
+function changeTheme(theme) {
+  const body = document.body;
+  const html = document.documentElement;
+  
+  if (theme === 'dark') {
+    body.classList.add('dark-mode');
+    html.classList.add('dark-mode');
+  } else {
+    body.classList.remove('dark-mode');
+    html.classList.remove('dark-mode');
+  }
+  
+  // Sauvegarder la préférence
+  localStorage.setItem('mrp-theme', theme);
+}
+
+// Appliquer le thème sauvegardé au chargement
+function applySavedTheme() {
+  const savedTheme = localStorage.getItem('mrp-theme') || 'light';
+  changeTheme(savedTheme);
 }
