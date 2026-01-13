@@ -620,6 +620,16 @@
 
     .step.active { display: block; }
 
+    .page-title {
+      font-size: 24px;
+      font-weight: 600;
+      margin: 0 0 20px 0;
+      padding: 0;
+      color: var(--text-color);
+      border-bottom: 2px solid var(--primary-color);
+      padding-bottom: 10px;
+    }
+
     /* Pages (À propos, etc.) */
     .page {
       position: fixed;
@@ -1226,6 +1236,11 @@
 
     .dark-mode .update-container {
       color: #b0b0b0;
+    }
+
+    .dark-mode .page-title {
+      color: #e0e0e0;
+      border-bottom-color: #007BFF;
     }
 
     .dark-mode .update-link, .dark-mode .share-link {
