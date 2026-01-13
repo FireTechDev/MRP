@@ -1277,23 +1277,19 @@
       </button>
       <h1>Réglages</h1>
       
-      <div style="margin-top: 24px;">
-        <label for="themeSelect">Aspect</label>
-        <select id="themeSelect" onchange="changeTheme(this.value)">
-          <option value="light">Clair</option>
-          <option value="dark">Sombre</option>
-        </select>
-      </div>
+      <label for="themeSelect">Aspect</label>
+      <select id="themeSelect" onchange="changeTheme(this.value)">
+        <option value="light">Clair</option>
+        <option value="dark">Sombre</option>
+      </select>
 
-      <div style="margin-top: 32px;">
-        <label>Fonction</label>
-        <div class="function-buttons">
-          <button type="button" class="toggle-btn function-btn" onclick="selectFonction(this, 'CATE')">CATE</button>
-          <button type="button" class="toggle-btn function-btn" onclick="selectFonction(this, 'CDG')">CDG</button>
-        </div>
-        <input type="hidden" id="fonction" value="">
-        <p class="function-notice">Affiche les infos à passer dans le message radio, selon votre fonction.</p>
+      <label>Fonction</label>
+      <div class="function-buttons">
+        <button type="button" class="toggle-btn function-btn" onclick="selectFonction(this, 'CATE')">CATE</button>
+        <button type="button" class="toggle-btn function-btn" onclick="selectFonction(this, 'CDG')">CDG</button>
       </div>
+      <input type="hidden" id="fonction" value="">
+      <p class="function-notice">Affiche les infos à passer dans le message radio, selon votre fonction.</p>
     </div>
   </div>
 
