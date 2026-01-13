@@ -403,7 +403,7 @@
     }
 
     /* Typography */
-    h1, h4 {
+    h4 {
       margin: 15px 0 10px;
       color: #333;
     }
@@ -413,6 +413,19 @@
       text-align: center;
       font-size: 1.2rem;
       margin: 0.5rem 0;
+    }
+
+    /* Titres des pages du menu (Conditions, Réglages, Partager) */
+    .page-content h1 {
+      font-size: 24px;
+      font-weight: 600;
+      margin: 0 0 24px 0;
+      padding: 0 0 12px 0;
+      color: var(--text-color);
+      border-bottom: 2px solid var(--primary-color);
+      display: flex;
+      align-items: center;
+      gap: 16px;
     }
 
     h3 {
