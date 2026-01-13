@@ -503,33 +503,22 @@
       overflow: hidden;
     }
 
-    button, .toggle-btn {
+    button {
       border: none;
       cursor: pointer;
       transition: all 0.3s;
       text-align: center;
-    }
-
-    button {
       background-color: var(--primary-color);
       color: #fff;
     }
 
     .toggle-btn {
-      width: 100%;
-      padding: 14px 16px;
-      margin: 0 0 12px 0;
       background: rgba(0, 123, 255, 0.05);
       color: var(--primary-color);
       border: 1px solid var(--primary-color);
-      border-radius: 8px;
       cursor: pointer;
       transition: all 0.3s ease;
       text-align: center;
-    }
-
-    .toggle-btn:last-child {
-      margin-bottom: 0;
     }
 
     .toggle-btn:hover {
