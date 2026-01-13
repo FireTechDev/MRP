@@ -29,14 +29,14 @@
       <img src="icons/192.png" alt="MRP" class="app-header-icon">
       <h1 class="app-header-title">MRP</h1>
     </div>
-    <button class="burger-menu" id="burgerMenu" aria-label="Menu" onclick="toggleMenu()">
-      <div class="burger-menu-icon">
+    <div class="burger-menu-container">
+      <button class="burger-menu" id="burgerMenu" aria-label="Menu" onclick="toggleMenu()">
         <span></span>
         <span></span>
         <span></span>
-      </div>
+      </button>
       <span class="burger-menu-label">MENU</span>
-    </button>
+    </div>
   </header>
 
   <!-- Menu latéral -->
@@ -777,7 +777,7 @@
 
     <!-- Étape 3 : Victimes -->
     <div id="step3" class="step hidden">
-      <h2 class="page-title"><span class="material-icons">personal_injury</span>Victimes</h2>
+      <h2 class="page-title"><span class="material-icons">personal_injury</span>Victimes <span id="victimesTotalCounter" class="victimes-counter">0</span></h2>
       <div id="victimsFields">
         <!-- UA -->
         <div class="vehicle-count">

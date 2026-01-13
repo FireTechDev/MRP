@@ -314,6 +314,9 @@ updateVehicleDetails(id);
 updateMinusButtonState(id);
   });
   
+  // Mettre à jour le compteur total de victimes
+  updateVictimesTotalCounter();
+  
   // Compteurs de moyens pompiers
   ['VSAV', 'FPT', 'FPTSR', 'VSR', 'EPA', 'chefGroupe', 'SMUR', 'ISP', 'vehiculeSpecifique'].forEach(id => {
 updateMinusButtonState(id);
@@ -333,6 +336,7 @@ try {
   span.textContent = value;
   updateVehicleDetails(id);
   updateMinusButtonState(id);
+  updateVictimesTotalCounter();
 } catch (error) {
   console.error('Error incrementing vehicle:', error);
 }
@@ -348,6 +352,7 @@ try {
     span.textContent = value - 1;
     updateVehicleDetails(id);
     updateMinusButtonState(id);
+    updateVictimesTotalCounter();
   }
 } catch (error) {
   console.error('Error decrementing vehicle:', error);
@@ -370,6 +375,24 @@ if (value > 0) {
   const victimeTypes = ["UA", "UR", "DCD", "incarcerees", "intoxiquees", "indemnes", "impliques"];
   if (victimeTypes.includes(id)) {
 updateVictimeInfoFields(id, value);
+  }
+}
+
+// Fonction pour mettre à jour le compteur total de victimes
+function updateVictimesTotalCounter() {
+  const victimeIds = ["UA", "UR", "DCD", "incarcerees", "intoxiquees", "indemnes", "impliques"];
+  let total = 0;
+  
+  victimeIds.forEach(id => {
+    const counter = document.getElementById(id);
+    if (counter) {
+      total += parseInt(counter.textContent || '0');
+    }
+  });
+  
+  const totalCounter = document.getElementById("victimesTotalCounter");
+  if (totalCounter) {
+    totalCounter.textContent = total;
   }
 }
 

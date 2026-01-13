@@ -778,6 +778,16 @@
       color: var(--primary-color);
     }
 
+    .victimes-counter {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--primary-color);
+      background: rgba(0, 123, 255, 0.1);
+      padding: 4px 12px;
+      border-radius: 12px;
+      margin-left: 8px;
+    }
+
     /* Pages (À propos, etc.) */
     .page {
       position: fixed;
