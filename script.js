@@ -1034,6 +1034,9 @@ document.querySelectorAll(`#${containerId} .toggle-btn.selected`).forEach(btn =>
 "FPTSR": "FPTSR",
 "VSR": "VSR",
 "EPA": "EPA",
+"CCF": "CCF",
+"CCFS": "CCFS",
+"CCGC": "CCGC",
 "chefGroupe": "Chef de groupe",
 "ISP": "ISP",
 "vehiculeSpecifique": "Véhicule spécifique"
