@@ -665,17 +665,15 @@
     }
 
     .step h3 {
-      font-size: 1.1rem !important;
-      font-weight: 600 !important;
-      margin-top: 24px !important;
-      margin-bottom: 12px !important;
-      margin-left: 0 !important;
-      margin-right: 0 !important;
-      color: var(--text-color) !important;
+      font-size: 1rem;
+      font-weight: 500;
+      margin-top: 24px;
+      margin-bottom: 12px;
+      color: #333;
     }
 
     .step h3:first-of-type {
-      margin-top: 0 !important;
+      margin-top: 0;
     }
 
     .function-notice {
