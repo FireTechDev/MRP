@@ -93,7 +93,7 @@
 
     <!-- Étape 0 : Intervention -->
     <div id="step0" class="step active">
-      <h2 class="page-title">Intervention</h2>
+      <h2 class="page-title"><span class="material-icons">description</span>Intervention</h2>
       <label for="interventionNumber">Numéro intervention</label>
       <input type="number" id="interventionNumber" class="form-control" min="0" inputMode="numeric" pattern="[0-9]*" step="1" onchange="updateMessage()" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
 
@@ -262,7 +262,7 @@
 
     <!-- Étape 1 : Je suis -->
     <div id="step1" class="step hidden">
-      <h2 class="page-title">Je suis</h2>
+      <h2 class="page-title"><span class="material-icons">my_location</span>Je suis</h2>
       <div class="address-buttons">
         <button type="button" class="secondary-btn" onclick="selectAddressToggle(this, 'Confirmée')">Adresse confirmée</button>
         <button type="button" class="secondary-btn" onclick="selectAddressToggle(this, 'Modifiée')">Adresse modifiée</button>
@@ -327,7 +327,7 @@
 
     <!-- Étape 2 : Je vois -->
     <div id="step2" class="step hidden">
-      <h2 class="page-title">Je vois</h2>
+      <h2 class="page-title"><span class="material-icons">visibility</span>Je vois</h2>
       <div id="natureInterventionContainer">
         <button type="button" class="toggle-btn nature-toggle" data-value="AVP" onclick="selectNature(this)">AVP</button>
         <button type="button" class="toggle-btn nature-toggle" data-value="Feu de véhicule" onclick="selectNature(this)">Feu de véhicule</button>
@@ -783,7 +783,7 @@
 
     <!-- Étape 3 : Victimes -->
     <div id="step3" class="step hidden">
-      <h2 class="page-title">Victimes</h2>
+      <h2 class="page-title"><span class="material-icons">personal_injury</span>Victimes</h2>
       <div id="victimsFields">
         <!-- UA -->
         <div class="vehicle-count">
@@ -886,7 +886,7 @@
 
     <!-- Étape 4 : Je fais -->
     <div id="step4" class="step hidden">
-      <h2 class="page-title">Je fais</h2>
+      <h2 class="page-title"><span class="material-icons">touch_app</span>Je fais</h2>
       <!-- Contenu existant sans la section "Je prévois" -->
       <h3>Victimes</h3>
       <div id="actionsContainer">
@@ -1049,7 +1049,7 @@
 
     <!-- Étape 5 : Je demande / confirme -->
     <div id="step5" class="step hidden">
-      <h2 class="page-title">Je demande</h2>
+      <h2 class="page-title"><span class="material-icons">local_fire_department</span>Je demande</h2>
       <h3>Moyens pompiers</h3>
       <div id="moyensPompiers">
         <!-- VSAV -->
@@ -1232,7 +1232,7 @@
 
     <!-- Étape 6 : Message généré -->
     <div id="step6" class="step hidden">
-      <h2 class="page-title">Message</h2>
+      <h2 class="page-title"><span class="material-icons">phone_android</span>Message</h2>
       <div class="form-group">
         <label for="groupeHoraireAuto">Groupe horaire</label>
         <input type="time" id="groupeHoraireAuto" name="groupeHoraireAuto" onchange="updateMessage()">
