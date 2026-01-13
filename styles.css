@@ -1516,8 +1516,6 @@
       font-weight: normal;
       flex: 1;
       line-height: 32px; /* Aligner avec la hauteur des boutons de compteur */
-      display: flex;
-      align-items: center;
     }
 
     .vehicle-count .counter-container {
