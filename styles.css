@@ -140,8 +140,8 @@
     }
 
     .app-header-icon {
-      width: 32px;
-      height: 32px;
+      width: 28px;
+      height: 28px;
       border-radius: 50%;
       object-fit: cover;
     }
@@ -396,7 +396,7 @@
       margin: 0;
       background: transparent;
       padding: var(--padding);
-      padding-top: 16px; /* Espace harmonieux sous la barre de menu */
+      padding-top: 24px; /* Espace selon standards iOS/Android entre top bar et contenu */
       padding-bottom: calc(100px + max(env(safe-area-inset-bottom), 8px) + 8px); /* Espace pour le menu flottant en bas + safe area + espace pour barre système + espace supplémentaire */
       box-shadow: none;
       border-radius: 0;
@@ -781,7 +781,7 @@
 
     .page-content {
       padding: var(--padding);
-      padding-top: 16px; /* Espace harmonieux sous la barre de menu */
+      padding-top: 24px; /* Espace selon standards iOS/Android entre top bar et contenu */
       max-width: 100%;
       margin: 0 auto;
     }
