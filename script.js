@@ -37,6 +37,20 @@ const motifDepart = document.getElementById('motifDepart').value;
 if (motifDepart === 'AVP') {
   updateRouteFields();
 }
+
+// Déclencher automatiquement la géolocalisation sur mobile
+if (navigator.geolocation) {
+  // Vérifier si on est sur mobile (écran tactile et taille d'écran)
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+                   (window.matchMedia && window.matchMedia("(max-width: 768px)").matches);
+  
+  if (isMobile) {
+    // Attendre un court délai pour que la page soit bien affichée
+    setTimeout(() => {
+      geolocalise();
+    }, 300);
+  }
+}
   }
   
   // Si on arrive à l'étape "Je vois" (step 2), sélectionner automatiquement le motif de départ
