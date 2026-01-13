@@ -94,6 +94,14 @@
     <!-- Étape 0 : Intervention -->
     <div id="step0" class="step active">
       <h2 class="page-title"><span class="material-icons">description</span>Intervention</h2>
+      <label>Fonction</label>
+      <div class="function-buttons">
+        <button type="button" class="toggle-btn function-btn" onclick="selectFonction(this, 'CATE')">CATE</button>
+        <button type="button" class="toggle-btn function-btn" onclick="selectFonction(this, 'CDG')">CDG</button>
+      </div>
+      <input type="hidden" id="fonction" value="">
+      <p class="function-notice">Affiche les infos à passer dans le message radio, selon votre fonction.</p>
+
       <label for="interventionNumber">Numéro intervention</label>
       <input type="number" id="interventionNumber" class="form-control" min="0" inputMode="numeric" pattern="[0-9]*" step="1" onchange="updateMessage()" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
 
@@ -115,8 +123,9 @@
         <option>Autre type d'intervention</option>
       </select>
 
+      <h3>Moyen au départ</h3>
       <div style="margin-top: 15px;">
-        <button type="button" class="toggle-btn function-btn" onclick="toggleMoyensDepart()" style="font-size: 18px;">Moyens au départ<span class="toggle-icon">›</span></button>
+        <button type="button" class="toggle-btn function-btn" onclick="toggleMoyensDepart()" style="font-size: 18px;">+ Ajouter des moyens au départ<span class="toggle-icon">›</span></button>
       </div>
 
       <div id="moyensDepartContainer" class="hidden" style="margin-top: 15px;">
@@ -245,14 +254,6 @@
           </div>
         </div>
       </div>
-
-      <label style="margin-top: 20px; display: block;">Fonction</label>
-      <div class="function-buttons">
-        <button type="button" class="toggle-btn function-btn" onclick="selectFonction(this, 'CATE')">CATE</button>
-        <button type="button" class="toggle-btn function-btn" onclick="selectFonction(this, 'CDG')">CDG</button>
-      </div>
-      <input type="hidden" id="fonction" value="">
-      <p class="function-notice">Affiche les infos à passer dans le message radio, selon votre fonction.</p>
 
       <div class="navigation-buttons">
         <button type="button" class="prev-btn hidden" onclick="goToStep(0)">← Précédent</button>
