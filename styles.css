@@ -1264,8 +1264,16 @@
       color: #e0e0e0;
     }
 
+    .dark-mode .burger-menu {
+      border-color: #007BFF;
+    }
+
     .dark-mode .burger-menu span {
       background: #e0e0e0;
+    }
+
+    .dark-mode .burger-menu-label {
+      color: #007BFF;
     }
 
     .dark-mode .side-menu-content {
