@@ -756,9 +756,10 @@
     }
 
     .page-title .material-icons {
-      font-size: 24px;
+      font-size: 28px;
       vertical-align: middle;
       flex-shrink: 0;
+      color: var(--primary-color);
     }
 
     /* Pages (À propos, etc.) */
