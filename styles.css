@@ -1992,7 +1992,13 @@
     }
 
     .navigation-buttons {
-      margin-top: 32px;
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid #e0e0e0;
+    }
+
+    .dark-mode .navigation-buttons {
+      border-top-color: #404040;
     }
 
     .surface-buttons {
