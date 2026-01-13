@@ -964,9 +964,8 @@ if (totalVictimes === 1) {
 msg += `Précisions sur les victimes: ${precisionVictimes}\n`;
   }
   
-  if (totalVictimes > 0) {
-msg += "\n";
-  }
+  // Toujours ajouter un saut de ligne avant "[ JE FAIS ]" pour l'espacement
+  msg += "\n";
 
   // Actions info
   msg += "[ JE FAIS ]\n";
