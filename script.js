@@ -1903,43 +1903,41 @@ document.getElementById('surfaceSinistree').value = value;
 }
 
 function selectFonction(btn, value) {
-  try {
-    // Réinitialiser tous les boutons
-    document.querySelectorAll('.function-btn').forEach(b => b.classList.remove('selected'));
-    
-    // Sélectionner le bouton cliqué
-    btn.classList.add('selected');
-    
-    // Mettre à jour la valeur cachée
-    const fonctionInput = document.getElementById('fonction');
-    if (fonctionInput) {
-      fonctionInput.value = value;
-    }
-    
-    // Sauvegarder dans localStorage
-    localStorage.setItem('mrp-fonction', value);
-    
-    // Gérer l'affichage de la section "Je prévois"
-    const prevoisSection = document.getElementById("prevoisSection");
-    
-    if (value === 'CDG') {
-      // Si CDG est sélectionné, afficher la section
-      if (prevoisSection) prevoisSection.classList.remove("hidden");
-    } else {
-      // Sinon, masquer la section
-      if (prevoisSection) prevoisSection.classList.add("hidden");
-    }
-    
-    // Mettre à jour le message seulement si on est sur une page qui l'utilise
+  // Réinitialiser tous les boutons
+  document.querySelectorAll('.function-btn').forEach(b => b.classList.remove('selected'));
+  
+  // Sélectionner le bouton cliqué
+  btn.classList.add('selected');
+  
+  // Mettre à jour la valeur cachée
+  const fonctionInput = document.getElementById('fonction');
+  if (fonctionInput) {
+    fonctionInput.value = value;
+  }
+  
+  // Sauvegarder dans localStorage
+  localStorage.setItem('mrp-fonction', value);
+  
+  // Gérer l'affichage de la section "Je prévois"
+  const prevoisSection = document.getElementById("prevoisSection");
+  
+  if (value === 'CDG') {
+    // Si CDG est sélectionné, afficher la section
+    if (prevoisSection) prevoisSection.classList.remove("hidden");
+  } else {
+    // Sinon, masquer la section
+    if (prevoisSection) prevoisSection.classList.add("hidden");
+  }
+  
+  // Mettre à jour le message seulement si on est sur une page qui l'utilise
+  // Vérifier que le container principal est visible avant d'appeler updateMessage
+  const container = document.querySelector('.container');
+  if (container && container.style.display !== 'none' && typeof updateMessage === 'function') {
     try {
-      if (typeof updateMessage === 'function') {
-        updateMessage();
-      }
+      updateMessage();
     } catch (error) {
       console.error('Erreur lors de la mise à jour du message:', error);
     }
-  } catch (error) {
-    console.error('Erreur dans selectFonction:', error);
   }
 }
 
