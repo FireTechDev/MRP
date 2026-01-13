@@ -445,10 +445,11 @@
     /* Form elements */
     label {
       display: block;
-      margin-top: 20px;
+      margin-top: 24px;
       margin-bottom: 8px;
       font-weight: 500;
       color: var(--text-color);
+      font-size: var(--font-size);
     }
 
     label:first-of-type {
@@ -461,18 +462,19 @@
 
     input, select, textarea {
       width: 100%;
-      padding: var(--padding);
-      margin: 0 0 4px 0;
+      padding: 12px;
+      margin: 0 0 0 0;
       box-sizing: border-box;
       font-size: var(--font-size);
       border-radius: 5px;
       font-family: var(--font-family);
+      border: 1px solid var(--border-color);
     }
 
     button, .toggle-btn {
       width: 100%;
-      padding: var(--padding);
-      margin: 8px 0;
+      padding: 12px;
+      margin: 0;
       box-sizing: border-box;
       font-size: var(--font-size);
       border-radius: 5px;
@@ -654,11 +656,11 @@
     .page-title {
       font-size: 24px;
       font-weight: 600;
-      margin: 0 0 24px 0;
+      margin: 0 0 28px 0;
       padding: 0;
       color: var(--text-color);
       border-bottom: 2px solid var(--primary-color);
-      padding-bottom: 10px;
+      padding-bottom: 12px;
       display: flex;
       align-items: center;
       gap: 16px;
@@ -667,13 +669,17 @@
     .step h3 {
       font-size: 1rem;
       font-weight: 500;
-      margin-top: 24px;
-      margin-bottom: 12px;
+      margin-top: 32px;
+      margin-bottom: 16px;
       color: #333;
+      padding-top: 16px;
+      border-top: 1px solid #e0e0e0;
     }
 
     .step h3:first-of-type {
       margin-top: 0;
+      padding-top: 0;
+      border-top: none;
     }
 
     .function-notice {
@@ -681,11 +687,32 @@
       margin-bottom: 0;
       font-size: 0.9rem;
       color: #666;
+      line-height: 1.4;
     }
 
     .function-buttons {
       margin-top: 8px;
       margin-bottom: 0;
+      display: flex;
+      gap: 12px;
+    }
+
+    .function-buttons .toggle-btn {
+      flex: 1;
+    }
+
+    /* Espacement après les groupes de champs */
+    .form-group,
+    .function-buttons,
+    select + .toggle-btn,
+    input + .toggle-btn {
+      margin-top: 12px;
+    }
+
+    /* Espacement pour les conteneurs de moyens */
+    #moyensDepartContainer,
+    .sub-container {
+      margin-top: 16px;
     }
 
     .page-title .material-icons {
