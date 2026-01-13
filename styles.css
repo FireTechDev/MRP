@@ -1501,6 +1501,10 @@
       border-bottom-color: #007BFF;
     }
 
+    .dark-mode .page-title .material-icons {
+      color: var(--primary-color);
+    }
+
     .dark-mode .page-content h1 {
       color: #e0e0e0;
       border-bottom-color: #007BFF;
