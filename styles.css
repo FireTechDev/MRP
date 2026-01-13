@@ -439,7 +439,33 @@
     }
 
     /* Form elements */
-    input, select, textarea, button, .toggle-btn {
+    label {
+      display: block;
+      margin-top: 20px;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: var(--text-color);
+    }
+
+    label:first-of-type {
+      margin-top: 0;
+    }
+
+    .page-title + label {
+      margin-top: 0;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: var(--padding);
+      margin: 0 0 4px 0;
+      box-sizing: border-box;
+      font-size: var(--font-size);
+      border-radius: 5px;
+      font-family: var(--font-family);
+    }
+
+    button, .toggle-btn {
       width: 100%;
       padding: var(--padding);
       margin: 8px 0;
@@ -624,7 +650,7 @@
     .page-title {
       font-size: 24px;
       font-weight: 600;
-      margin: 0 0 20px 0;
+      margin: 0 0 24px 0;
       padding: 0;
       color: var(--text-color);
       border-bottom: 2px solid var(--primary-color);
@@ -632,6 +658,30 @@
       display: flex;
       align-items: center;
       gap: 16px;
+    }
+
+    .step h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-top: 24px;
+      margin-bottom: 12px;
+      color: var(--text-color);
+    }
+
+    .step h3:first-of-type {
+      margin-top: 0;
+    }
+
+    .function-notice {
+      margin-top: 8px;
+      margin-bottom: 0;
+      font-size: 0.9rem;
+      color: #666;
+    }
+
+    .function-buttons {
+      margin-top: 8px;
+      margin-bottom: 0;
     }
 
     .page-title .material-icons {
