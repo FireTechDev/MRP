@@ -1444,30 +1444,34 @@ prevButton.style.display = 'none';
   }
   
   // Restaurer ou sélectionner CATE par défaut au chargement
-  const savedFonction = localStorage.getItem('mrp-fonction') || 'CATE';
-  const fonctionInput = document.getElementById('fonction');
-  if (fonctionInput) {
-    fonctionInput.value = savedFonction;
-  }
-  
-  // Mettre à jour l'état visuel des boutons
-  const functionButtons = document.querySelectorAll('.function-btn');
-  functionButtons.forEach(btn => {
-    btn.classList.remove('selected');
-    const onclickAttr = btn.getAttribute('onclick') || '';
-    if (onclickAttr.includes(savedFonction)) {
-      btn.classList.add('selected');
+  try {
+    const savedFonction = localStorage.getItem('mrp-fonction') || 'CATE';
+    const fonctionInput = document.getElementById('fonction');
+    if (fonctionInput) {
+      fonctionInput.value = savedFonction;
     }
-  });
-  
-  // Gérer l'affichage de la section "Je prévois"
-  const prevoisSection = document.getElementById("prevoisSection");
-  if (prevoisSection) {
-    if (savedFonction === 'CDG') {
-      prevoisSection.classList.remove("hidden");
-    } else {
-      prevoisSection.classList.add("hidden");
+    
+    // Mettre à jour l'état visuel des boutons (même s'ils sont dans une page cachée)
+    const functionButtons = document.querySelectorAll('.function-btn');
+    functionButtons.forEach(btn => {
+      btn.classList.remove('selected');
+      const onclickAttr = btn.getAttribute('onclick') || '';
+      if (onclickAttr.includes(savedFonction)) {
+        btn.classList.add('selected');
+      }
+    });
+    
+    // Gérer l'affichage de la section "Je prévois"
+    const prevoisSection = document.getElementById("prevoisSection");
+    if (prevoisSection) {
+      if (savedFonction === 'CDG') {
+        prevoisSection.classList.remove("hidden");
+      } else {
+        prevoisSection.classList.add("hidden");
+      }
     }
+  } catch (error) {
+    console.error('Erreur lors de l\'initialisation de la fonction:', error);
   }
 }
 
@@ -1898,34 +1902,40 @@ document.getElementById('surfaceSinistree').value = value;
 }
 
 function selectFonction(btn, value) {
-  // Réinitialiser tous les boutons
-  document.querySelectorAll('.function-btn').forEach(b => b.classList.remove('selected'));
-  
-  // Sélectionner le bouton cliqué
-  btn.classList.add('selected');
-  
-  // Mettre à jour la valeur cachée
-  const fonctionInput = document.getElementById('fonction');
-  if (fonctionInput) {
-    fonctionInput.value = value;
+  try {
+    // Réinitialiser tous les boutons
+    document.querySelectorAll('.function-btn').forEach(b => b.classList.remove('selected'));
+    
+    // Sélectionner le bouton cliqué
+    btn.classList.add('selected');
+    
+    // Mettre à jour la valeur cachée
+    const fonctionInput = document.getElementById('fonction');
+    if (fonctionInput) {
+      fonctionInput.value = value;
+    }
+    
+    // Sauvegarder dans localStorage
+    localStorage.setItem('mrp-fonction', value);
+    
+    // Gérer l'affichage de la section "Je prévois"
+    const prevoisSection = document.getElementById("prevoisSection");
+    
+    if (value === 'CDG') {
+      // Si CDG est sélectionné, afficher la section
+      if (prevoisSection) prevoisSection.classList.remove("hidden");
+    } else {
+      // Sinon, masquer la section
+      if (prevoisSection) prevoisSection.classList.add("hidden");
+    }
+    
+    // Mettre à jour le message seulement si on est sur une page qui l'utilise
+    if (typeof updateMessage === 'function') {
+      updateMessage();
+    }
+  } catch (error) {
+    console.error('Erreur dans selectFonction:', error);
   }
-  
-  // Sauvegarder dans localStorage
-  localStorage.setItem('mrp-fonction', value);
-  
-  // Gérer l'affichage de la section "Je prévois"
-  const prevoisSection = document.getElementById("prevoisSection");
-  
-  if (value === 'CDG') {
-// Si CDG est sélectionné, afficher la section
-if (prevoisSection) prevoisSection.classList.remove("hidden");
-  } else {
-// Sinon, masquer la section
-if (prevoisSection) prevoisSection.classList.add("hidden");
-  }
-  
-  // Mettre à jour le message
-  updateMessage();
 }
 
 function handleIsolation(value) {
