@@ -1515,7 +1515,6 @@
       font-size: 16px;
       font-weight: normal;
       flex: 1;
-      line-height: 32px; /* Aligner avec la hauteur des boutons de compteur */
     }
 
     .vehicle-count .counter-container {
