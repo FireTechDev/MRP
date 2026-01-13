@@ -403,7 +403,7 @@
     }
 
     /* Typography */
-    h1, h3, h4 {
+    h1, h4 {
       margin: 15px 0 10px;
       color: #333;
     }
@@ -418,6 +418,8 @@
     h3 {
       font-size: 1rem;
       font-weight: 500;
+      margin: 15px 0 10px;
+      color: #333;
     }
 
     /* Les h3 dans les steps ont un style spécifique défini plus bas */
@@ -663,15 +665,17 @@
     }
 
     .step h3 {
-      font-size: 1.1rem;
-      font-weight: 600;
-      margin-top: 24px;
-      margin-bottom: 12px;
-      color: var(--text-color);
+      font-size: 1.1rem !important;
+      font-weight: 600 !important;
+      margin-top: 24px !important;
+      margin-bottom: 12px !important;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      color: var(--text-color) !important;
     }
 
     .step h3:first-of-type {
-      margin-top: 0;
+      margin-top: 0 !important;
     }
 
     .function-notice {
