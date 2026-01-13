@@ -1252,6 +1252,11 @@
       color: #b0b0b0;
     }
 
+    .dark-mode .page-title {
+      color: #e0e0e0;
+      border-bottom-color: #007BFF;
+    }
+
     .dark-mode .page-content select {
       background: #2d2d2d;
       color: #e0e0e0;
