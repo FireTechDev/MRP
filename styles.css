@@ -1539,6 +1539,10 @@
       border-bottom-color: #007BFF;
     }
 
+    .dark-mode .page-title .material-icons {
+      color: var(--primary-color);
+    }
+
     .dark-mode .page-content select {
       background: #2d2d2d;
       color: #e0e0e0;
