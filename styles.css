@@ -420,6 +420,8 @@
       font-weight: 500;
     }
 
+    /* Les h3 dans les steps ont un style spécifique défini plus bas */
+
     /* Titres dans les pages (À propos, Conditions d'utilisation) */
     .page-content h3 {
       font-size: 1.1rem;
