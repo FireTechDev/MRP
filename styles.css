@@ -160,32 +160,43 @@
     }
 
     /* Burger menu */
+    .burger-menu-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
     .burger-menu {
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
+      width: 32px;
+      height: 32px;
+      min-width: 32px;
+      min-height: 32px;
       background: transparent;
       border: 1px solid var(--primary-color);
       border-radius: 8px;
       cursor: pointer;
-      padding: 6px 8px;
+      padding: 0;
       z-index: 1000;
       transition: transform 0.3s ease;
       flex-shrink: 0;
       -webkit-tap-highlight-color: transparent;
-      gap: 2px;
-    }
-
-    .burger-menu-icon {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
       gap: 4px;
     }
 
-    .burger-menu-icon span {
+    .burger-menu-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--primary-color);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .burger-menu span {
       width: 24px;
       height: 2px;
       background: #333;
@@ -196,24 +207,15 @@
       margin: 0;
     }
 
-    .burger-menu-label {
-      font-size: 9px;
-      font-weight: 600;
-      color: var(--primary-color);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      line-height: 1;
-    }
-
-    .burger-menu.active .burger-menu-icon span:nth-child(1) {
+    .burger-menu.active span:nth-child(1) {
       transform: rotate(45deg) translate(6px, 6px);
     }
 
-    .burger-menu.active .burger-menu-icon span:nth-child(2) {
+    .burger-menu.active span:nth-child(2) {
       opacity: 0;
     }
 
-    .burger-menu.active .burger-menu-icon span:nth-child(3) {
+    .burger-menu.active span:nth-child(3) {
       transform: rotate(-45deg) translate(6px, -6px);
     }
 
@@ -474,7 +476,7 @@
       display: block;
       margin-top: 24px;
       margin-bottom: 8px;
-      font-weight: 500;
+      font-weight: 600;
       color: var(--text-color);
       font-size: var(--font-size);
     }
@@ -1282,7 +1284,7 @@
       border-color: #007BFF;
     }
 
-    .dark-mode .burger-menu-icon span {
+    .dark-mode .burger-menu span {
       background: #e0e0e0;
     }
 
