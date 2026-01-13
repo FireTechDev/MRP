@@ -1521,11 +1521,16 @@
       display: flex;
       align-items: center;
       gap: 8px;
+      height: 32px; /* Hauteur fixe pour le conteneur */
     }
 
     .vehicle-count .counter-btn {
       width: 32px;
       height: 32px;
+      min-width: 32px;
+      min-height: 32px;
+      max-width: 32px;
+      max-height: 32px;
       border: none;
       background: #007BFF;
       color: white;
@@ -1537,7 +1542,10 @@
       border-radius: 50%;
       transition: all 0.2s ease;
       padding: 0;
+      margin: 0;
       line-height: 1;
+      vertical-align: middle;
+      box-sizing: border-box;
     }
 
     .vehicle-count .counter-btn:hover {
@@ -1581,6 +1589,11 @@
       padding: 0;
       text-align: center;
       min-width: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      height: 32px; /* Même hauteur que les boutons */
     }
 
     .vehicle-count .counter-btn:disabled {
