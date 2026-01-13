@@ -1200,6 +1200,10 @@
       color: #e0e0e0;
     }
 
+    .dark-mode .step h3 {
+      border-top-color: #404040;
+    }
+
     .dark-mode label {
       color: #e0e0e0;
     }
