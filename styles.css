@@ -442,7 +442,7 @@
       font-weight: 500;
     }
 
-    /* Form elements */
+    /* Form elements - Standards mobiles */
     label {
       display: block;
       margin-top: 24px;
@@ -462,23 +462,27 @@
 
     input, select, textarea {
       width: 100%;
-      padding: 12px;
-      margin: 0 0 0 0;
+      padding: 12px 16px;
+      margin: 0 0 16px 0;
       box-sizing: border-box;
       font-size: var(--font-size);
-      border-radius: 5px;
+      border-radius: 8px;
       font-family: var(--font-family);
       border: 1px solid var(--border-color);
     }
 
     button, .toggle-btn {
       width: 100%;
-      padding: 12px;
-      margin: 0;
+      padding: 14px 16px;
+      margin: 0 0 12px 0;
       box-sizing: border-box;
       font-size: var(--font-size);
-      border-radius: 5px;
+      border-radius: 8px;
       font-family: var(--font-family);
+    }
+
+    button:last-child, .toggle-btn:last-child {
+      margin-bottom: 0;
     }
 
     /* Fix pour le champ groupe horaire sur iOS */
@@ -513,15 +517,19 @@
 
     .toggle-btn {
       width: 100%;
-      padding: 10px;
-      margin: 8px 0;
+      padding: 14px 16px;
+      margin: 0 0 12px 0;
       background: rgba(0, 123, 255, 0.05);
       color: var(--primary-color);
       border: 1px solid var(--primary-color);
-      border-radius: var(--border-radius);
+      border-radius: 8px;
       cursor: pointer;
       transition: all 0.3s ease;
       text-align: center;
+    }
+
+    .toggle-btn:last-child {
+      margin-bottom: 0;
     }
 
     .toggle-btn:hover {
@@ -656,11 +664,10 @@
     .page-title {
       font-size: 24px;
       font-weight: 600;
-      margin: 0 0 28px 0;
-      padding: 0;
+      margin: 0 0 24px 0;
+      padding: 0 0 12px 0;
       color: var(--text-color);
       border-bottom: 2px solid var(--primary-color);
-      padding-bottom: 12px;
       display: flex;
       align-items: center;
       gap: 16px;
@@ -671,8 +678,10 @@
       font-weight: 500;
       margin-top: 32px;
       margin-bottom: 16px;
+      margin-left: 0;
+      margin-right: 0;
       color: #333;
-      padding-top: 16px;
+      padding-top: 24px;
       border-top: 1px solid #e0e0e0;
     }
 
@@ -684,35 +693,31 @@
 
     .function-notice {
       margin-top: 8px;
-      margin-bottom: 0;
+      margin-bottom: 16px;
       font-size: 0.9rem;
       color: #666;
-      line-height: 1.4;
+      line-height: 1.5;
     }
 
     .function-buttons {
       margin-top: 8px;
-      margin-bottom: 0;
+      margin-bottom: 16px;
       display: flex;
       gap: 12px;
     }
 
     .function-buttons .toggle-btn {
       flex: 1;
-    }
-
-    /* Espacement après les groupes de champs */
-    .form-group,
-    .function-buttons,
-    select + .toggle-btn,
-    input + .toggle-btn {
-      margin-top: 12px;
+      margin: 0;
     }
 
     /* Espacement pour les conteneurs de moyens */
-    #moyensDepartContainer,
-    .sub-container {
+    #moyensDepartContainer {
       margin-top: 16px;
+    }
+
+    .sub-container {
+      margin: 24px 0;
     }
 
     .page-title .material-icons {
@@ -853,10 +858,10 @@
 
     /* Style pour les sous-conteneurs */
     .sub-container {
-      margin: 20px 0;
-      padding: 15px;
+      margin: 24px 0;
+      padding: 16px;
       background: #f8f9fa;
-      border-radius: 5px;
+      border-radius: 8px;
       border: 1px solid #e9ecef;
     }
 
