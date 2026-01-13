@@ -700,6 +700,34 @@
       margin: 0;
     }
 
+    .address-buttons {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .address-buttons .secondary-btn {
+      flex: 1;
+      margin: 0;
+    }
+
+    .field-group {
+      margin-bottom: 0;
+    }
+
+    #natureInterventionContainer {
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+
+    #natureInterventionContainer .toggle-btn {
+      margin-bottom: 12px;
+    }
+
+    #natureInterventionContainer .toggle-btn:last-child {
+      margin-bottom: 0;
+    }
+
     /* Espacement pour les conteneurs de moyens */
     #moyensDepartContainer {
       margin-top: 16px;
@@ -1004,11 +1032,11 @@
 
     .gps-btn {
       width: 100%;
-      padding: 10px;
-      margin: 8px 0;
+      padding: 14px 16px;
+      margin: 0 0 16px 0;
       background: rgba(0, 123, 255, 0.05);
       border: 1px solid var(--primary-color);
-      border-radius: var(--border-radius);
+      border-radius: 8px;
       color: var(--primary-color);
       font-size: var(--font-size);
       cursor: pointer;
