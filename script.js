@@ -817,7 +817,8 @@ else if (nature === "Chute de ligne électrique") {
 
   // Ajouter les prévisions du chef de groupe si présentes
   const fonction = getVal("fonction");
-  if (fonction === 'CDG' && document.getElementById('prevoisSection').classList.contains('hidden') === false) {
+  const prevoisSection = document.getElementById('prevoisSection');
+  if (fonction === 'CDG' && prevoisSection && !prevoisSection.classList.contains('hidden')) {
 msg += "[ JE PREVOIS ]\n";
 document.querySelectorAll('#prevoisActions .toggle-btn.selected').forEach(btn => {
   // Nettoyer le texte de l'action pour supprimer les tags "suggéré"
@@ -1930,8 +1931,12 @@ function selectFonction(btn, value) {
     }
     
     // Mettre à jour le message seulement si on est sur une page qui l'utilise
-    if (typeof updateMessage === 'function') {
-      updateMessage();
+    try {
+      if (typeof updateMessage === 'function') {
+        updateMessage();
+      }
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour du message:', error);
     }
   } catch (error) {
     console.error('Erreur dans selectFonction:', error);
