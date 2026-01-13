@@ -861,6 +861,20 @@
       display: flex;
       flex-direction: row;
       gap: 8px;
+      align-items: stretch;
+    }
+
+    /* S'assurer que les boutons dans les conteneurs de propagation ont la même hauteur */
+    #propagationBatimentContainer .toggle-btn,
+    #isoleBatimentContainer .toggle-btn,
+    #propagationVehiculeContainer .toggle-btn,
+    #isoleVehiculeContainer .toggle-btn {
+      flex: 1;
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0;
     }
 
     /* Style pour les éléments cachés */
@@ -1501,6 +1515,9 @@
       font-size: 16px;
       font-weight: normal;
       flex: 1;
+      line-height: 32px; /* Aligner avec la hauteur des boutons de compteur */
+      display: flex;
+      align-items: center;
     }
 
     .vehicle-count .counter-container {
@@ -1625,6 +1642,7 @@
       display: flex;
       gap: 8px;
       margin-bottom: 5px;
+      align-items: stretch;
     }
 
     #propagationVehiculeDetails,
@@ -1830,6 +1848,11 @@
       font-size: var(--font-size);
       cursor: pointer;
       transition: all 0.3s ease;
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
     }
 
     .surface-btn:hover {
