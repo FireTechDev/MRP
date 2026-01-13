@@ -720,6 +720,11 @@
       margin-bottom: 0;
     }
 
+    #natureInterventionContainer {
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+
     #natureInterventionContainer .toggle-btn {
       margin-bottom: 12px;
     }
