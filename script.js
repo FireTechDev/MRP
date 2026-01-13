@@ -1469,16 +1469,6 @@ prevButton.style.display = 'none';
       prevoisSection.classList.add("hidden");
     }
   }
-  
-  // Gérer l'affichage de la section "Je prévois" selon la fonction sauvegardée
-  const prevoisSection = document.getElementById('prevoisSection');
-  if (prevoisSection) {
-    if (savedFonction === 'CDG') {
-      prevoisSection.classList.remove('hidden');
-    } else {
-      prevoisSection.classList.add('hidden');
-    }
-  }
 }
 
 function toggleLigneDetails() {
