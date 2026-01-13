@@ -1813,6 +1813,7 @@
       cursor: pointer;
       display: inline-block;
       margin: 10px 0;
+      font-size: var(--font-size);
     }
 
     .link-toggle:hover {
