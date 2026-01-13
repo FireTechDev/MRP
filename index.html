@@ -94,14 +94,6 @@
     <!-- Étape 0 : Intervention -->
     <div id="step0" class="step active">
       <h2 class="page-title"><span class="material-icons">description</span>Intervention</h2>
-      <label>Fonction</label>
-      <div class="function-buttons">
-        <button type="button" class="toggle-btn function-btn" onclick="selectFonction(this, 'CATE')">CATE</button>
-        <button type="button" class="toggle-btn function-btn" onclick="selectFonction(this, 'CDG')">CDG</button>
-      </div>
-      <input type="hidden" id="fonction" value="">
-      <p class="function-notice">Affiche les infos à passer dans le message radio, selon votre fonction.</p>
-
       <label for="interventionNumber">Numéro intervention</label>
       <input type="number" id="interventionNumber" class="form-control" min="0" inputMode="numeric" pattern="[0-9]*" step="1" onchange="updateMessage()" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
 
@@ -1286,11 +1278,21 @@
       <h1>Réglages</h1>
       
       <div style="margin-top: 24px;">
-        <label for="themeSelect" style="display: block; margin-bottom: 8px; font-weight: 500;">Aspect</label>
-        <select id="themeSelect" onchange="changeTheme(this.value)" style="width: 100%; padding: 10px; font-size: 16px; border: 1px solid #ddd; border-radius: 5px; background: white; color: #333;">
+        <label for="themeSelect">Aspect</label>
+        <select id="themeSelect" onchange="changeTheme(this.value)">
           <option value="light">Clair</option>
           <option value="dark">Sombre</option>
         </select>
+      </div>
+
+      <div style="margin-top: 32px;">
+        <label>Fonction</label>
+        <div class="function-buttons">
+          <button type="button" class="toggle-btn function-btn" onclick="selectFonction(this, 'CATE')">CATE</button>
+          <button type="button" class="toggle-btn function-btn" onclick="selectFonction(this, 'CDG')">CDG</button>
+        </div>
+        <input type="hidden" id="fonction" value="">
+        <p class="function-notice">Affiche les infos à passer dans le message radio, selon votre fonction.</p>
       </div>
     </div>
   </div>

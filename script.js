@@ -1316,10 +1316,26 @@ btn.classList.remove('active');
   document.getElementById("step0").classList.replace("hidden", "active");
   updateProgress();
   
-  // Sélectionner CATE par défaut
-  const cateButton = document.querySelector('.function-btn[onclick*="CATE"]');
-  if (cateButton) {
-selectFonction(cateButton, 'CATE');
+  // Réinitialiser la fonction à CATE par défaut
+  const fonctionInput = document.getElementById('fonction');
+  if (fonctionInput) {
+    fonctionInput.value = 'CATE';
+  }
+  localStorage.setItem('mrp-fonction', 'CATE');
+  
+  // Mettre à jour l'état visuel des boutons
+  document.querySelectorAll('.function-btn').forEach(btn => {
+    btn.classList.remove('selected');
+    const onclickAttr = btn.getAttribute('onclick') || '';
+    if (onclickAttr.includes('CATE')) {
+      btn.classList.add('selected');
+    }
+  });
+  
+  // Masquer la section "Je prévois"
+  const prevoisSection = document.getElementById("prevoisSection");
+  if (prevoisSection) {
+    prevoisSection.classList.add("hidden");
   }
 }
 
@@ -1427,10 +1443,31 @@ window.onload = function() {
 prevButton.style.display = 'none';
   }
   
-  // Sélectionner CATE par défaut au chargement
-  const cateButton = document.querySelector('.function-btn[onclick*="CATE"]');
-  if (cateButton) {
-selectFonction(cateButton, 'CATE');
+  // Restaurer ou sélectionner CATE par défaut au chargement
+  const savedFonction = localStorage.getItem('mrp-fonction') || 'CATE';
+  const fonctionInput = document.getElementById('fonction');
+  if (fonctionInput) {
+    fonctionInput.value = savedFonction;
+  }
+  
+  // Mettre à jour l'état visuel des boutons
+  const functionButtons = document.querySelectorAll('.function-btn');
+  functionButtons.forEach(btn => {
+    btn.classList.remove('selected');
+    const onclickAttr = btn.getAttribute('onclick') || '';
+    if (onclickAttr.includes(savedFonction)) {
+      btn.classList.add('selected');
+    }
+  });
+  
+  // Gérer l'affichage de la section "Je prévois"
+  const prevoisSection = document.getElementById("prevoisSection");
+  if (prevoisSection) {
+    if (savedFonction === 'CDG') {
+      prevoisSection.classList.remove("hidden");
+    } else {
+      prevoisSection.classList.add("hidden");
+    }
   }
   
   // Masquer la section "Je prévois" par défaut au démarrage
@@ -1879,17 +1916,23 @@ function selectFonction(btn, value) {
   btn.classList.add('selected');
   
   // Mettre à jour la valeur cachée
-  document.getElementById('fonction').value = value;
+  const fonctionInput = document.getElementById('fonction');
+  if (fonctionInput) {
+    fonctionInput.value = value;
+  }
+  
+  // Sauvegarder dans localStorage
+  localStorage.setItem('mrp-fonction', value);
   
   // Gérer l'affichage de la section "Je prévois"
   const prevoisSection = document.getElementById("prevoisSection");
   
   if (value === 'CDG') {
 // Si CDG est sélectionné, afficher la section
-prevoisSection.classList.remove("hidden");
+if (prevoisSection) prevoisSection.classList.remove("hidden");
   } else {
 // Sinon, masquer la section
-prevoisSection.classList.add("hidden");
+if (prevoisSection) prevoisSection.classList.add("hidden");
   }
   
   // Mettre à jour le message
@@ -2511,6 +2554,21 @@ function showSettingsPage() {
     if (themeSelect) {
       themeSelect.value = savedTheme;
     }
+    // Restaurer la fonction sélectionnée
+    const savedFonction = localStorage.getItem('mrp-fonction') || 'CATE';
+    const fonctionInput = document.getElementById('fonction');
+    if (fonctionInput) {
+      fonctionInput.value = savedFonction;
+    }
+    // Mettre à jour l'état visuel des boutons
+    const functionButtons = settingsPage.querySelectorAll('.function-btn');
+    functionButtons.forEach(btn => {
+      btn.classList.remove('selected');
+      const onclickAttr = btn.getAttribute('onclick') || '';
+      if (onclickAttr.includes(savedFonction)) {
+        btn.classList.add('selected');
+      }
+    });
     // Fermer le menu
     closeMenu();
   }
