@@ -87,7 +87,7 @@
       font-family: var(--font-family);
       margin: 0;
       padding: var(--margin);
-      padding-top: 56px; /* Espace pour le header */
+      padding-top: 64px; /* Espace pour le header */
       padding-bottom: 0; /* Le padding est géré par le container */
       background: var(--background-color);
       font-size: var(--font-size);
@@ -97,7 +97,7 @@
     /* Support de la safe area iOS uniquement quand disponible */
     @supports (padding: env(safe-area-inset-top)) {
       body {
-        padding-top: calc(56px + env(safe-area-inset-top));
+        padding-top: calc(64px + env(safe-area-inset-top));
       }
     }
 
@@ -110,8 +110,8 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      min-height: 56px;
-      height: 56px;
+      min-height: 64px;
+      height: 64px;
       padding: 0 16px;
       padding-top: 0;
       padding-bottom: 0;
@@ -126,8 +126,8 @@
     @supports (padding: env(safe-area-inset-top)) {
       .app-header {
         padding-top: env(safe-area-inset-top);
-        height: calc(56px + env(safe-area-inset-top));
-        min-height: calc(56px + env(safe-area-inset-top));
+        height: calc(64px + env(safe-area-inset-top));
+        min-height: calc(64px + env(safe-area-inset-top));
       }
     }
 
@@ -135,7 +135,7 @@
       display: flex;
       align-items: center;
       gap: 12px;
-      height: 56px;
+      height: 64px;
       flex-shrink: 0;
     }
 
@@ -791,7 +791,7 @@
     /* Pages (À propos, etc.) */
     .page {
       position: fixed;
-      top: calc(56px + env(safe-area-inset-top));
+      top: calc(64px + env(safe-area-inset-top));
       left: 0;
       right: 0;
       bottom: calc(49px + max(env(safe-area-inset-bottom), 8px) + 8px);
