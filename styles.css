@@ -1889,37 +1889,7 @@
       opacity: 0.7;
     }
 
-    .address-buttons {
-      display: flex;
-      width: 100%;
-      margin: 8px 0;
-      gap: 8px;
-    }
-
-    .secondary-btn {
-      width: 100%;
-      padding: 10px;
-      margin: 8px 0;
-      background: rgba(0, 123, 255, 0.05);
-      border: 1px solid var(--primary-color);
-      border-radius: var(--border-radius);
-      color: var(--primary-color);
-      font-size: var(--font-size);
-      cursor: pointer;
-      transition: all 0.3s ease;
-      text-align: center;
-    }
-
-    .secondary-btn:hover {
-      background: rgba(0, 123, 255, 0.1);
-    }
-
-    .secondary-btn.selected {
-      background-color: var(--primary-color);
-      color: white;
-      font-weight: 500;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
+    /* Les styles pour .address-buttons et .secondary-btn sont définis plus haut */
 
     /* Style pour les sections de risque dans le feu de bâtiment */
     .risk-section {
