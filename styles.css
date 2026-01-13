@@ -1378,6 +1378,11 @@
       border-bottom-color: #007BFF;
     }
 
+    .dark-mode .page-content h1 {
+      color: #e0e0e0;
+      border-bottom-color: #007BFF;
+    }
+
     .dark-mode .update-link, .dark-mode .share-link {
       color: var(--primary-color);
     }
