@@ -1142,7 +1142,8 @@
     #actionsContainer .toggle-btn,
     #incendieContainer .toggle-btn,
     #secoursRoutierContainer .toggle-btn,
-    #prevoisActions .toggle-btn {
+    #prevoisActions .toggle-btn,
+    #autresServices .toggle-btn {
       position: relative;
       display: flex;
       align-items: center;
@@ -1157,7 +1158,8 @@
     #actionsContainer .toggle-btn:not(.selected),
     #incendieContainer .toggle-btn:not(.selected),
     #secoursRoutierContainer .toggle-btn:not(.selected),
-    #prevoisActions .toggle-btn:not(.selected) {
+    #prevoisActions .toggle-btn:not(.selected),
+    #autresServices .toggle-btn:not(.selected) {
       background: white;
       color: var(--primary-color);
       border: 1px solid var(--primary-color);
@@ -1167,7 +1169,8 @@
     #actionsContainer .toggle-btn.selected,
     #incendieContainer .toggle-btn.selected,
     #secoursRoutierContainer .toggle-btn.selected,
-    #prevoisActions .toggle-btn.selected {
+    #prevoisActions .toggle-btn.selected,
+    #autresServices .toggle-btn.selected {
       background: var(--primary-color);
       color: white;
       border: 1px solid var(--primary-color);
@@ -1177,7 +1180,8 @@
     #actionsContainer .toggle-btn::after,
     #incendieContainer .toggle-btn::after,
     #secoursRoutierContainer .toggle-btn::after,
-    #prevoisActions .toggle-btn::after {
+    #prevoisActions .toggle-btn::after,
+    #autresServices .toggle-btn::after {
       content: '';
       width: 24px;
       height: 24px;
@@ -1193,7 +1197,8 @@
     #actionsContainer .toggle-btn:not(.selected)::after,
     #incendieContainer .toggle-btn:not(.selected)::after,
     #secoursRoutierContainer .toggle-btn:not(.selected)::after,
-    #prevoisActions .toggle-btn:not(.selected)::after {
+    #prevoisActions .toggle-btn:not(.selected)::after,
+    #autresServices .toggle-btn:not(.selected)::after {
       border: 2px solid var(--primary-color);
       background: transparent;
     }
@@ -1202,7 +1207,8 @@
     #actionsContainer .toggle-btn.selected::after,
     #incendieContainer .toggle-btn.selected::after,
     #secoursRoutierContainer .toggle-btn.selected::after,
-    #prevoisActions .toggle-btn.selected::after {
+    #prevoisActions .toggle-btn.selected::after,
+    #autresServices .toggle-btn.selected::after {
       background: var(--primary-color);
       border: 2px solid white;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
@@ -1365,7 +1371,8 @@
     .dark-mode #actionsContainer .toggle-btn:not(.selected),
     .dark-mode #incendieContainer .toggle-btn:not(.selected),
     .dark-mode #secoursRoutierContainer .toggle-btn:not(.selected),
-    .dark-mode #prevoisActions .toggle-btn:not(.selected) {
+    .dark-mode #prevoisActions .toggle-btn:not(.selected),
+    .dark-mode #autresServices .toggle-btn:not(.selected) {
       background: #2d2d2d;
       color: #e0e0e0;
       border-color: #404040;
@@ -1374,14 +1381,16 @@
     .dark-mode #actionsContainer .toggle-btn:not(.selected)::after,
     .dark-mode #incendieContainer .toggle-btn:not(.selected)::after,
     .dark-mode #secoursRoutierContainer .toggle-btn:not(.selected)::after,
-    .dark-mode #prevoisActions .toggle-btn:not(.selected)::after {
+    .dark-mode #prevoisActions .toggle-btn:not(.selected)::after,
+    .dark-mode #autresServices .toggle-btn:not(.selected)::after {
       border-color: #007BFF;
     }
 
     .dark-mode #actionsContainer .toggle-btn.selected,
     .dark-mode #incendieContainer .toggle-btn.selected,
     .dark-mode #secoursRoutierContainer .toggle-btn.selected,
-    .dark-mode #prevoisActions .toggle-btn.selected {
+    .dark-mode #prevoisActions .toggle-btn.selected,
+    .dark-mode #autresServices .toggle-btn.selected {
       background: var(--primary-color);
       color: white;
       border-color: var(--primary-color);
