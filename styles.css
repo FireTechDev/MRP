@@ -1138,6 +1138,79 @@
       color: white;
     }
 
+    /* Style spécifique pour les boutons d'action dans "Je fais" avec icône checkmark */
+    #actionsContainer .toggle-btn,
+    #incendieContainer .toggle-btn,
+    #secoursRoutierContainer .toggle-btn,
+    #prevoisActions .toggle-btn {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      border-radius: 12px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    /* État non coché : fond blanc, texte bleu, cercle vide */
+    #actionsContainer .toggle-btn:not(.selected),
+    #incendieContainer .toggle-btn:not(.selected),
+    #secoursRoutierContainer .toggle-btn:not(.selected),
+    #prevoisActions .toggle-btn:not(.selected) {
+      background: white;
+      color: var(--primary-color);
+      border: 1px solid var(--primary-color);
+    }
+
+    /* État coché : fond bleu, texte blanc, cercle avec checkmark */
+    #actionsContainer .toggle-btn.selected,
+    #incendieContainer .toggle-btn.selected,
+    #secoursRoutierContainer .toggle-btn.selected,
+    #prevoisActions .toggle-btn.selected {
+      background: var(--primary-color);
+      color: white;
+      border: 1px solid var(--primary-color);
+    }
+
+    /* Icône checkmark à droite */
+    #actionsContainer .toggle-btn::after,
+    #incendieContainer .toggle-btn::after,
+    #secoursRoutierContainer .toggle-btn::after,
+    #prevoisActions .toggle-btn::after {
+      content: '';
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    /* Cercle vide pour état non coché */
+    #actionsContainer .toggle-btn:not(.selected)::after,
+    #incendieContainer .toggle-btn:not(.selected)::after,
+    #secoursRoutierContainer .toggle-btn:not(.selected)::after,
+    #prevoisActions .toggle-btn:not(.selected)::after {
+      border: 2px solid var(--primary-color);
+      background: transparent;
+    }
+
+    /* Cercle avec checkmark pour état coché */
+    #actionsContainer .toggle-btn.selected::after,
+    #incendieContainer .toggle-btn.selected::after,
+    #secoursRoutierContainer .toggle-btn.selected::after,
+    #prevoisActions .toggle-btn.selected::after {
+      background: var(--primary-color);
+      border: 2px solid white;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 14px 14px;
+    }
+
     /* Style pour le bouton "Je prévois" */
     #togglePrevoisBtn {
       background: rgba(0, 123, 255, 0.05);
@@ -1286,6 +1359,32 @@
     .dark-mode .toggle-btn.selected, .dark-mode #toggleRouteBtn.active {
       background-color: var(--primary-color);
       color: white;
+    }
+
+    /* Dark mode pour les boutons d'action dans "Je fais" */
+    .dark-mode #actionsContainer .toggle-btn:not(.selected),
+    .dark-mode #incendieContainer .toggle-btn:not(.selected),
+    .dark-mode #secoursRoutierContainer .toggle-btn:not(.selected),
+    .dark-mode #prevoisActions .toggle-btn:not(.selected) {
+      background: #2d2d2d;
+      color: #e0e0e0;
+      border-color: #404040;
+    }
+
+    .dark-mode #actionsContainer .toggle-btn:not(.selected)::after,
+    .dark-mode #incendieContainer .toggle-btn:not(.selected)::after,
+    .dark-mode #secoursRoutierContainer .toggle-btn:not(.selected)::after,
+    .dark-mode #prevoisActions .toggle-btn:not(.selected)::after {
+      border-color: #007BFF;
+    }
+
+    .dark-mode #actionsContainer .toggle-btn.selected,
+    .dark-mode #incendieContainer .toggle-btn.selected,
+    .dark-mode #secoursRoutierContainer .toggle-btn.selected,
+    .dark-mode #prevoisActions .toggle-btn.selected {
+      background: var(--primary-color);
+      color: white;
+      border-color: var(--primary-color);
     }
 
     .dark-mode button {
