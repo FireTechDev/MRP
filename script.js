@@ -1470,15 +1470,14 @@ prevButton.style.display = 'none';
     }
   }
   
-  // Masquer la section "Je prévois" par défaut au démarrage
+  // Gérer l'affichage de la section "Je prévois" selon la fonction sauvegardée
   const prevoisSection = document.getElementById('prevoisSection');
   if (prevoisSection) {
-// Vérifier si une fonction est déjà sélectionnée
-const fonction = document.getElementById('fonction').value;
-if (fonction !== 'CDG') {
-  // Si ce n'est pas CDG ou si aucune fonction n'est sélectionnée, masquer la section
-  prevoisSection.classList.add('hidden');
-}
+    if (savedFonction === 'CDG') {
+      prevoisSection.classList.remove('hidden');
+    } else {
+      prevoisSection.classList.add('hidden');
+    }
   }
 }
 
