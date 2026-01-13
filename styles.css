@@ -1539,6 +1539,11 @@
       color: var(--primary-color);
     }
 
+    .dark-mode .victimes-counter {
+      color: var(--primary-color);
+      background: rgba(0, 123, 255, 0.2);
+    }
+
     .dark-mode .page-content h1 {
       color: #e0e0e0;
       border-bottom-color: #007BFF;
