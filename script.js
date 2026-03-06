@@ -1946,8 +1946,8 @@ function toggleMoyensDepart() {
 }
 
 // Version de l'application
-const APP_VERSION = '1.0.21';
-const APP_BUILD = '06/03/2026 - 13h31';
+const APP_VERSION = '1.0.22';
+const APP_BUILD = '06/03/2026 - 13h46';
 const PWA_VERSION_ENDPOINT = './version.json';
 const PWA_SW_URL = `./sw.js?v=${encodeURIComponent(`${APP_VERSION}-${APP_BUILD}`)}`;
 const PWA_VERSION_CHECK_INTERVAL_MS = 10 * 60 * 1000;

@@ -1,6 +1,6 @@
 {
   "name": "mrp",
-  "version": "1.0.21",
+  "version": "1.0.22",
   "description": "MRP - Message radio Pompier",
   "main": "index.js",
   "scripts": {

@@ -1,4 +1,9 @@
-const SW_VERSION = new URL(self.location.href).searchParams.get('v') || 'dev';
+// Legacy bridge: the pre-refactor app parses APP_VERSION from sw.js and relies on
+// registration.update() to move to a newer worker. Keep these constants here so
+// already-installed iOS PWAs can detect the transition build and adopt it.
+const APP_VERSION = '1.0.22';
+const APP_BUILD = '06/03/2026 - 13h46';
+const SW_VERSION = new URL(self.location.href).searchParams.get('v') || `${APP_VERSION}-${APP_BUILD}`;
 const CACHE_PREFIX = 'mrp-';
 const STATIC_CACHE = `${CACHE_PREFIX}static-${SW_VERSION}`;
 const RUNTIME_CACHE = `${CACHE_PREFIX}runtime-${SW_VERSION}`;
@@ -106,6 +111,10 @@ self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(STATIC_CACHE).then((cache) => cache.addAll(PRECACHE_URLS))
   );
+
+  // Immediate activation keeps legacy clients from being stranded with the old
+  // service worker when they trigger registration.update() from cached code.
+  self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
