@@ -80,25 +80,30 @@
       --font-size: 18px;
       --padding: 16px;
       --margin: 10px;
+      --safe-area-top: env(safe-area-inset-top, 0px);
+      --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+      --app-header-base-height: 64px;
+      --app-header-height: calc(var(--app-header-base-height) + var(--safe-area-top));
+      --bottom-nav-base-height: 49px;
+      --bottom-nav-padding-y: 12px;
+      --bottom-nav-height: calc(var(--bottom-nav-base-height) + (var(--bottom-nav-padding-y) * 2) + var(--safe-area-bottom));
     }
 
     /* Base styles */
+    html {
+      background: var(--background-color);
+    }
+
     body {
       font-family: var(--font-family);
       margin: 0;
       padding: var(--margin);
-      padding-top: 64px; /* Espace pour le header */
+      padding-top: var(--app-header-height);
       padding-bottom: 0; /* Le padding est géré par le container */
       background: var(--background-color);
       font-size: var(--font-size);
       line-height: 1.5;
-    }
-
-    /* Support de la safe area iOS uniquement quand disponible */
-    @supports (padding: env(safe-area-inset-top)) {
-      body {
-        padding-top: calc(64px + env(safe-area-inset-top));
-      }
+      overflow-x: hidden;
     }
 
     /* Header - Barre de navigation en haut */
@@ -110,10 +115,10 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      min-height: 64px;
-      height: 64px;
+      min-height: var(--app-header-height);
+      height: var(--app-header-height);
       padding: 0 16px;
-      padding-top: 0;
+      padding-top: var(--safe-area-top);
       padding-bottom: 0;
       box-sizing: border-box;
       background: #ffffff;
@@ -122,20 +127,11 @@
       border-bottom: 1px solid #e0e0e0;
     }
 
-    /* Support de la safe area iOS uniquement quand disponible */
-    @supports (padding: env(safe-area-inset-top)) {
-      .app-header {
-        padding-top: env(safe-area-inset-top);
-        height: calc(64px + env(safe-area-inset-top));
-        min-height: calc(64px + env(safe-area-inset-top));
-      }
-    }
-
     .header-left {
       display: flex;
       align-items: center;
       gap: 12px;
-      height: 64px;
+      height: var(--app-header-base-height);
       flex-shrink: 0;
     }
 
@@ -272,7 +268,7 @@
       align-items: center;
       justify-content: space-between;
       padding: 16px;
-      padding-top: calc(16px + env(safe-area-inset-top));
+      padding-top: calc(16px + var(--safe-area-top));
       border-bottom: 1px solid #e0e0e0;
       min-height: 56px;
     }
@@ -413,7 +409,7 @@
       background: transparent;
       padding: var(--padding);
       padding-top: 32px; /* Espace selon standards iOS/Android entre top bar et contenu */
-      padding-bottom: calc(100px + max(env(safe-area-inset-bottom), 8px) + 8px); /* Espace pour le menu flottant en bas + safe area + espace pour barre système + espace supplémentaire */
+      padding-bottom: calc(var(--bottom-nav-height) + 24px);
       box-shadow: none;
       border-radius: 0;
     }
@@ -577,15 +573,14 @@
       left: 0;
       right: 0;
       background: #ffffff;
-      /* Padding bottom: 12px de base + safe area (min 8px) + 8px supplémentaire pour la barre système iOS */
-      padding: 12px 4px calc(12px + max(env(safe-area-inset-bottom), 8px) + 8px) 4px;
+      padding: var(--bottom-nav-padding-y) 4px calc(var(--bottom-nav-padding-y) + var(--safe-area-bottom)) 4px;
       box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.15);
       z-index: 1000;
       border-top: 1px solid #e0e0e0;
       margin: 0;
       max-width: 100%;
       box-sizing: border-box;
-      min-height: 49px;
+      min-height: var(--bottom-nav-base-height);
       height: auto;
       align-items: center;
     }
@@ -634,8 +629,8 @@
 
     @media (max-width: 480px) {
       .progress-bar {
-        padding: 12px 2px calc(12px + max(env(safe-area-inset-bottom), 8px) + 8px) 2px;
-        min-height: 49px;
+        padding: var(--bottom-nav-padding-y) 2px calc(var(--bottom-nav-padding-y) + var(--safe-area-bottom)) 2px;
+        min-height: var(--bottom-nav-base-height);
       }
       
       .progress-step {
@@ -844,10 +839,10 @@
     /* Pages (À propos, etc.) */
     .page {
       position: fixed;
-      top: calc(64px + env(safe-area-inset-top));
+      top: var(--app-header-height);
       left: 0;
       right: 0;
-      bottom: calc(49px + max(env(safe-area-inset-bottom), 8px) + 8px);
+      bottom: var(--bottom-nav-height);
       background: var(--background-color);
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
