@@ -674,6 +674,11 @@
 
     .step.active { display: block; }
 
+    /* Step 0 has no contextual preamble above the title, so it needs less top air on iOS. */
+    #step0.active {
+      margin-top: -12px;
+    }
+
     .page-title {
       font-size: 24px;
       font-weight: 600;
