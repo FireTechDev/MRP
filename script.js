@@ -1992,7 +1992,7 @@ function showUpdateStatus(message, color, autoHideMs = 0) {
 function syncDisplayedAppVersion() {
   const versionInfo = document.getElementById('appVersionInfo');
   if (versionInfo) {
-    versionInfo.textContent = `Version : ${APP_VERSION}`;
+    versionInfo.textContent = `Version ${APP_VERSION} • Build ${APP_BUILD}`;
   }
 }
 
@@ -2276,7 +2276,9 @@ async function checkForUpdates(isAutoCheck = false) {
   }
 
   if (remoteMeta) {
-    showUpdateStatus('Nouvelle version détectée. Téléchargement en cours...', '#ffc107', isAutoCheck ? 4000 : 5000);
+    const remoteVersion = remoteMeta.version || 'n/a';
+    const remoteBuild = remoteMeta.build || 'n/a';
+    showUpdateStatus(`Nouvelle version détectée : Version ${remoteVersion} • Build ${remoteBuild}`, '#ffc107', isAutoCheck ? 5000 : 6000);
     return;
   }
 
