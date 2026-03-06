@@ -778,14 +778,67 @@
       color: var(--primary-color);
     }
 
+    .page-title-victimes {
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .page-title-victimes .material-icons {
+      margin-top: 0;
+    }
+
+    .victimes-title-content {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
     .victimes-counter {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 34px;
       font-size: 18px;
       font-weight: 600;
       color: var(--primary-color);
       background: rgba(0, 123, 255, 0.1);
       padding: 4px 12px;
       border-radius: 12px;
-      margin-left: 2px;
+      line-height: 1.2;
+    }
+
+    .victimes-counter[hidden] {
+      display: none;
+    }
+
+    .victimes-title-label {
+      line-height: 1.2;
+    }
+
+    .step-card {
+      margin: 0 0 18px 0;
+      padding: 16px;
+      border: 1px solid #e3e8ef;
+      border-radius: 14px;
+      background: #ffffff;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    }
+
+    .victimes-summary-card {
+      margin: 0 0 18px 0;
+      padding: 10px 12px;
+      border: 1px solid #dbe5ef;
+      border-radius: 10px;
+      background: #f7fafc;
+      color: #5b6775;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .victimes-summary-text {
+      display: block;
     }
 
     /* Pages (À propos, etc.) */
@@ -1475,6 +1528,78 @@
       color: #e0e0e0;
     }
 
+    .dark-mode #victimsFields {
+      background: transparent !important;
+      box-shadow: none !important;
+    }
+
+    .dark-mode #moyensPompiers {
+      background: transparent !important;
+      box-shadow: none !important;
+    }
+
+    .dark-mode :is(#victimsFields, #moyensPompiers) .vehicle-count {
+      background: #202833;
+      border-color: #334155;
+      box-shadow: none;
+    }
+
+    .dark-mode :is(#victimsFields, #moyensPompiers) .vehicle-count label,
+    .dark-mode :is(#victimsFields, #moyensPompiers) .counter-value {
+      color: #e5e7eb;
+    }
+
+    .dark-mode :is(#victimsFields, #moyensPompiers) .counter-btn {
+      border-color: #4c6ea8;
+      color: #b9d4ff;
+      background: transparent;
+    }
+
+    .dark-mode :is(#victimsFields, #moyensPompiers) .counter-btn.minus {
+      border-color: #3b4659;
+      color: #cbd2df;
+      background: #263142;
+    }
+
+    .dark-mode :is(#victimsFields, #moyensPompiers) .counter-btn.minus:disabled {
+      border-color: #2d3544;
+      color: #556070;
+    }
+
+    .dark-mode :is(#victimsFields, #moyensPompiers) .counter-btn.plus {
+      border-color: #4c6ea8;
+      color: #b9d4ff;
+    }
+
+    .dark-mode :is(#victimsFields, #moyensPompiers) .counter-btn:hover:not(:disabled) {
+      background: rgba(76, 110, 168, 0.12);
+    }
+
+    .dark-mode #moyensPompiers .vehicle-count.moyen-pompier-active {
+      background: #4c6ea8;
+      border-color: #4c6ea8;
+    }
+
+    .dark-mode #moyensPompiers .vehicle-count.moyen-pompier-active label,
+    .dark-mode #moyensPompiers .vehicle-count.moyen-pompier-active .counter-value {
+      color: #ffffff;
+    }
+
+    .dark-mode #moyensPompiers .vehicle-count.moyen-pompier-active .counter-btn {
+      border-color: #ffffff;
+      color: #ffffff;
+    }
+
+    .dark-mode #moyensPompiers .vehicle-count.moyen-pompier-active .counter-btn:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .dark-mode .step-card {
+      background: #202833;
+      border-color: #334155;
+      box-shadow: none;
+    }
+
     .dark-mode .surface-btn {
       background: rgba(255, 255, 255, 0.05);
       color: #e0e0e0;
@@ -1544,6 +1669,12 @@
       background: rgba(0, 123, 255, 0.2);
     }
 
+    .dark-mode .victimes-summary-card {
+      background: rgba(255, 255, 255, 0.04);
+      border-color: #334155;
+      color: #b7c1cd;
+    }
+
     .dark-mode .page-content h1 {
       color: #e0e0e0;
       border-bottom-color: #007BFF;
@@ -1598,54 +1729,226 @@
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     }
 
-    /* Containers des victimes (sexe et âge) */
-    .victime-info {
-      background: #f9f9f9;
+    /* Cartes victimes */
+    .victime-info-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 12px;
+      margin-bottom: 18px;
     }
 
-    .dark-mode .victime-info-container {
-      background: #2d2d2d !important;
-      border-color: #404040 !important;
+    #victimsFields .vehicle-count.victime-type-active {
+      border-color: #cfd9e6;
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.06);
+    }
+
+    #victimsFields .vehicle-count.victime-type-active .vehicle-count-header {
+      margin-bottom: 10px;
+    }
+
+    #victimsFields .vehicle-count.victime-type-active .victime-info-container {
+      margin-bottom: 0;
+    }
+
+    .victime-info {
+      background: #f9fbfd;
+      border: 1px solid #dbe5ef;
+      border-left: 4px solid #f0ad4e;
+      border-radius: 12px;
+      overflow: hidden;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+    }
+
+    .victime-info.is-complete {
+      border-left-color: #1f8f5f;
+      background: #f6fbf8;
+    }
+
+    .victime-info.is-partial {
+      border-left-color: #2f7fd9;
+      background: #f5f9ff;
+    }
+
+    .victime-info.is-incomplete {
+      border-left-color: #f0ad4e;
+    }
+
+    .victime-card-header {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 12px;
+      padding: 12px 14px;
+      border: none;
+      background: transparent;
+      color: inherit;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .victime-card-header:focus-visible {
+      outline: 2px solid rgba(0, 123, 255, 0.35);
+      outline-offset: -2px;
+    }
+
+    .victime-card-title {
+      flex: 1;
+      min-width: 0;
+      font-size: 15px;
+      font-weight: 500;
+      line-height: 1.35;
+      color: #1f2937;
+    }
+
+    .victime-card-details {
+      display: grid;
+      gap: 10px;
+      padding: 0 14px 14px;
+    }
+
+    .victime-card-details[hidden] {
+      display: none !important;
+    }
+
+    .victime-sexe-buttons {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .sexe-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 48px;
+      min-height: 44px;
+      font-size: 16px;
+      font-weight: 700;
+      border-radius: 10px;
+      line-height: 1;
+      padding: 0 10px;
+    }
+
+    .sexe-masculin {
+      background: #dfefff;
+      color: #0b63c9;
+      border: 1px solid #9bc3f1;
+    }
+
+    .sexe-masculin.selected {
+      background: #0b63c9;
+      color: #ffffff;
+      border-color: #0b63c9;
+    }
+
+    .sexe-feminin {
+      background: #fde6ef;
+      color: #d63384;
+      border: 1px solid #f1b1cb;
+    }
+
+    .sexe-feminin.selected {
+      background: #d63384;
+      color: #ffffff;
+      border-color: #d63384;
+    }
+
+    .victime-age-input {
+      width: 100%;
+      min-height: 48px;
+      padding: 10px 12px;
+      border: 1px solid #ccd5df;
+      border-radius: 10px;
+      background: #ffffff;
+      color: #1f2937;
+      font-size: 16px;
+      text-align: center;
+      box-sizing: border-box;
+    }
+
+    .victime-age-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 92px;
+      gap: 8px;
+      align-items: stretch;
+    }
+
+    .victime-age-unit {
+      min-height: 48px;
+      padding: 10px 12px;
+      border: 1px solid #ccd5df;
+      border-radius: 10px;
+      background: #ffffff;
+      color: #1f2937;
+      font-size: 16px;
+      text-align: center;
+      box-sizing: border-box;
     }
 
     .dark-mode .victime-info {
-      background: #1a1a1a !important;
-      color: #e0e0e0;
+      background: #171b22 !important;
+      border-color: #334155 !important;
+      border-left-color: #f0ad4e !important;
+      color: #e5e7eb;
     }
 
-    .dark-mode .victime-info input[type="number"] {
-      background: #1a1a1a !important;
-      color: #e0e0e0 !important;
-      border-color: #404040 !important;
+    .dark-mode .victime-info.is-complete {
+      background: #13241d !important;
+      border-left-color: #2fb171 !important;
     }
 
-    /* Boutons de sexe des victimes en dark mode */
+    .dark-mode .victime-info.is-partial {
+      background: #142131 !important;
+      border-left-color: #5aa0ff !important;
+    }
+
+    .dark-mode .victime-card-title {
+      color: #f3f4f6;
+    }
+
+    .dark-mode #victimsFields .vehicle-count.victime-type-active {
+      background: #202833;
+      border-color: #49627d;
+      box-shadow: none;
+    }
+
+    .dark-mode .victime-age-input {
+      background: #0f141a !important;
+      color: #f3f4f6 !important;
+      border-color: #334155 !important;
+    }
+
+    .dark-mode .victime-age-unit {
+      background: #0f141a !important;
+      color: #f3f4f6 !important;
+      border-color: #334155 !important;
+    }
+
     .dark-mode .sexe-masculin:not(.selected) {
-      background: rgba(0, 102, 204, 0.2) !important;
-      color: #66b3ff !important;
-      border-color: #0066cc !important;
+      background: rgba(11, 99, 201, 0.2) !important;
+      color: #8ec5ff !important;
+      border-color: #0b63c9 !important;
     }
 
     .dark-mode .sexe-masculin.selected {
-      background: #0066cc !important;
-      color: white !important;
-      border-color: #0066cc !important;
+      background: #0b63c9 !important;
+      color: #ffffff !important;
+      border-color: #0b63c9 !important;
     }
 
     .dark-mode .sexe-feminin:not(.selected) {
-      background: rgba(255, 128, 171, 0.2) !important;
-      color: #ff80ab !important;
-      border-color: #FF80AB !important;
+      background: rgba(214, 51, 132, 0.2) !important;
+      color: #ff9fc8 !important;
+      border-color: #d63384 !important;
     }
 
     .dark-mode .sexe-feminin.selected {
-      background: #FF80AB !important;
-      color: white !important;
-      border-color: #FF80AB !important;
-    }
-
-    .dark-mode .victime-info hr {
-      border-top-color: #404040 !important;
+      background: #d63384 !important;
+      color: #ffffff !important;
+      border-color: #d63384 !important;
     }
 
     /* Ajout des styles pour le nouveau compteur */
@@ -1879,20 +2182,115 @@
 
     /* Ajout du style pour la section des victimes */
     #victimsFields {
-      background-color: white;
-      padding: 15px;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      background-color: transparent;
+      padding: 0;
+      border-radius: 0;
+      box-shadow: none;
       margin-bottom: 20px;
     }
 
-    /* Ajout du style pour la section des moyens pompiers */
+    /* Style partagé pour les listes à compteur */
     #moyensPompiers {
-      background-color: white;
-      padding: 15px;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      background-color: transparent;
+      padding: 0;
+      border-radius: 0;
+      box-shadow: none;
       margin-bottom: 20px;
+    }
+
+    :is(#victimsFields, #moyensPompiers) .vehicle-count {
+      margin-bottom: 12px;
+      padding: 10px 16px;
+      border: 1px solid var(--primary-color);
+      border-radius: 12px;
+      background: #ffffff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    :is(#victimsFields, #moyensPompiers) .vehicle-count:last-child {
+      margin-bottom: 0;
+    }
+
+    :is(#victimsFields, #moyensPompiers) .vehicle-count-header {
+      margin-bottom: 0;
+    }
+
+    :is(#victimsFields, #moyensPompiers) .vehicle-count label {
+      font-weight: 400;
+      font-size: var(--font-size);
+      line-height: 1.2;
+      color: var(--primary-color);
+    }
+
+    :is(#victimsFields, #moyensPompiers) .counter-container {
+      gap: 8px;
+      height: 30px;
+    }
+
+    :is(#victimsFields, #moyensPompiers) .counter-btn {
+      width: 30px;
+      height: 30px;
+      min-width: 30px;
+      min-height: 30px;
+      font-size: 16px;
+      border: 2px solid var(--primary-color);
+      background: transparent;
+      color: var(--primary-color);
+      border-radius: 50%;
+      box-shadow: none;
+      transition: all 0.2s ease;
+    }
+
+    :is(#victimsFields, #moyensPompiers) .counter-btn.minus {
+      border-color: #d6dbe6;
+      color: #6b7280;
+      background: #f5f7fb;
+    }
+
+    :is(#victimsFields, #moyensPompiers) .counter-btn.minus:disabled {
+      border-color: #e5e7eb;
+      color: #cbd5e1;
+      opacity: 1;
+    }
+
+    :is(#victimsFields, #moyensPompiers) .counter-btn.plus {
+      border-color: var(--primary-color);
+      color: var(--primary-color);
+      background: transparent;
+    }
+
+    :is(#victimsFields, #moyensPompiers) .counter-btn:hover:not(:disabled) {
+      background: rgba(0, 123, 255, 0.08);
+    }
+
+    :is(#victimsFields, #moyensPompiers) .counter-value {
+      font-size: var(--font-size);
+      font-weight: 700;
+      color: var(--primary-color);
+      min-width: 20px;
+      height: 30px;
+      line-height: 1;
+    }
+
+    #moyensPompiers .vehicle-count.moyen-pompier-active {
+      border-color: var(--primary-color);
+      background: var(--primary-color);
+      box-shadow: 0 4px 10px rgba(0, 123, 255, 0.18);
+    }
+
+    #moyensPompiers .vehicle-count.moyen-pompier-active label,
+    #moyensPompiers .vehicle-count.moyen-pompier-active .counter-value {
+      color: #ffffff;
+    }
+
+    #moyensPompiers .vehicle-count.moyen-pompier-active .counter-btn {
+      border-color: #ffffff;
+      color: #ffffff;
+      background: transparent;
+    }
+
+    #moyensPompiers .vehicle-count.moyen-pompier-active .counter-btn:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.12);
     }
 
     .app-info {

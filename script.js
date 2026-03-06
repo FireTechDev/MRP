@@ -3,6 +3,379 @@ selectedNature = "",
 selectedBatiment = "",
 victimsSelected = false;
 
+const OTHER_INTERVENTION_LEGACY_MAP = {
+  "Fuite de Gaz procédure classique": "Fuite de gaz procédure classique",
+  "Fuite de Gaz procédure renforcée": "Fuite de gaz procédure renforcée"
+};
+
+const BUILDING_CONTEXT_INTERVENTIONS = new Set([
+  "Feu de bâtiment",
+  "Fuite de gaz procédure classique",
+  "Fuite de gaz procédure renforcée",
+  "Fumée suspecte",
+  "Odeur de brulé",
+  "Feu de cheminée",
+  "Autre type de feu",
+  "Déclenchement alarme",
+  "Intoxication au monoxyde de carbone (CO)",
+  "Personne bloquée dans un ascenseur"
+]);
+
+const FIRE_BUILDING_INTERVENTIONS = new Set([
+  "Feu de bâtiment",
+  "Fumée suspecte",
+  "Odeur de brulé",
+  "Feu de cheminée",
+  "Autre type de feu"
+]);
+
+const VICTIME_TYPES = ["UA", "UR", "DCD", "incarcerees", "intoxiquees", "indemnes", "impliques"];
+
+const MOYENS_POMPIERS_IDS = ["VSAV", "FPT", "FPTSR", "VSR", "EPA", "CCF", "CCFS", "CCGC", "VID", "chefGroupe", "SMUR", "ISP", "vehiculeSpecifique"];
+const MOYENS_DEPART_IDS = ["VSAVDepart", "FPTDepart", "FPTSRDepart", "VSRDepart", "EPADepart", "VIDDepart", "chefGroupeDepart", "SMURDepart", "ISPDepart", "vehiculeSpecifiqueDepart"];
+
+const VICTIME_CARD_LABELS = {
+  UA: "Victime UA",
+  UR: "Victime UR",
+  DCD: "Victime DCD",
+  incarcerees: "Victime incarcérée",
+  intoxiquees: "Victime intoxiquée",
+  indemnes: "Victime indemne",
+  impliques: "Victime impliquée"
+};
+
+const victimCardState = {};
+
+function normalizeInterventionValue(value) {
+  return OTHER_INTERVENTION_LEGACY_MAP[value] || value;
+}
+
+function isBuildingContextIntervention(value) {
+  return BUILDING_CONTEXT_INTERVENTIONS.has(normalizeInterventionValue(value));
+}
+
+function isFireBuildingIntervention(value) {
+  return FIRE_BUILDING_INTERVENTIONS.has(normalizeInterventionValue(value));
+}
+
+function formatNatureLine(value) {
+  const normalizedValue = normalizeInterventionValue(value);
+
+  switch (normalizedValue) {
+    case "AVP":
+      return "Un AVP";
+    case "Feu de véhicule":
+      return "Un feu de véhicule";
+    case "Feu de bâtiment":
+      return "Un feu de bâtiment";
+    case "Chute de ligne électrique":
+      return "Une chute de ligne électrique";
+    case "Fuite de gaz procédure classique":
+      return "Une fuite de gaz procédure classique";
+    case "Fuite de gaz procédure renforcée":
+      return "Une fuite de gaz procédure renforcée";
+    case "Fumée suspecte":
+      return "Une fumée suspecte";
+    case "Odeur de brulé":
+      return "Une odeur de brulé";
+    case "Feu de cheminée":
+      return "Un feu de cheminée";
+    case "Déclenchement alarme":
+      return "Un déclenchement d'alarme";
+    case "Intoxication au monoxyde de carbone (CO)":
+      return "Une intoxication au monoxyde de carbone (CO)";
+    case "Personne bloquée dans un ascenseur":
+      return "Une personne bloquée dans un ascenseur";
+    case "Autre type de feu":
+      return "Un autre type de feu";
+    default:
+      return normalizedValue ? `Intervention : ${normalizedValue}` : "";
+  }
+}
+
+function configureBuildingFieldsForIntervention(value) {
+  const normalizedValue = normalizeInterventionValue(value);
+  const includeFireSpecificFields = isFireBuildingIntervention(normalizedValue);
+  const niveauSinistreLabel = document.getElementById("niveauSinistreLabel");
+  const surfaceSinistreeSection = document.getElementById("surfaceSinistreeSection");
+  const propagationBatimentSection = document.getElementById("propagationBatimentSection");
+  const evolutionFeuBatimentSection = document.getElementById("evolutionFeuBatimentSection");
+
+  if (niveauSinistreLabel) {
+    if (normalizedValue === "Personne bloquée dans un ascenseur") {
+      niveauSinistreLabel.textContent = "Préciser l'étage concerné";
+    } else if (includeFireSpecificFields) {
+      niveauSinistreLabel.textContent = "Préciser le niveau sinistré";
+    } else {
+      niveauSinistreLabel.textContent = "Préciser le niveau concerné";
+    }
+  }
+
+  [surfaceSinistreeSection, propagationBatimentSection, evolutionFeuBatimentSection].forEach(section => {
+    if (section) {
+      section.classList.toggle("hidden", !includeFireSpecificFields);
+    }
+  });
+}
+
+function getVictimeCardLabel(id) {
+  return VICTIME_CARD_LABELS[id] || "Victime";
+}
+
+function getVictimeTypeLabel(id) {
+  const label = getVictimeCardLabel(id);
+  return label.startsWith("Victime ") ? label.substring(8).trim() : label;
+}
+
+function getVictimeDetails(victimeId) {
+  return {
+    sexe: document.getElementById(`${victimeId}-sexe`)?.value || "",
+    age: document.getElementById(`${victimeId}-age`)?.value || "",
+    ageUnit: document.getElementById(`${victimeId}-age-unit`)?.value || "ans"
+  };
+}
+
+function formatVictimeAge(age, ageUnit = "ans") {
+  if (!age) {
+    return "";
+  }
+
+  if (ageUnit === "mois") {
+    return `${age} mois`;
+  }
+
+  return `${age} ${age === "1" ? "an" : "ans"}`;
+}
+
+function getVictimeCompletionState(victimeId) {
+  const { sexe, age } = getVictimeDetails(victimeId);
+
+  if (sexe && age) {
+    return "complete";
+  }
+
+  if (sexe || age) {
+    return "partial";
+  }
+
+  return "empty";
+}
+
+function getVictimeSummary(victimeId) {
+  const { sexe, age, ageUnit } = getVictimeDetails(victimeId);
+  const parts = [];
+
+  if (sexe === "M") {
+    parts.push("VSM");
+  } else if (sexe === "F") {
+    parts.push("VSF");
+  }
+
+  if (age) {
+    parts.push(formatVictimeAge(age, ageUnit));
+  }
+
+  return parts.length > 0 ? parts.join(" · ") : "";
+}
+
+function parseVictimeId(victimeId) {
+  const separatorIndex = victimeId.lastIndexOf("-");
+
+  return {
+    typeId: separatorIndex === -1 ? victimeId : victimeId.slice(0, separatorIndex),
+    index: separatorIndex === -1 ? "" : victimeId.slice(separatorIndex + 1)
+  };
+}
+
+function formatVictimeCardTitle(victimeId) {
+  const { typeId, index } = parseVictimeId(victimeId);
+  const baseTitle = `${getVictimeTypeLabel(typeId)} ${index}`.trim();
+  const summary = getVictimeSummary(victimeId);
+
+  return summary ? `${baseTitle} · ${summary}` : baseTitle;
+}
+
+function getVictimeDetailedSummary(typeId, index) {
+  const { sexe, age, ageUnit } = getVictimeDetails(`${typeId}-${index}`);
+
+  if (!sexe && !age) {
+    return "";
+  }
+
+  const parts = ["1"];
+
+  if (sexe === "M") {
+    parts.push("VSM");
+  } else if (sexe === "F") {
+    parts.push("VSF");
+  } else {
+    parts.push("Victime");
+  }
+
+  parts.push(getVictimeTypeLabel(typeId));
+
+  if (age) {
+    parts.push(formatVictimeAge(age, ageUnit));
+  }
+
+  return parts.join(" ");
+}
+
+function formatVictimeTitleSummaryItem(summaryItem) {
+  return summaryItem.replace(/\bVictimes?\b\s*/g, "").replace(/\s{2,}/g, " ").trim();
+}
+
+function collectVictimeSummaryData() {
+  const detailMessages = [];
+  const countMessages = [];
+  let totalVictimes = 0;
+
+  VICTIME_TYPES.forEach(typeId => {
+    const count = parseInt(document.getElementById(typeId)?.textContent || "0", 10);
+
+    if (count <= 0) {
+      return;
+    }
+
+    totalVictimes += count;
+
+    let victimsWithDetails = 0;
+
+    for (let i = 1; i <= count; i++) {
+      const detailMessage = getVictimeDetailedSummary(typeId, i);
+
+      if (detailMessage) {
+        detailMessages.push(detailMessage);
+        victimsWithDetails += 1;
+      }
+    }
+
+    const victimsWithoutDetails = count - victimsWithDetails;
+
+    if (victimsWithoutDetails > 0) {
+      countMessages.push(
+        `${victimsWithoutDetails} ${victimsWithoutDetails === 1 ? "Victime" : "Victimes"} ${getVictimeTypeLabel(typeId)}`
+      );
+    }
+  });
+
+  return {
+    totalVictimes,
+    detailMessages,
+    countMessages
+  };
+}
+
+function formatVictimesTitleSummary() {
+  const { totalVictimes, detailMessages, countMessages } = collectVictimeSummaryData();
+  const summaryParts = [...detailMessages, ...countMessages].map(formatVictimeTitleSummaryItem);
+
+  return {
+    totalVictimes,
+    summaryText: summaryParts.join(", ")
+  };
+}
+
+function hasVictimeDetails(victimeId) {
+  const { sexe, age } = getVictimeDetails(victimeId);
+  return Boolean(sexe || age);
+}
+
+function setVictimeCardCollapsed(victimeId, collapsed) {
+  victimCardState[victimeId] = {
+    ...victimCardState[victimeId],
+    collapsed
+  };
+}
+
+function updateVictimeCardUI(victimeId) {
+  const card = document.querySelector(`.victime-info[data-victime-id="${victimeId}"]`);
+  if (!card) {
+    return;
+  }
+
+  const hasDetails = hasVictimeDetails(victimeId);
+  const completionState = getVictimeCompletionState(victimeId);
+  const isCollapsed = Boolean(victimCardState[victimeId]?.collapsed && hasDetails);
+  const title = card.querySelector(".victime-card-title");
+  const detailsContainer = card.querySelector(".victime-card-details");
+  const header = card.querySelector(".victime-card-header");
+
+  card.classList.toggle("is-complete", completionState === "complete");
+  card.classList.toggle("is-partial", completionState === "partial");
+  card.classList.toggle("is-incomplete", completionState === "empty");
+  card.classList.toggle("is-collapsed", isCollapsed);
+
+  if (title) {
+    title.textContent = formatVictimeCardTitle(victimeId);
+  }
+
+  if (detailsContainer) {
+    detailsContainer.hidden = isCollapsed;
+  }
+
+  if (header) {
+    header.setAttribute("aria-expanded", String(!isCollapsed));
+  }
+
+  updateVictimesTotalCounter();
+}
+
+function focusVictimeCard(victimeId, shouldFocusInput = true) {
+  const card = document.querySelector(`.victime-info[data-victime-id="${victimeId}"]`);
+  if (!card) {
+    return;
+  }
+
+  setVictimeCardCollapsed(victimeId, false);
+  updateVictimeCardUI(victimeId);
+
+  card.scrollIntoView({
+    behavior: "smooth",
+    block: "center"
+  });
+
+  if (shouldFocusInput) {
+    const { sexe } = getVictimeDetails(victimeId);
+    const target = sexe ? card.querySelector(".victime-age-input") : card.querySelector(".sexe-btn");
+
+    if (target) {
+      window.setTimeout(() => {
+        target.focus();
+      }, 180);
+    }
+  }
+}
+
+function collapseCompletedVictimeCards(exceptVictimeId = "") {
+  document.querySelectorAll(".victime-info[data-victime-id]").forEach(card => {
+    const victimeId = card.dataset.victimeId;
+    if (!victimeId || victimeId === exceptVictimeId) {
+      return;
+    }
+
+    if (hasVictimeDetails(victimeId)) {
+      setVictimeCardCollapsed(victimeId, true);
+      updateVictimeCardUI(victimeId);
+    }
+  });
+}
+
+function toggleVictimeCard(victimeId) {
+  if (!hasVictimeDetails(victimeId)) {
+    focusVictimeCard(victimeId);
+    return;
+  }
+
+  const nextCollapsed = !Boolean(victimCardState[victimeId]?.collapsed);
+  setVictimeCardCollapsed(victimeId, nextCollapsed);
+  updateVictimeCardUI(victimeId);
+
+  if (!nextCollapsed) {
+    focusVictimeCard(victimeId, false);
+  }
+}
+
 function goToStep(step) {
   document.querySelector(`.step.active`).classList.replace("active", "hidden");
   document.querySelector(`#step${step}`).classList.replace("hidden", "active");
@@ -55,7 +428,7 @@ if (navigator.geolocation) {
   
   // Si on arrive à l'étape "Je vois" (step 2), sélectionner automatiquement le motif de départ
   if (step === 2) {
-const motifDepart = document.getElementById('motifDepart').value;
+const motifDepart = normalizeInterventionValue(document.getElementById('motifDepart').value);
     
 // Réinitialiser d'abord toutes les sélections
 document.querySelectorAll(".nature-toggle").forEach(b => b.classList.remove("selected"));
@@ -82,12 +455,12 @@ switch(motifDepart) {
   case 'Chute de ligne électrique':
   case 'Odeur de brulé':
   case 'Fumée suspecte':
-  case 'Fuite de Gaz procédure classique':
-  case 'Fuite de Gaz procédure renforcée':
+  case 'Fuite de gaz procédure classique':
+  case 'Fuite de gaz procédure renforcée':
+  case 'Feu de cheminée':
   case 'Déclenchement alarme':
   case 'Intoxication au monoxyde de carbone (CO)':
   case 'Personne bloquée dans un ascenseur':
-  case 'Autre type d\'intervention':
     const autreButton = document.querySelector('.nature-toggle[data-value="Autre"]');
     if (autreButton) {
       selectNature(autreButton);
@@ -96,6 +469,12 @@ switch(motifDepart) {
         autreSelect.value = motifDepart;
         handleAutreIntervention(motifDepart);
       }
+    }
+    break;
+  case 'Autre type d\'intervention':
+    const autreTypeButton = document.querySelector('.nature-toggle[data-value="Autre"]');
+    if (autreTypeButton) {
+      selectNature(autreTypeButton);
     }
     break;
 }
@@ -263,6 +642,7 @@ updateSuggestions(); // Mettre à jour les suggestions quand AVP est sélectionn
 document.getElementById("feuVehiculeFields").classList.remove("hidden");
   } else if (selectedNature === "Feu de bâtiment") {
 document.getElementById("batimentFields").classList.remove("hidden");
+configureBuildingFieldsForIntervention(selectedNature);
   } else if (selectedNature === "Autre") {
 document.getElementById("autreTypeBox").classList.remove("hidden");
 // Suppression de la ligne suivante
@@ -271,7 +651,14 @@ document.getElementById("autreTypeBox").classList.remove("hidden");
 }
 
 function handleAutreIntervention(value) {
-  if (!value) {
+  const normalizedValue = normalizeInterventionValue(value);
+  const autreTypeIntervention = document.getElementById("autreTypeIntervention");
+
+  if (autreTypeIntervention && autreTypeIntervention.value !== normalizedValue) {
+    autreTypeIntervention.value = normalizedValue;
+  }
+
+  if (!normalizedValue) {
 resetFields();
 document.getElementById("selectedNatureTitle").classList.add("hidden");
 return;
@@ -283,7 +670,7 @@ if (b.dataset.value !== "Autre") {
   b.classList.remove("selected");
 }
   });
-  selectedNature = value;
+  selectedNature = normalizedValue;
   
   // Hide all fields first
   ["avpFields", "feuVehiculeFields", "batimentFields", "chuteLigneFields"].forEach(id => 
@@ -293,13 +680,15 @@ document.getElementById(id).classList.add("hidden")
   document.getElementById("selectedNatureTitle").classList.add("hidden");
 
   // Show relevant fields based on selection
-  if (value === "Chute de ligne électrique") {
+  if (normalizedValue === "Chute de ligne électrique") {
 document.getElementById("chuteLigneFields").classList.remove("hidden");
-  } else if (value.startsWith("Fuite de gaz")) {
+  } else if (normalizedValue.startsWith("Fuite de gaz")) {
 document.getElementById("batimentFields").classList.remove("hidden");
 document.getElementById("infoFuiteGaz").classList.remove("hidden");
-  } else if (["Fumée suspecte", "Odeur de brulé", "Feu de cheminée", "Autre type de feu"].includes(value)) {
+configureBuildingFieldsForIntervention(normalizedValue);
+  } else if (isBuildingContextIntervention(normalizedValue)) {
 document.getElementById("batimentFields").classList.remove("hidden");
+configureBuildingFieldsForIntervention(normalizedValue);
   }
 }
 
@@ -324,7 +713,7 @@ updateVehicleDetails(id);
   });
   
   // Compteurs de victimes
-  ['victimes', 'indemnes', 'UA', 'UR', 'DCD', 'incarcerees', 'intoxiquees', 'impliques'].forEach(id => {
+  VICTIME_TYPES.forEach(id => {
 updateMinusButtonState(id);
   });
   
@@ -332,12 +721,14 @@ updateMinusButtonState(id);
   updateVictimesTotalCounter();
   
   // Compteurs de moyens pompiers
-  ['VSAV', 'FPT', 'FPTSR', 'VSR', 'EPA', 'chefGroupe', 'SMUR', 'ISP', 'vehiculeSpecifique'].forEach(id => {
+  MOYENS_POMPIERS_IDS.forEach(id => {
+updateVehicleDetails(id);
 updateMinusButtonState(id);
   });
   
   // Compteurs de moyens au départ
-  ['VSAVDepart', 'FPTDepart', 'FPTSRDepart', 'VSRDepart', 'EPADepart', 'VIDDepart', 'chefGroupeDepart', 'SMURDepart', 'ISPDepart', 'vehiculeSpecifiqueDepart'].forEach(id => {
+  MOYENS_DEPART_IDS.forEach(id => {
+updateVehicleDetails(id);
 updateMinusButtonState(id);
   });
 });
@@ -346,11 +737,17 @@ function incrementVehicle(id) {
   const span = document.getElementById(id);
   if (span) {
 try {
-  const value = parseInt(span.textContent || '0') + 1;
+  const previousValue = parseInt(span.textContent || '0');
+  const value = previousValue + 1;
   span.textContent = value;
   updateVehicleDetails(id);
   updateMinusButtonState(id);
   updateVictimesTotalCounter();
+  if (VICTIME_TYPES.includes(id)) {
+    const victimeId = `${id}-${value}`;
+    collapseCompletedVictimeCards(victimeId);
+    focusVictimeCard(victimeId);
+  }
 } catch (error) {
   console.error('Error incrementing vehicle:', error);
 }
@@ -363,6 +760,9 @@ function decrementVehicle(id) {
 try {
   const value = parseInt(span.textContent || '0');
   if (value > 0) {
+    if (VICTIME_TYPES.includes(id)) {
+      delete victimCardState[`${id}-${value}`];
+    }
     span.textContent = value - 1;
     updateVehicleDetails(id);
     updateMinusButtonState(id);
@@ -376,7 +776,8 @@ try {
 
 function updateVehicleDetails(id) {
   let details = document.getElementById(id + "Details");
-  let value = parseInt(document.getElementById(id).textContent);
+  let counter = document.getElementById(id);
+  let value = parseInt(counter.textContent);
   if (details) {
 if (value > 0) {
   details.classList.remove("hidden");
@@ -384,29 +785,33 @@ if (value > 0) {
   details.classList.add("hidden");
 }
   }
+
+  const vehicleContainer = counter?.closest('.vehicle-count');
+  if (vehicleContainer && counter.closest('#moyensPompiers')) {
+    vehicleContainer.classList.toggle('moyen-pompier-active', value > 0);
+  }
   
   // Ajouter/mettre à jour les champs de sexe et âge pour les victimes
-  const victimeTypes = ["UA", "UR", "DCD", "incarcerees", "intoxiquees", "indemnes", "impliques"];
-  if (victimeTypes.includes(id)) {
+  if (VICTIME_TYPES.includes(id)) {
 updateVictimeInfoFields(id, value);
   }
 }
 
 // Fonction pour mettre à jour le compteur total de victimes
 function updateVictimesTotalCounter() {
-  const victimeIds = ["UA", "UR", "DCD", "incarcerees", "intoxiquees", "indemnes", "impliques"];
-  let total = 0;
-  
-  victimeIds.forEach(id => {
-    const counter = document.getElementById(id);
-    if (counter) {
-      total += parseInt(counter.textContent || '0');
-    }
-  });
-  
+  const { totalVictimes, summaryText } = formatVictimesTitleSummary();
   const totalCounter = document.getElementById("victimesTotalCounter");
+  const summaryCard = document.getElementById("victimesSummaryCard");
+  const summaryTextElement = document.getElementById("victimesSummaryText");
+
   if (totalCounter) {
-    totalCounter.textContent = total;
+    totalCounter.textContent = totalVictimes;
+    totalCounter.hidden = totalVictimes === 0;
+  }
+
+  if (summaryCard && summaryTextElement) {
+    summaryTextElement.textContent = summaryText;
+    summaryCard.classList.toggle("hidden", !summaryText);
   }
 }
 
@@ -715,12 +1120,12 @@ function generateMessage() {
   
   // Get selected nature
   let natureBtn = document.querySelector(".nature-toggle.selected");
-  let autreNature = getVal("autreTypeIntervention");
+  let autreNature = normalizeInterventionValue(getVal("autreTypeIntervention"));
   // Si "Autre" est sélectionné, utiliser la valeur de autreTypeIntervention
-  let nature = (natureBtn && natureBtn.dataset.value === "Autre") ? autreNature : (natureBtn ? natureBtn.dataset.value : autreNature);
+  let nature = normalizeInterventionValue((natureBtn && natureBtn.dataset.value === "Autre") ? autreNature : (natureBtn ? natureBtn.dataset.value : autreNature));
   
   if (nature) {
-msg += `Un ${nature}\n`;
+msg += `${formatNatureLine(nature)}\n`;
 
 // AVP specific fields
 if (nature === "AVP") {
@@ -784,10 +1189,10 @@ else if (nature === "Feu de véhicule") {
   }
 }
 
-// Building related fields (used by multiple types)
-else if (nature === "Feu de bâtiment" || nature.includes("Fuite de gaz") || 
-         nature === "Fumée suspecte" || nature === "Odeur de brulé" || 
-         nature === "Autre type de feu") {
+// Building related fields reused by fire, gas, alarm, CO and elevator scenarios
+else if (isBuildingContextIntervention(nature)) {
+  const includeFireSpecificFields = isFireBuildingIntervention(nature);
+  const levelLabel = nature === "Personne bloquée dans un ascenseur" ? "Étage concerné" : (includeFireSpecificFields ? "Niveau sinistré" : "Niveau concerné");
       
   let batimentType = document.querySelector("#typeBatimentContainer .toggle-btn.selected");
   if (batimentType) {
@@ -802,7 +1207,7 @@ else if (nature === "Feu de bâtiment" || nature.includes("Fuite de gaz") ||
       if (rMoins !== "0") msg += `Nombre d'étages R-: ${rMoins}\n`;
       if (niveauSinistre !== "0") {
         const prefix = parseInt(niveauSinistre) >= 0 ? "R+" : "R";
-        msg += `Niveau sinistré: ${prefix}${niveauSinistre}\n`;
+        msg += `${levelLabel}: ${prefix}${niveauSinistre}\n`;
       }
     }
   }
@@ -811,26 +1216,29 @@ else if (nature === "Feu de bâtiment" || nature.includes("Fuite de gaz") ||
   if (getVal("typeBatimentSelect")) msg += `De type: ${getVal("typeBatimentSelect")}\n`;
   if (getVal("structure")) msg += `Structure: ${getVal("structure")}\n`;
   if (getVal("surfaceTotale")) msg += `Surface totale: ${getVal("surfaceTotale")} m²\n`;
-  if (getVal("surfaceSinistree")) msg += `Surface sinistrée: ${getVal("surfaceSinistree")} m²\n`;
-
-  let propagation = getVal("propagationBatiment");
-  if (propagation) {
-    msg += `Risque de propagation: ${propagation}\n`;
-    if (propagation === "Oui" && getVal("precisionsPropagationBatiment")) {
-      msg += `Précisions propagation: ${getVal("precisionsPropagationBatiment")}\n`;
-    }
-  }
+  if (includeFireSpecificFields && getVal("surfaceSinistree")) msg += `Surface sinistrée: ${getVal("surfaceSinistree")} m²\n`;
 
   let isole = getVal("isoleBatiment");
   if (isole) {
-    msg += `Bâtiment isolé: ${isole}\n`;
+msg += `Bâtiment isolé: ${isole}\n`;
     if (isole === "Oui" && getVal("precisionsIsoleBatiment")) {
       msg += `Précisions environnement: ${getVal("precisionsIsoleBatiment")}\n`;
     }
   }
 
   if (getVal("risqueSpecifiqueBatiment")) msg += `Risque spécifique: ${getVal("risqueSpecifiqueBatiment")}\n`;
-  if (getVal("evolutionFeuBatiment")) msg += `Évolution du feu: ${getVal("evolutionFeuBatiment")}\n`;
+
+  if (includeFireSpecificFields) {
+    let propagation = getVal("propagationBatiment");
+    if (propagation) {
+msg += `Risque de propagation: ${propagation}\n`;
+      if (propagation === "Oui" && getVal("precisionsPropagationBatiment")) {
+        msg += `Précisions propagation: ${getVal("precisionsPropagationBatiment")}\n`;
+      }
+    }
+
+    if (getVal("evolutionFeuBatiment")) msg += `Évolution du feu: ${getVal("evolutionFeuBatiment")}\n`;
+  }
 }
 
 // Chute de ligne électrique specific fields
@@ -886,109 +1294,31 @@ msg += "\n";
 
   // Victimes info
   msg += "[ VICTIMES ]\n";
-  const victimTypes = {
-"UA": "Victime UA",
-"UR": "Victime UR",
-"DCD": "Victime DCD",
-"incarcerees": "Victime Incarcérée",
-"intoxiquees": "Victime Intoxiquée",
-"indemnes": "Indemne",
-"impliques": "Impliqué"
-  };
-
-  // Collecter toutes les informations sur les victimes
-  let totalVictimes = 0;
-  const allVictimDetails = [];
-  const victimCountsByType = {}; // Pour regrouper les victimes sans détails
-  
-  Object.entries(victimTypes).forEach(([id, label]) => {
-const count = parseInt(document.getElementById(id)?.textContent || "0");
-if (count > 0) {
-  totalVictimes += count;
-      
-  // Extraire le type court (UA, UR, etc.) du label
-  const typeLabel = label.startsWith("Victime") ? label.substring(8).trim() : label;
-      
-  let victimsWithDetails = 0;
-      
-  // Collecter les détails de chaque victime
-  for (let i = 1; i <= count; i++) {
-    // Récupérer les informations de sexe et d'âge
-    const sexeInput = document.getElementById(`${id}-${i}-sexe`);
-    const ageInput = document.getElementById(`${id}-${i}-age`);
-    const sexe = sexeInput ? sexeInput.value : '';
-    const age = ageInput ? ageInput.value : '';
-        
-    // Si la victime a des détails (sexe ou âge), afficher les détails individuels
-    if (sexe || age) {
-      let detail = "";
-      // Construire la description de la victime
-      if (sexe === 'M') {
-        detail += "1 VSM";
-      } else if (sexe === 'F') {
-        detail += "1 VSF";
-      } else {
-        detail += "1 Victime";
-      }
-          
-      // Ajouter l'âge si disponible
-      if (age) {
-        detail += ` ${age} ans`;
-      }
-          
-      // Ajouter le type de victime à la fin
-      detail += ` ${typeLabel}`;
-          
-      allVictimDetails.push(detail);
-      victimsWithDetails++;
-    }
-  }
-      
-  // Si certaines victimes n'ont pas de détails, les regrouper
-  const victimsWithoutDetails = count - victimsWithDetails;
-  if (victimsWithoutDetails > 0) {
-    if (!victimCountsByType[typeLabel]) {
-      victimCountsByType[typeLabel] = 0;
-    }
-    victimCountsByType[typeLabel] += victimsWithoutDetails;
-  }
-}
-  });
+  const { totalVictimes, detailMessages, countMessages } = collectVictimeSummaryData();
 
   // Générer le message pour les victimes
   if (totalVictimes > 0) {
 // Cas spécial : une seule victime
 if (totalVictimes === 1) {
   // Si la victime a des détails, afficher directement les détails
-  if (allVictimDetails.length > 0) {
-    msg += allVictimDetails[0] + "\n";
+  if (detailMessages.length > 0) {
+    msg += detailMessages[0] + "\n";
   } else {
     // Sinon, afficher le type de victime
-    const typeKeys = Object.keys(victimCountsByType);
-    if (typeKeys.length > 0) {
-      msg += `1 Victime ${typeKeys[0]}\n`;
+    if (countMessages.length > 0) {
+      msg += countMessages[0] + "\n";
     } else {
       msg += `1 Victime\n`;
     }
   }
 } else {
   // Plusieurs victimes : afficher le total avec "au total, dont"
-  msg += `${totalVictimes} Victimes au total, dont`;
-      
-  // Ajouter les compteurs groupés pour les victimes sans détails
-  const countMessages = [];
-  Object.entries(victimCountsByType).forEach(([type, count]) => {
-    if (count === 1) {
-      countMessages.push(`1 Victime ${type}`);
-    } else {
-      countMessages.push(`${count} Victimes ${type}`);
-    }
-  });
-      
+  msg += `${totalVictimes} Victimes au total`;
+
   // Combiner les détails individuels et les compteurs groupés
-  const allMessages = [...countMessages, ...allVictimDetails];
+  const allMessages = [...countMessages, ...detailMessages];
   if (allMessages.length > 0) {
-    msg += ", " + allMessages.join(", ");
+    msg += `, dont ${allMessages.join(", ")}`;
   }
       
   msg += "\n";
@@ -1307,16 +1637,33 @@ if (counter) counter.textContent = '0';
   });
 
   // Réinitialiser les compteurs de victimes
-  ['victimes', 'indemnes', 'UA', 'UR', 'DCD', 'incarcerees', 'intoxiquees', 'impliques'].forEach(id => {
+  VICTIME_TYPES.forEach(id => {
 let counter = document.getElementById(id);
 if (counter) counter.textContent = '0';
   });
 
+  Object.keys(victimCardState).forEach(key => {
+    delete victimCardState[key];
+  });
+  document.querySelectorAll('.victime-info-container').forEach(container => {
+    container.remove();
+  });
+
   // Réinitialiser les compteurs de moyens pompiers
-  ['VSAV', 'FPT', 'FPTSR', 'VSR', 'EPA', 'chefGroupe', 'SMUR', 'ISP', 'vehiculeSpecifique'].forEach(id => {
+  MOYENS_POMPIERS_IDS.forEach(id => {
 let counter = document.getElementById(id);
 if (counter) counter.textContent = '0';
+updateVehicleDetails(id);
   });
+
+  ['vehiculeLeger', 'poidsLourd', 'deuxRoues', 'bus'].forEach(id => updateMinusButtonState(id));
+  VICTIME_TYPES.forEach(id => updateMinusButtonState(id));
+  MOYENS_POMPIERS_IDS.forEach(id => updateMinusButtonState(id));
+  MOYENS_DEPART_IDS.forEach(id => {
+    updateVehicleDetails(id);
+    updateMinusButtonState(id);
+  });
+  updateVictimesTotalCounter();
 
   // Réinitialiser les champs de précisions des véhicules
   ['vehiculeLegerPrecisions', 'poidsLourdPrecisions', 'deuxRouesPrecisions', 'busPrecisions', 'vehiculeSpecifiqueText'].forEach(id => {
@@ -2132,6 +2479,9 @@ console.error('Error initializing buttons:', error);
 function updateVictimeInfoFields(id, count) {
   // Trouver le conteneur parent de cette victime
   const victimeContainer = document.getElementById(id).closest('.vehicle-count');
+  if (victimeContainer) {
+    victimeContainer.classList.toggle('victime-type-active', count > 0);
+  }
   
   // Identifier ou créer le conteneur pour les infos supplémentaires
   let infoContainer = document.getElementById(`${id}InfoContainer`);
@@ -2139,10 +2489,6 @@ function updateVictimeInfoFields(id, count) {
 infoContainer = document.createElement('div');
 infoContainer.id = `${id}InfoContainer`;
 infoContainer.className = 'victime-info-container';
-infoContainer.style.marginTop = '10px';
-infoContainer.style.padding = '5px';
-infoContainer.style.border = '1px solid #eee';
-infoContainer.style.borderRadius = '5px';
     
 // Ajouter le conteneur après les boutons de compteur
 victimeContainer.appendChild(infoContainer);
@@ -2155,16 +2501,18 @@ infoContainer.innerHTML = '';
 return;
   }
   
-  infoContainer.style.display = 'block';
+  infoContainer.style.display = '';
   
   // Sauvegarder les valeurs existantes
-  const existingValues = {};
-  for (let i = 1; i <= Math.max(count, infoContainer.querySelectorAll('.victime-info').length); i++) {
+const existingValues = {};
+for (let i = 1; i <= Math.max(count, infoContainer.querySelectorAll('.victime-info').length); i++) {
 const sexeInput = document.getElementById(`${id}-${i}-sexe`);
 const ageInput = document.getElementById(`${id}-${i}-age`);
+const ageUnitInput = document.getElementById(`${id}-${i}-age-unit`);
 existingValues[i] = {
   sexe: sexeInput ? sexeInput.value : '',
-  age: ageInput ? ageInput.value : ''
+  age: ageInput ? ageInput.value : '',
+  ageUnit: ageUnitInput ? ageUnitInput.value : 'ans'
 };
   }
   
@@ -2173,151 +2521,123 @@ existingValues[i] = {
   
   // Créer les champs pour chaque victime
   for (let i = 1; i <= count; i++) {
+const victimeId = `${id}-${i}`;
 const victimeInfo = document.createElement('div');
 victimeInfo.className = 'victime-info';
-victimeInfo.style.marginBottom = '10px';
-victimeInfo.style.padding = '5px';
-// Le fond sera géré par CSS selon le thème
+victimeInfo.dataset.victimeId = victimeId;
     
-// Titre de la victime
-const victimeTitle = document.createElement('div');
-// Modification du titre de la victime pour afficher "Victime n°X" 
-victimeTitle.textContent = `Victime n°${i}`;
-// Suppression du style gras
-victimeTitle.style.marginBottom = '5px';
-// victimeTitle.style.fontWeight = 'bold'; // Suppression du style gras
+const victimeHeader = document.createElement('button');
+victimeHeader.type = 'button';
+victimeHeader.className = 'victime-card-header';
+victimeHeader.addEventListener('click', () => toggleVictimeCard(victimeId));
+
+const victimeTitle = document.createElement('span');
+victimeTitle.className = 'victime-card-title';
+victimeTitle.textContent = `${getVictimeTypeLabel(id)} ${i}`;
+
+victimeHeader.appendChild(victimeTitle);
     
-// Conteneur pour les boutons de sexe
-const sexeContainer = document.createElement('div');
-sexeContainer.style.display = 'flex';
-sexeContainer.style.flexDirection = 'column';
-sexeContainer.style.marginBottom = '12px';
-sexeContainer.style.width = '100%';
+const victimeDetails = document.createElement('div');
+victimeDetails.className = 'victime-card-details';
     
 // Boutons pour le sexe
 const buttonContainer = document.createElement('div');
-buttonContainer.style.display = 'flex';
-buttonContainer.style.flexDirection = 'column';
-buttonContainer.style.gap = '5px';
-buttonContainer.style.width = '100%';
+buttonContainer.className = 'victime-sexe-buttons';
     
 const maleBtn = document.createElement('button');
 maleBtn.type = 'button';
 maleBtn.className = 'secondary-btn sexe-btn sexe-masculin';
-maleBtn.textContent = 'Masculin';
-maleBtn.onclick = function() { selectSexe(this, `${id}-${i}`, 'M'); };
-maleBtn.style.width = '100%';
-maleBtn.style.height = '40px';
-maleBtn.style.backgroundColor = '#d4e6f6';
-maleBtn.style.color = '#0066cc';
-maleBtn.style.border = '1px solid #ccc';
-maleBtn.style.borderRadius = '5px';
-maleBtn.style.fontSize = '16px';
-maleBtn.style.textAlign = 'center';
+maleBtn.textContent = 'VSM';
+maleBtn.setAttribute('aria-label', 'Victime sexe masculin');
+maleBtn.addEventListener('click', () => selectSexe(maleBtn, victimeId, 'M'));
     
 const femaleBtn = document.createElement('button');
 femaleBtn.type = 'button';
 femaleBtn.className = 'secondary-btn sexe-btn sexe-feminin';
-femaleBtn.textContent = 'Féminin';
-femaleBtn.onclick = function() { selectSexe(this, `${id}-${i}`, 'F'); };
-femaleBtn.style.width = '100%';
-femaleBtn.style.height = '40px';
-femaleBtn.style.backgroundColor = '#fce4ec';
-femaleBtn.style.color = '#e91e63';
-femaleBtn.style.border = '1px solid #ccc';
-femaleBtn.style.borderRadius = '5px';
-femaleBtn.style.fontSize = '16px';
-femaleBtn.style.textAlign = 'center';
+femaleBtn.textContent = 'VSF';
+femaleBtn.setAttribute('aria-label', 'Victime sexe féminin');
+femaleBtn.addEventListener('click', () => selectSexe(femaleBtn, victimeId, 'F'));
     
 buttonContainer.appendChild(maleBtn);
 buttonContainer.appendChild(femaleBtn);
-sexeContainer.appendChild(buttonContainer);
     
-// Conteneur pour l'âge
-const ageContainer = document.createElement('div');
-ageContainer.style.display = 'flex';
-ageContainer.style.flexDirection = 'column';
-ageContainer.style.width = '100%';
+const hiddenSexe = document.createElement('input');
+hiddenSexe.type = 'hidden';
+hiddenSexe.id = `${victimeId}-sexe`;
+hiddenSexe.value = existingValues[i]?.sexe || '';
     
 // Input pour l'âge
 const ageInput = document.createElement('input');
 ageInput.type = 'number';
-ageInput.id = `${id}-${i}-age`;
+ageInput.id = `${victimeId}-age`;
+ageInput.className = 'victime-age-input';
 ageInput.min = '0';
 ageInput.max = '120';
-ageInput.placeholder = 'Âge en années';
+ageInput.placeholder = 'Âge si connu';
 ageInput.inputMode = 'numeric';  // Affichera un clavier numérique sur mobile
 ageInput.pattern = '[0-9]*';     // Force les valeurs numériques
 ageInput.step = '1';             // Incréments de 1
-ageInput.style.width = '100%';
-ageInput.style.height = '40px';
-ageInput.style.textAlign = 'center';
-ageInput.style.fontSize = '16px';
-ageInput.style.padding = '5px';
-ageInput.style.border = '1px solid #ccc';
-ageInput.style.borderRadius = '5px';
-ageInput.style.boxSizing = 'border-box';
-ageInput.onchange = function() { updateMessage(); };
+ageInput.addEventListener('change', () => {
+  updateVictimeCardUI(victimeId);
+  updateMessage();
+});
     
 // Ajouter une validation pour n'accepter que des nombres
-ageInput.oninput = function() {
+ageInput.addEventListener('input', function() {
   // Remplace tout ce qui n'est pas un nombre par une chaîne vide
   this.value = this.value.replace(/[^0-9]/g, '');
+  updateVictimeCardUI(victimeId);
   updateMessage();
-};
+});
+
+const ageUnitSelect = document.createElement('select');
+ageUnitSelect.id = `${victimeId}-age-unit`;
+ageUnitSelect.className = 'victime-age-unit';
+
+const ageUnitYearsOption = document.createElement('option');
+ageUnitYearsOption.value = 'ans';
+ageUnitYearsOption.textContent = 'ans';
+
+const ageUnitMonthsOption = document.createElement('option');
+ageUnitMonthsOption.value = 'mois';
+ageUnitMonthsOption.textContent = 'mois';
+
+ageUnitSelect.appendChild(ageUnitYearsOption);
+ageUnitSelect.appendChild(ageUnitMonthsOption);
+ageUnitSelect.addEventListener('change', () => {
+  updateVictimeCardUI(victimeId);
+  updateMessage();
+});
     
 // Restaurer les valeurs existantes
 if (existingValues[i]) {
-  // Créer un champ caché pour le sexe s'il y a une valeur
   if (existingValues[i].sexe) {
-    const hiddenSexe = document.createElement('input');
-    hiddenSexe.type = 'hidden';
-    hiddenSexe.id = `${id}-${i}-sexe`;
-    hiddenSexe.value = existingValues[i].sexe;
-    victimeInfo.appendChild(hiddenSexe);
-        
-    // Mettre à jour le style du bouton correspondant
     if (existingValues[i].sexe === 'M') {
       maleBtn.classList.add('selected');
-      if (!document.body.classList.contains('dark-mode')) {
-        maleBtn.style.backgroundColor = '#0066cc';
-        maleBtn.style.color = 'white';
-        maleBtn.style.border = '1px solid #0066cc';
-      }
-      maleBtn.style.fontWeight = 'bold';
     } else {
       femaleBtn.classList.add('selected');
-      if (!document.body.classList.contains('dark-mode')) {
-        femaleBtn.style.backgroundColor = '#FF80AB';
-        femaleBtn.style.color = 'white';
-        femaleBtn.style.border = '1px solid #FF80AB';
-      }
-      femaleBtn.style.fontWeight = 'bold';
     }
   }
       
   // Restaurer la valeur de l'âge
   ageInput.value = existingValues[i].age;
+  ageUnitSelect.value = existingValues[i].ageUnit || 'ans';
 }
-    
-ageContainer.appendChild(ageInput);
-    
-// Assembler tous les éléments
-victimeInfo.appendChild(victimeTitle);
-victimeInfo.appendChild(sexeContainer);
-victimeInfo.appendChild(ageContainer);
+
+const ageRow = document.createElement('div');
+ageRow.className = 'victime-age-row';
+ageRow.appendChild(ageInput);
+ageRow.appendChild(ageUnitSelect);
+
+victimeDetails.appendChild(buttonContainer);
+victimeDetails.appendChild(ageRow);
+victimeInfo.appendChild(victimeHeader);
+victimeInfo.appendChild(victimeDetails);
+victimeInfo.appendChild(hiddenSexe);
     
 // Ajouter cette victime au conteneur
 infoContainer.appendChild(victimeInfo);
-    
-// Ajouter un séparateur sauf pour la dernière victime
-if (i < count) {
-  const separator = document.createElement('hr');
-  separator.style.margin = '10px 0';
-  separator.style.border = '0';
-  separator.style.borderTop = '1px solid #eee';
-  infoContainer.appendChild(separator);
-}
+updateVictimeCardUI(victimeId);
   }
 }
 
@@ -2326,45 +2646,12 @@ function selectSexe(button, victimeId, sexe) {
   // Trouver le conteneur parent
   const container = button.closest('.victime-info');
   // Désélectionner tous les boutons de sexe dans ce conteneur
-  container.querySelectorAll('button').forEach(btn => {
-if (btn.textContent === 'Masculin' || btn.textContent === 'Féminin') {
-  btn.classList.remove('selected');
-  // Les styles seront gérés par CSS selon le thème
-  if (!document.body.classList.contains('dark-mode')) {
-    if (btn.textContent === 'Masculin') {
-      btn.style.backgroundColor = '#d4e6f6';
-      btn.style.color = '#0066cc';
-      btn.style.fontWeight = 'normal';
-      btn.style.border = '1px solid #ccc';
-    } else {
-      btn.style.backgroundColor = '#fce4ec';
-      btn.style.color = '#e91e63';
-      btn.style.fontWeight = 'normal';
-      btn.style.border = '1px solid #ccc';
-    }
-  }
-}
+  container.querySelectorAll('.sexe-btn').forEach(btn => {
+btn.classList.remove('selected');
   });
   
   // Sélectionner le bouton cliqué
   button.classList.add('selected');
-  // Les styles seront gérés par CSS selon le thème
-  if (!document.body.classList.contains('dark-mode')) {
-    if (sexe === 'M') {
-      button.style.backgroundColor = '#0066cc';
-      button.style.color = 'white';
-      button.style.fontWeight = 'bold';
-      button.style.border = '1px solid #0066cc';
-    } else {
-      button.style.backgroundColor = '#FF80AB';
-      button.style.color = 'white';
-      button.style.fontWeight = 'bold';
-      button.style.border = '1px solid #FF80AB';
-    }
-  } else {
-    // En dark mode, les styles CSS gèrent les couleurs
-    button.style.fontWeight = 'bold';
-  }
   
   // Stocker la valeur dans un champ caché pour pouvoir la récupérer plus tard
   let hiddenInput = document.getElementById(`${victimeId}-sexe`);
@@ -2375,6 +2662,8 @@ hiddenInput.id = `${victimeId}-sexe`;
 container.appendChild(hiddenInput);
   }
   hiddenInput.value = sexe;
+
+  updateVictimeCardUI(victimeId);
   
   // Mettre à jour le message
   updateMessage();

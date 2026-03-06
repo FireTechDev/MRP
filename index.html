@@ -94,6 +94,7 @@
     <!-- Étape 0 : Intervention -->
     <div id="step0" class="step active">
       <h2 class="page-title"><span class="material-icons">description</span>Intervention</h2>
+      <div class="step-card">
       <label for="interventionNumber">Numéro intervention</label>
       <input type="number" id="interventionNumber" class="form-control" min="0" inputMode="numeric" pattern="[0-9]*" step="1" onchange="updateMessage()" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
 
@@ -107,8 +108,8 @@
         <option>Odeur de brulé</option>
         <option>Fumée suspecte</option>
         <option>Feu de cheminée</option>
-        <option>Fuite de Gaz procédure classique</option>
-        <option>Fuite de Gaz procédure renforcée</option>
+        <option>Fuite de gaz procédure classique</option>
+        <option>Fuite de gaz procédure renforcée</option>
         <option>Déclenchement alarme</option>
         <option>Intoxication au monoxyde de carbone (CO)</option>
         <option>Personne bloquée dans un ascenseur</option>
@@ -244,6 +245,7 @@
           </div>
         </div>
       </div>
+      </div>
 
       <div class="navigation-buttons">
         <button type="button" class="prev-btn hidden" onclick="goToStep(0)">← Précédent</button>
@@ -254,6 +256,7 @@
     <!-- Étape 1 : Je suis -->
     <div id="step1" class="step hidden">
       <h2 class="page-title"><span class="material-icons">my_location</span>Je suis</h2>
+      <div class="step-card">
       <div class="address-buttons">
         <button type="button" class="secondary-btn" onclick="selectAddressToggle(this, 'Confirmée')">Adresse confirmée</button>
         <button type="button" class="secondary-btn" onclick="selectAddressToggle(this, 'Modifiée')">Adresse modifiée</button>
@@ -309,6 +312,7 @@
         <input type="number" id="pk" class="form-control" min="0" inputMode="numeric" pattern="[0-9]*" step="1" placeholder="Saisissez numéro PK" onchange="updateMessage()" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
       </div>
       </div>
+      </div>
 
       <div class="navigation-buttons">
         <button type="button" class="prev-btn" onclick="goToStep(0)">← Précédent</button>
@@ -319,6 +323,7 @@
     <!-- Étape 2 : Je vois -->
     <div id="step2" class="step hidden">
       <h2 class="page-title"><span class="material-icons">visibility</span>Je vois</h2>
+      <div class="step-card">
       <div id="natureInterventionContainer">
         <button type="button" class="toggle-btn nature-toggle" data-value="AVP" onclick="selectNature(this)">AVP</button>
         <button type="button" class="toggle-btn nature-toggle" data-value="Feu de véhicule" onclick="selectNature(this)">Feu de véhicule</button>
@@ -336,6 +341,7 @@
           <option value="Chute de ligne électrique">Chute de ligne électrique</option>
           <option value="Fuite de gaz procédure classique">Fuite de gaz procédure classique</option>
           <option value="Fuite de gaz procédure renforcée">Fuite de gaz procédure renforcée</option>
+          <option value="Déclenchement alarme">Déclenchement alarme</option>
           <option value="Fumée suspecte">Fumée suspecte</option>
           <option value="Odeur de brulé">Odeur de brulé</option>
           <option value="Feu de cheminée">Feu de cheminée</option>
@@ -599,7 +605,7 @@
 
           <div class="vehicle-count">
             <div class="vehicle-count-header">
-              <label>Préciser le niveau sinistré</label>
+              <label id="niveauSinistreLabel">Préciser le niveau sinistré</label>
               <div class="counter-container">
                 <button type="button" class="counter-btn minus always-active" onclick="decrementNiveauSinistre()" id="niveauSinistreMinus">−</button>
                 <span class="counter-value" id="niveauSinistre">0</span>
@@ -662,27 +668,29 @@
         </div>
         <input type="hidden" id="surfaceTotale" value="">
 
-        <label for="surfaceSinistree">Surface sinistrée estimée m²</label>
-        <div class="surface-buttons">
-          <button type="button" class="surface-btn" onclick="selectSurfaceSinistree(50)">50m²</button>
-          <button type="button" class="surface-btn" onclick="selectSurfaceSinistree(100)">100m²</button>
-          <button type="button" class="surface-btn" onclick="selectSurfaceSinistree(200)">200m²</button>
-          <button type="button" class="surface-btn" onclick="selectSurfaceSinistree(500)">500m²</button>
-          <button type="button" class="surface-btn" onclick="selectSurfaceSinistree(1000)">1000m²</button>
-          <button type="button" class="surface-btn" onclick="selectSurfaceSinistree(2000)">2000m²</button>
-        </div>
-        <div class="surface-custom">
-          <button type="button" class="toggle-btn" onclick="toggleCustomSurfaceSinistree()" id="toggleCustomSurfaceSinistreeBtn">
-            Autre surface
-            <span class="toggle-icon">›</span>
-          </button>
-          <div id="customSurfaceSinistreeInput" class="hidden">
-            <input type="number" id="customSurfaceSinistree" placeholder="Entrez la surface en m²" min="0" inputMode="numeric" pattern="[0-9]*" step="1" onchange="updateCustomSurfaceSinistree()" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+        <div id="surfaceSinistreeSection">
+          <label for="surfaceSinistree">Surface sinistrée estimée m²</label>
+          <div class="surface-buttons">
+            <button type="button" class="surface-btn" onclick="selectSurfaceSinistree(50)">50m²</button>
+            <button type="button" class="surface-btn" onclick="selectSurfaceSinistree(100)">100m²</button>
+            <button type="button" class="surface-btn" onclick="selectSurfaceSinistree(200)">200m²</button>
+            <button type="button" class="surface-btn" onclick="selectSurfaceSinistree(500)">500m²</button>
+            <button type="button" class="surface-btn" onclick="selectSurfaceSinistree(1000)">1000m²</button>
+            <button type="button" class="surface-btn" onclick="selectSurfaceSinistree(2000)">2000m²</button>
           </div>
+          <div class="surface-custom">
+            <button type="button" class="toggle-btn" onclick="toggleCustomSurfaceSinistree()" id="toggleCustomSurfaceSinistreeBtn">
+              Autre surface
+              <span class="toggle-icon">›</span>
+            </button>
+            <div id="customSurfaceSinistreeInput" class="hidden">
+              <input type="number" id="customSurfaceSinistree" placeholder="Entrez la surface en m²" min="0" inputMode="numeric" pattern="[0-9]*" step="1" onchange="updateCustomSurfaceSinistree()" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+            </div>
+          </div>
+          <input type="hidden" id="surfaceSinistree" value="">
         </div>
-        <input type="hidden" id="surfaceSinistree" value="">
 
-        <div class="risk-section">
+        <div id="propagationBatimentSection" class="risk-section">
           <label>Risque de propagation</label>
           <div id="propagationBatimentContainer">
             <button type="button" class="toggle-btn" onclick="selectToggle('propagationBatiment', this)" data-value="Oui">Oui</button>
@@ -715,17 +723,19 @@
           <option>Gaz</option>
           </select>
 
-        <label>Évolution du feu</label>
-        <select id="evolutionFeuBatiment">
-          <option value="">Choisir</option>
-          <option>1-En développement</option>
-          <option>2-Stabilisé</option>
-          <option>3-En régression</option>
-          <option>4-Circonscrit</option>
-          <option>5-Maîtrisé</option>
-          <option>6-Foyer principal éteint</option>
-          <option>7-Feu éteint</option>
-        </select>
+        <div id="evolutionFeuBatimentSection">
+          <label>Évolution du feu</label>
+          <select id="evolutionFeuBatiment">
+            <option value="">Choisir</option>
+            <option>1-En développement</option>
+            <option>2-Stabilisé</option>
+            <option>3-En régression</option>
+            <option>4-Circonscrit</option>
+            <option>5-Maîtrisé</option>
+            <option>6-Foyer principal éteint</option>
+            <option>7-Feu éteint</option>
+          </select>
+        </div>
         </div>
 
       <!-- Champs Chute de ligne électrique -->
@@ -770,11 +780,21 @@
         <button type="button" class="prev-btn" onclick="goToStep(1)">← Précédent</button>
         <button type="button" onclick="goToStep(3)">Suivant →</button>
       </div>
+      </div>
     </div>
 
     <!-- Étape 3 : Victimes -->
     <div id="step3" class="step hidden">
-      <h2 class="page-title"><span class="material-icons">personal_injury</span>Victimes <span id="victimesTotalCounter" class="victimes-counter">0</span></h2>
+      <h2 class="page-title page-title-victimes">
+        <span class="material-icons">personal_injury</span>
+        <span class="victimes-title-content">
+          <span id="victimesTotalCounter" class="victimes-counter" hidden>0</span>
+          <span class="victimes-title-label">Victimes</span>
+        </span>
+      </h2>
+      <div id="victimesSummaryCard" class="victimes-summary-card hidden">
+        <span id="victimesSummaryText" class="victimes-summary-text"></span>
+      </div>
       <div id="victimsFields">
         <!-- UA -->
         <div class="vehicle-count">
