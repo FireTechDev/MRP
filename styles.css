@@ -87,6 +87,7 @@
       --bottom-nav-base-height: 49px;
       --bottom-nav-padding-y: 12px;
       --bottom-nav-height: calc(var(--bottom-nav-base-height) + (var(--bottom-nav-padding-y) * 2) + var(--safe-area-bottom));
+      --content-top-spacing: 12px;
     }
 
     /* Base styles */
@@ -408,7 +409,7 @@
       margin: 0;
       background: transparent;
       padding: var(--padding);
-      padding-top: 32px; /* Espace selon standards iOS/Android entre top bar et contenu */
+      padding-top: var(--content-top-spacing);
       padding-bottom: calc(var(--bottom-nav-height) + 24px);
       box-shadow: none;
       border-radius: 0;
@@ -674,11 +675,6 @@
 
     .step.active { display: block; }
 
-    /* Step 0 has no contextual preamble above the title, so it needs less top air on iOS. */
-    #step0.active {
-      margin-top: -12px;
-    }
-
     .page-title {
       font-size: 24px;
       font-weight: 600;
@@ -860,7 +856,7 @@
 
     .page-content {
       padding: var(--padding);
-      padding-top: 32px; /* Espace selon standards iOS/Android entre top bar et contenu */
+      padding-top: var(--content-top-spacing);
       max-width: 100%;
       margin: 0 auto;
     }
