@@ -1946,187 +1946,342 @@ function toggleMoyensDepart() {
 }
 
 // Version de l'application
-const APP_VERSION = '1.0.20';
+const APP_VERSION = '1.0.21';
+const APP_BUILD = '06/03/2026 - 13h31';
+const PWA_VERSION_ENDPOINT = './version.json';
+const PWA_SW_URL = `./sw.js?v=${encodeURIComponent(`${APP_VERSION}-${APP_BUILD}`)}`;
+const PWA_VERSION_CHECK_INTERVAL_MS = 10 * 60 * 1000;
+const PWA_SW_UPDATE_INTERVAL_MS = 60 * 60 * 1000;
+
+let mrpSwReloading = false;
+let mrpSwActivationInProgress = false;
+
+function versionSignature(version, build) {
+  const normalizedVersion = String(version || '').trim();
+  const normalizedBuild = String(build || '').trim();
+  return `${normalizedVersion}::${normalizedBuild}`;
+}
+
+function getUpdateStatusElement() {
+  return document.getElementById('updateStatus');
+}
+
+function hideUpdateStatus() {
+  const updateStatus = getUpdateStatusElement();
+  if (!updateStatus) return;
+  updateStatus.style.display = 'none';
+}
+
+function showUpdateStatus(message, color, autoHideMs = 0) {
+  const updateStatus = getUpdateStatusElement();
+  if (!updateStatus) return;
+
+  updateStatus.textContent = message;
+  updateStatus.style.color = color;
+  updateStatus.style.display = 'block';
+
+  if (autoHideMs > 0) {
+    window.setTimeout(() => {
+      if (updateStatus.textContent === message) {
+        updateStatus.style.display = 'none';
+      }
+    }, autoHideMs);
+  }
+}
+
+function syncDisplayedAppVersion() {
+  const versionInfo = document.getElementById('appVersionInfo');
+  if (versionInfo) {
+    versionInfo.textContent = `Version : ${APP_VERSION}`;
+  }
+}
+
+function isLikelyNetworkError(error) {
+  const message = String(error?.message || '');
+  return !navigator.onLine ||
+    error?.name === 'TypeError' ||
+    error?.name === 'NetworkError' ||
+    message.includes('Failed to fetch') ||
+    message.includes('NetworkError') ||
+    message.includes('load failed');
+}
+
+async function fetchRemoteVersionMeta(signal) {
+  try {
+    const response = await fetch(`${PWA_VERSION_ENDPOINT}?t=${Date.now()}`, {
+      cache: 'no-store',
+      signal,
+    });
+
+    if (!response.ok) return null;
+
+    const remote = await response.json();
+    const remoteSignature = versionSignature(remote?.version, remote?.build);
+    const localSignature = versionSignature(APP_VERSION, APP_BUILD);
+
+    if (!remoteSignature || remoteSignature === localSignature) {
+      return null;
+    }
+
+    return remote;
+  } catch (_) {
+    return null;
+  }
+}
+
+function waitForWaitingServiceWorker(registration, timeoutMs = 8000) {
+  if (!registration) {
+    return Promise.resolve(null);
+  }
+
+  if (registration.waiting) {
+    return Promise.resolve(registration.waiting);
+  }
+
+  return new Promise((resolve) => {
+    let installingWorker = null;
+    let settled = false;
+
+    const finish = (worker = null) => {
+      if (settled) return;
+      settled = true;
+      window.clearTimeout(timeoutId);
+      registration.removeEventListener('updatefound', onUpdateFound);
+      if (installingWorker) {
+        installingWorker.removeEventListener('statechange', onStateChange);
+      }
+      resolve(worker);
+    };
+
+    const onStateChange = () => {
+      if (!installingWorker) return;
+
+      if (installingWorker.state === 'installed') {
+        window.setTimeout(() => finish(registration.waiting || null), 0);
+      } else if (installingWorker.state === 'redundant') {
+        finish(null);
+      }
+    };
+
+    const attachInstallingWorker = (worker) => {
+      if (!worker || worker === installingWorker) return;
+
+      if (installingWorker) {
+        installingWorker.removeEventListener('statechange', onStateChange);
+      }
+
+      installingWorker = worker;
+      installingWorker.addEventListener('statechange', onStateChange);
+
+      if (installingWorker.state === 'installed') {
+        window.setTimeout(() => finish(registration.waiting || null), 0);
+      }
+    };
+
+    const onUpdateFound = () => {
+      attachInstallingWorker(registration.installing);
+    };
+
+    const timeoutId = window.setTimeout(() => {
+      finish(registration.waiting || null);
+    }, timeoutMs);
+
+    registration.addEventListener('updatefound', onUpdateFound);
+    attachInstallingWorker(registration.installing);
+  });
+}
+
+async function activateWaitingServiceWorker(registration = window.__mrpSwRegistration) {
+  if (!registration) return false;
+
+  try {
+    await registration.update();
+  } catch (_) {
+    // Ignore update errors and use the currently waiting worker if present.
+  }
+
+  const waitingWorker = registration.waiting;
+  if (!waitingWorker) {
+    mrpSwActivationInProgress = false;
+    return false;
+  }
+
+  mrpSwActivationInProgress = true;
+  waitingWorker.postMessage({ type: 'SKIP_WAITING' });
+  return true;
+}
+
+function handleServiceWorkerUpdateReady({ registration }) {
+  window.__mrpSwRegistration = registration;
+
+  if (mrpSwActivationInProgress) return;
+
+  showUpdateStatus('Mise à jour disponible. Rechargement de l\'application...', '#ffc107');
+  activateWaitingServiceWorker(registration).catch(() => {
+    mrpSwActivationInProgress = false;
+  });
+}
+
+async function initServiceWorkerRuntime({ onUpdateReady, onOfflineReady }) {
+  if (!('serviceWorker' in navigator)) {
+    return { registration: null, dispose: () => {} };
+  }
+
+  const onControllerChange = () => {
+    if (mrpSwReloading) return;
+    mrpSwReloading = true;
+    window.location.reload();
+  };
+
+  const onMessage = (event) => {
+    if (event?.data?.type === 'MRP_SW_OFFLINE_READY') {
+      onOfflineReady?.({
+        source: 'message',
+        registration: window.__mrpSwRegistration || null,
+      });
+    }
+  };
+
+  navigator.serviceWorker.addEventListener('controllerchange', onControllerChange);
+  navigator.serviceWorker.addEventListener('message', onMessage);
+
+  try {
+    const registration = await navigator.serviceWorker.register(PWA_SW_URL, { scope: './' });
+    window.__mrpSwRegistration = registration;
+
+    const markUpdateReady = (source) => onUpdateReady?.({ source, registration });
+    const markOfflineReady = (source) => onOfflineReady?.({ source, registration });
+
+    if (registration.waiting) {
+      markUpdateReady('waiting');
+    }
+
+    registration.addEventListener('updatefound', () => {
+      const installing = registration.installing;
+      if (!installing) return;
+
+      installing.addEventListener('statechange', () => {
+        if (installing.state !== 'installed') return;
+
+        if (navigator.serviceWorker.controller) {
+          markUpdateReady('updatefound');
+        } else {
+          markOfflineReady('installed');
+        }
+      });
+    });
+
+    registration.update().catch(() => {});
+
+    const versionCheckTimer = window.setInterval(() => {
+      checkForUpdates(true);
+    }, PWA_VERSION_CHECK_INTERVAL_MS);
+
+    const swUpdateTimer = window.setInterval(() => {
+      registration.update().catch(() => {});
+    }, PWA_SW_UPDATE_INTERVAL_MS);
+
+    return {
+      registration,
+      dispose: () => {
+        navigator.serviceWorker.removeEventListener('controllerchange', onControllerChange);
+        navigator.serviceWorker.removeEventListener('message', onMessage);
+        window.clearInterval(versionCheckTimer);
+        window.clearInterval(swUpdateTimer);
+      },
+    };
+  } catch (error) {
+    console.log('ServiceWorker registration failed:', error);
+
+    return {
+      registration: null,
+      dispose: () => {
+        navigator.serviceWorker.removeEventListener('controllerchange', onControllerChange);
+        navigator.serviceWorker.removeEventListener('message', onMessage);
+      },
+    };
+  }
+}
 
 // Fonction pour vérifier les mises à jour
-function checkForUpdates(isAutoCheck = false) {
-  console.log('checkForUpdates appelé, isAutoCheck =', isAutoCheck);
-  
-  const updateStatus = document.getElementById('updateStatus');
-  if (!updateStatus) {
-console.error('Élément updateStatus non trouvé');
-return;
-  }
-  updateStatus.style.display = 'none';
-  
-  // Vérifier d'abord si on est en mode local (file://)
-  if (window.location.protocol === 'file:') {
-updateStatus.textContent = 'Vérification des mises à jour non disponible en mode local (file://)';
-updateStatus.style.color = '#ffc107';
-updateStatus.style.display = 'block';
-if (!isAutoCheck) {
-  setTimeout(() => {
-    updateStatus.style.display = 'none';
-  }, 5000);
-}
-return;
-  }
-  
-  if ('serviceWorker' in navigator) {
-console.log('ServiceWorker disponible, vérification des mises à jour...');
-navigator.serviceWorker.getRegistration().then(registration => {
-  if (registration) {
-    console.log('ServiceWorker enregistré:', registration.scope);
-        
-    // Vider le cache avant de vérifier les mises à jour
-    caches.keys().then(cacheNames => {
-      console.log('Suppression des caches:', cacheNames);
-      return Promise.all(
-        cacheNames.map(cacheName => caches.delete(cacheName))
-      );
-    }).then(() => {
-      // Créer un timestamp unique pour le cache-busting
-      const timestamp = new Date().getTime();
-          
-      // Obtenir le chemin de base à partir du scope du service worker
-      const swScope = registration.scope;
-      const basePath = swScope.endsWith('/') ? swScope : swScope + '/';
-      console.log('Chemin de base pour le service worker:', basePath);
-          
-      // Construire l'URL du service worker en utilisant le chemin relatif
-      const swUrl = new URL('sw.js', registration.scope).href;
-      console.log('URL du service worker:', swUrl);
-          
-      // Vérifier la version actuelle du service worker
-      fetch(`${swUrl}?v=${timestamp}`)
-        .then(response => {
-          console.log('Réponse de la requête sw.js:', response.status, response.ok);
-          if (response.ok) {
-            return response.text().then(swContent => {
-              console.log('Contenu du service worker récupéré', swContent.substring(0, 100) + '...');
-              const versionMatch = swContent.match(/const APP_VERSION = ['"]([^'"]+)['"]/);
-              const swVersion = versionMatch ? versionMatch[1] : null;
-              console.log('Version du service worker:', swVersion, 'Version actuelle:', APP_VERSION);
-                  
-              if (swVersion && swVersion === APP_VERSION) {
-                // Version à jour
-                updateStatus.textContent = 'Application à jour et disponible hors-ligne';
-                updateStatus.style.color = '#28a745';
-                updateStatus.style.display = 'block';
-                    
-                // Si c'est une vérification automatique, masquer le message après quelques secondes
-                if (isAutoCheck) {
-                  setTimeout(() => {
-                    updateStatus.style.display = 'none';
-                  }, 3000);
-                }
-              } else {
-                // Nouvelle version disponible
-                updateStatus.textContent = 'Une mise à jour est disponible. Mise à jour en cours...';
-                updateStatus.style.color = '#ffc107';
-                updateStatus.style.display = 'block';
-                    
-                // Forcer la mise à jour du service worker
-                registration.update().then(() => {
-                  // Envoyer un message au service worker pour forcer l'activation
-                  registration.active.postMessage({ type: 'SKIP_WAITING' });
-                      
-                  if (isIOS) {
-                    // Sur iOS, forcer le rechargement de la page
-                    updateStatus.textContent = 'Mise à jour terminée. Rechargement de l\'application...';
-                    console.log('iOS: Rechargement de la page pour appliquer les mises à jour');
-                    setTimeout(() => {
-                      window.location.reload(true);
-                    }, 2000);
-                  } else {
-                    // Sur les autres plateformes, forcer le rechargement après un court délai
-                    updateStatus.textContent = 'Mise à jour terminée. Rechargement de l\'application...';
-                    setTimeout(() => {
-                      window.location.reload(true);
-                    }, 2000);
-                  }
-                });
-              }
-            });
-          } else {
-            console.error('Erreur lors de la récupération du service worker:', response.status, response.statusText);
-            throw new Error('Service worker non disponible');
-          }
-        })
-        .catch(error => {
-          console.error('Erreur lors de la vérification:', error);
-          
-          // Détecter si l'erreur est due à l'absence de réseau
-          const isNetworkError = !navigator.onLine || 
-                                 error.message.includes('Failed to fetch') || 
-                                 error.message.includes('NetworkError') ||
-                                 error.message.includes('load failed') ||
-                                 error.name === 'TypeError' ||
-                                 error.name === 'NetworkError';
-          
-          if (isNetworkError) {
-            updateStatus.textContent = 'Mise à jour impossible : pas de réseau. Réessayez plus tard.';
-            updateStatus.style.color = '#ffc107';
-          } else {
-            updateStatus.textContent = 'Erreur lors de la vérification des mises à jour';
-            updateStatus.style.color = '#dc3545';
-          }
-          
-          updateStatus.style.display = 'block';
-          if (!isAutoCheck) {
-            setTimeout(() => {
-              updateStatus.style.display = 'none';
-            }, 5000);
-          }
-        });
-    });
-  } else {
-    console.error('Aucun service worker enregistré');
-    // Gérer le cas où il n'y a pas de service worker (mode local/file://)
-    if (window.location.protocol === 'file:' || !('serviceWorker' in navigator)) {
-      updateStatus.textContent = 'Vérification des mises à jour non disponible en mode local (file://)';
-      updateStatus.style.color = '#ffc107';
-      updateStatus.style.display = 'block';
-      if (!isAutoCheck) {
-        setTimeout(() => {
-          updateStatus.style.display = 'none';
-        }, 5000);
-      }
-    } else {
-      updateStatus.textContent = 'Service worker non enregistré. Veuillez recharger la page.';
-      updateStatus.style.color = '#dc3545';
-      updateStatus.style.display = 'block';
-      setTimeout(() => {
-        updateStatus.style.display = 'none';
-      }, 3000);
-    }
-  }
-});
-  } else {
-console.error('ServiceWorker non pris en charge par ce navigateur');
-// Gérer le cas où le service worker n'est pas supporté
-updateStatus.textContent = 'Vérification des mises à jour non disponible en mode local (file://)';
-updateStatus.style.color = '#ffc107';
-updateStatus.style.display = 'block';
-if (!isAutoCheck) {
-  setTimeout(() => {
-    updateStatus.style.display = 'none';
-  }, 5000);
-}
-  }
-}
+async function checkForUpdates(isAutoCheck = false) {
+  hideUpdateStatus();
 
-// Vérifier automatiquement les mises à jour au chargement de la page
-window.addEventListener('load', () => {
-  if ('serviceWorker' in navigator) {
-navigator.serviceWorker.getRegistration().then(registration => {
-  if (registration) {
-    // Vérification unique au démarrage
-    checkForUpdates(true);
+  if (window.location.protocol === 'file:') {
+    if (!isAutoCheck) {
+      showUpdateStatus('Vérification des mises à jour non disponible en mode local (file://)', '#ffc107', 5000);
+    }
+    return;
   }
-});
+
+  if (!('serviceWorker' in navigator)) {
+    if (!isAutoCheck) {
+      showUpdateStatus('Vérification des mises à jour non prise en charge par ce navigateur', '#ffc107', 5000);
+    }
+    return;
   }
-});
+
+  if (!navigator.onLine) {
+    if (!isAutoCheck) {
+      showUpdateStatus('Mise à jour impossible : pas de réseau. Réessayez plus tard.', '#ffc107', 5000);
+    }
+    return;
+  }
+
+  const registration = window.__mrpSwRegistration || await navigator.serviceWorker.getRegistration();
+
+  if (!registration) {
+    showUpdateStatus('Service worker non enregistré. Veuillez recharger la page.', '#dc3545', isAutoCheck ? 3000 : 5000);
+    return;
+  }
+
+  window.__mrpSwRegistration = registration;
+
+  if (!isAutoCheck) {
+    showUpdateStatus('Vérification de la mise à jour...', '#007BFF');
+  }
+
+  if (registration.waiting) {
+    showUpdateStatus('Mise à jour disponible. Rechargement de l\'application...', '#ffc107');
+    await activateWaitingServiceWorker(registration);
+    return;
+  }
+
+  let remoteMeta = null;
+  try {
+    remoteMeta = await fetchRemoteVersionMeta();
+  } catch (_) {
+    remoteMeta = null;
+  }
+
+  let updateError = null;
+  try {
+    await registration.update();
+  } catch (error) {
+    updateError = error;
+  }
+
+  const waitingWorker = registration.waiting || (remoteMeta ? await waitForWaitingServiceWorker(registration) : null);
+  if (waitingWorker) {
+    showUpdateStatus('Mise à jour disponible. Rechargement de l\'application...', '#ffc107');
+    await activateWaitingServiceWorker(registration);
+    return;
+  }
+
+  if (updateError && isLikelyNetworkError(updateError)) {
+    if (!isAutoCheck) {
+      showUpdateStatus('Mise à jour impossible : pas de réseau. Réessayez plus tard.', '#ffc107', 5000);
+    }
+    return;
+  }
+
+  if (remoteMeta) {
+    showUpdateStatus('Nouvelle version détectée. Téléchargement en cours...', '#ffc107', isAutoCheck ? 4000 : 5000);
+    return;
+  }
+
+  showUpdateStatus('Application à jour et disponible hors-ligne', '#28a745', isAutoCheck ? 3000 : 5000);
+}
 
 function selectAddressToggle(btn, value) {
   const container = btn.parentElement;
@@ -2708,38 +2863,31 @@ behavior: 'smooth'
 }
 
 // Enregistrement du Service Worker
-if ('serviceWorker' in navigator && (window.location.protocol === 'https:' || window.location.protocol === 'http:')) {
-  window.addEventListener('load', () => {
-navigator.serviceWorker.register('/MRP/sw.js')
-  .then(registration => {
-    console.log('ServiceWorker registration successful');
-        
-    // Vérification automatique des mises à jour lors du lancement de l'application
-    // Fonctionne en mode PWA, HTTP et local
-    console.log('Vérification des mises à jour au lancement...');
-    checkForUpdates(true); // true = vérification automatique
-  })
-  .catch(err => {
-    console.log('ServiceWorker registration failed: ', err);
+window.addEventListener('load', () => {
+  syncDisplayedAppVersion();
+
+  if (!('serviceWorker' in navigator) || window.location.protocol === 'file:') {
+    console.log('Service Worker non disponible en mode local - Version actuelle:', APP_VERSION, APP_BUILD);
+    showUpdateStatus('Vérification des mises à jour non disponible en mode local (file://)', '#ffc107', 5000);
+    return;
+  }
+
+  initServiceWorkerRuntime({
+    onUpdateReady: handleServiceWorkerUpdateReady,
+    onOfflineReady: () => {
+      if (!navigator.serviceWorker.controller) {
+        showUpdateStatus('Application prête pour le mode hors-ligne', '#28a745', 3000);
+      }
+    },
+  }).then(({ registration }) => {
+    if (!registration) {
+      showUpdateStatus('Service worker non enregistré. Veuillez recharger la page.', '#dc3545', 5000);
+      return;
+    }
+
+    checkForUpdates(true);
   });
-  });
-} else {
-  // En cas d'ouverture via file:// ou protocole non pris en charge
-  window.addEventListener('load', () => {
-console.log('Service Worker non disponible en mode file:// - Version actuelle: ' + APP_VERSION);
-    
-// Mise à jour du statut pour indiquer qu'on est en mode local
-const updateStatus = document.getElementById('updateStatus');
-if (updateStatus) {
-  updateStatus.textContent = 'Vérification des mises à jour non disponible en mode local (file://)';
-  updateStatus.style.color = '#ffc107';
-  updateStatus.style.display = 'block';
-  setTimeout(() => {
-    updateStatus.style.display = 'none';
-  }, 5000);
-}
-  });
-}
+});
 
 // Initialisation des gestes de swipe
 if (document.readyState === 'loading') {

@@ -1,7 +1,7 @@
 {
   "name": "mrp",
-  "version": "1.0.0",
-  "description": "MRP - Mon site personnel",
+  "version": "1.0.21",
+  "description": "MRP - Message radio Pompier",
   "main": "index.js",
   "scripts": {
     "build": "echo 'Build step completed'",

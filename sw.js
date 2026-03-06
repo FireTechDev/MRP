@@ -1,170 +1,231 @@
-// Version de l'application
-const APP_VERSION = '1.0.20';
+const SW_VERSION = new URL(self.location.href).searchParams.get('v') || 'dev';
+const CACHE_PREFIX = 'mrp-';
+const STATIC_CACHE = `${CACHE_PREFIX}static-${SW_VERSION}`;
+const RUNTIME_CACHE = `${CACHE_PREFIX}runtime-${SW_VERSION}`;
+const API_CACHE = `${CACHE_PREFIX}api-${SW_VERSION}`;
+const EXTERNAL_CACHE = `${CACHE_PREFIX}external-${SW_VERSION}`;
 
-const CACHE_NAME = 'mrp-cache-v6';
-const urlsToCache = [
-  '/MRP/',
-  '/MRP/index.html',
-  '/MRP/styles.css',
-  '/MRP/script.js',
-  '/MRP/manifest.json',
-  '/MRP/icon-192x192.png',
-  '/MRP/icon-512x512.png',
-  '/MRP/sw.js'
+const PRECACHE_URLS = [
+  './',
+  './index.html',
+  './styles.css',
+  './script.js',
+  './manifest.json',
+  './version.json',
+  './icon-192x192.png',
+  './icon-512x512.png',
+  './icons/192.png',
+  './icons/512.png',
+  './icons/firetruck.svg',
+  './icons/material-icons.woff2',
 ];
 
-// Ressources externes optionnelles (seront mises en cache si disponibles)
-const optionalUrlsToCache = [
-  'https://fonts.googleapis.com/icon?family=Material+Icons',
-  'https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js'
-];
+const API_HOSTS = new Set([
+  'nominatim.openstreetmap.org',
+]);
 
-// Installation du Service Worker
-self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => {
-        console.log('Opened cache');
-        // Mettre en cache les ressources essentielles
-        return cache.addAll(urlsToCache)
-          .then(() => {
-            console.log('Ressources essentielles mises en cache');
-            // Essayer de mettre en cache les ressources externes (optionnelles)
-            return Promise.allSettled(
-              optionalUrlsToCache.map(url => 
-                fetch(url)
-                  .then(response => {
-                    if (response.ok) {
-                      return cache.put(url, response);
-                    }
-                  })
-                  .catch(err => {
-                    console.log('Ressource externe non disponible:', url, err);
-                    // Ignorer les erreurs pour les ressources externes
-                  })
-              )
-            );
-          })
-          .catch(error => {
-            console.log('Erreur lors de la mise en cache initiale:', error);
-            // Continuer même si certaines ressources n'ont pas pu être mises en cache
-            // Les ressources seront mises en cache lors de leur première utilisation
-          });
-      })
-  );
-  // Forcer l'activation immédiate du nouveau service worker
-  self.skipWaiting();
-});
+const EXTERNAL_ASSET_HOSTS = new Set([
+  'fonts.googleapis.com',
+  'fonts.gstatic.com',
+  'cdnjs.cloudflare.com',
+]);
 
-// Activation du Service Worker
-self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.map(cacheName => {
-          if (cacheName !== CACHE_NAME) {
-            console.log('Deleting old cache:', cacheName);
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    }).then(() => {
-      // Forcer la prise de contrôle de tous les clients
-      return self.clients.claim();
+function isSupportedProtocol(url) {
+  return url.protocol === 'http:' || url.protocol === 'https:';
+}
+
+function isCacheableResponse(response) {
+  return !!response && (response.status === 200 || response.type === 'opaque');
+}
+
+async function safeCachePut(cache, request, response) {
+  try {
+    const requestUrl = new URL(request.url);
+    if (!isSupportedProtocol(requestUrl)) return;
+    await cache.put(request, response);
+  } catch (_) {
+    // Ignore cache write failures.
+  }
+}
+
+async function fetchWithTimeout(request, timeoutMs) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await fetch(request, { signal: controller.signal });
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
+async function staleWhileRevalidate(request, cacheName) {
+  const cache = await caches.open(cacheName);
+  const cached = await cache.match(request);
+  const networkPromise = fetch(request)
+    .then(async (response) => {
+      if (isCacheableResponse(response)) {
+        await safeCachePut(cache, request, response.clone());
+      }
+      return response;
     })
+    .catch(() => null);
+
+  if (cached) return cached;
+
+  const networkResponse = await networkPromise;
+  if (networkResponse) return networkResponse;
+
+  throw new Error('Network unavailable');
+}
+
+async function networkFirst(request, cacheName, timeoutMs = 9000) {
+  const cache = await caches.open(cacheName);
+
+  try {
+    const response = await fetchWithTimeout(request, timeoutMs);
+
+    if (response.status === 429 || response.status >= 500) {
+      const cached = await cache.match(request);
+      if (cached) return cached;
+      return response;
+    }
+
+    if (isCacheableResponse(response)) {
+      await safeCachePut(cache, request, response.clone());
+    }
+
+    return response;
+  } catch (_) {
+    const cached = await cache.match(request);
+    if (cached) return cached;
+    throw new Error('Network unavailable');
+  }
+}
+
+self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open(STATIC_CACHE).then((cache) => cache.addAll(PRECACHE_URLS))
   );
 });
 
-// Gestion des requêtes
-self.addEventListener('fetch', event => {
-  // Ignorer les requêtes de vérification de mise à jour
-  if (event.request.url.includes('?v=')) {
-    return;
-  }
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    (async () => {
+      const cacheNames = await caches.keys();
 
-  // Ignorer les requêtes non-GET
-  if (event.request.method !== 'GET') {
-    return;
-  }
+      await Promise.all(
+        cacheNames
+          .filter((name) => name.startsWith(CACHE_PREFIX) && ![
+            STATIC_CACHE,
+            RUNTIME_CACHE,
+            API_CACHE,
+            EXTERNAL_CACHE,
+          ].includes(name))
+          .map((name) => caches.delete(name))
+      );
 
-  event.respondWith(
-    caches.match(event.request)
-      .then(response => {
-        // Cache hit - return response immédiatement (Cache First)
-        if (response) {
-          return response;
-        }
+      await self.clients.claim();
 
-        // Pas dans le cache - essayer le réseau
-        const fetchRequest = event.request.clone();
+      const clients = await self.clients.matchAll({
+        type: 'window',
+        includeUncontrolled: true,
+      });
 
-        return fetch(fetchRequest)
-          .then(response => {
-            // Vérifier que la réponse est valide
-            if (!response || response.status !== 200 || response.type !== 'basic') {
-              return response;
-            }
-
-            // Clone la réponse pour la mettre en cache
-            const responseToCache = response.clone();
-
-            // Mettre en cache la réponse (en arrière-plan, ne pas bloquer)
-            caches.open(CACHE_NAME)
-              .then(cache => {
-                cache.put(event.request, responseToCache);
-              })
-              .catch(err => {
-                console.log('Erreur lors de la mise en cache:', err);
-              });
-
-            return response;
-          })
-          .catch(error => {
-            // Erreur réseau - essayer de retourner depuis le cache (même si déjà vérifié)
-            console.log('Erreur réseau pour', event.request.url, error);
-            
-            // Essayer une dernière fois le cache (au cas où il y aurait une version)
-            return caches.match(event.request).then(cachedResponse => {
-              if (cachedResponse) {
-                return cachedResponse;
-              }
-              
-              // Si vraiment rien dans le cache, retourner une réponse d'erreur pour les pages HTML
-              if (event.request.destination === 'document' || event.request.mode === 'navigate') {
-                return caches.match('/MRP/index.html').then(indexResponse => {
-                  if (indexResponse) {
-                    return indexResponse;
-                  }
-                  // Dernier recours : réponse d'erreur
-                  return new Response('Application hors ligne. Veuillez vous reconnecter.', {
-                    status: 503,
-                    statusText: 'Service Unavailable',
-                    headers: new Headers({
-                      'Content-Type': 'text/html'
-                    })
-                  });
-                });
-              }
-              
-              // Pour les autres ressources, retourner une réponse d'erreur
-              throw error;
-            });
-          });
-      })
-      .catch(error => {
-        console.error('Erreur dans le service worker:', error);
-        // Dernier recours : essayer de retourner index.html
-        if (event.request.destination === 'document' || event.request.mode === 'navigate') {
-          return caches.match('/MRP/index.html');
-        }
-        throw error;
-      })
+      clients.forEach((client) => {
+        client.postMessage({
+          type: 'MRP_SW_OFFLINE_READY',
+          version: SW_VERSION,
+        });
+      });
+    })()
   );
 });
 
-// Gestion des messages pour les mises à jour
-self.addEventListener('message', event => {
-  if (event.data && event.data.type === 'SKIP_WAITING') {
+self.addEventListener('message', (event) => {
+  const type = event?.data?.type;
+
+  if (type === 'SKIP_WAITING') {
     self.skipWaiting();
+  } else if (type === 'CHECK_FOR_UPDATE') {
+    self.registration.update().catch(() => {});
   }
-}); 
+});
+
+self.addEventListener('fetch', (event) => {
+  const { request } = event;
+
+  if (request.method !== 'GET') return;
+
+  const url = new URL(request.url);
+  if (!isSupportedProtocol(url)) return;
+
+  if (request.mode === 'navigate') {
+    event.respondWith(
+      (async () => {
+        try {
+          const response = await fetchWithTimeout(request, 9000);
+          if (isCacheableResponse(response)) {
+            const runtimeCache = await caches.open(RUNTIME_CACHE);
+            await safeCachePut(runtimeCache, request, response.clone());
+          }
+          return response;
+        } catch (_) {
+          const runtimeCache = await caches.open(RUNTIME_CACHE);
+          const pageFromRuntime = await runtimeCache.match(request);
+          if (pageFromRuntime) return pageFromRuntime;
+
+          const staticCache = await caches.open(STATIC_CACHE);
+          const shell = await staticCache.match('./index.html');
+          if (shell) return shell;
+
+          return new Response('Application hors ligne.', {
+            status: 503,
+            statusText: 'Offline',
+            headers: {
+              'Content-Type': 'text/plain; charset=utf-8',
+            },
+          });
+        }
+      })()
+    );
+    return;
+  }
+
+  if (url.pathname.endsWith('/version.json')) {
+    event.respondWith(
+      networkFirst(request, RUNTIME_CACHE, 5000).catch(
+        () => new Response('', { status: 504, statusText: 'Gateway Timeout' })
+      )
+    );
+    return;
+  }
+
+  if (url.origin === self.location.origin) {
+    event.respondWith(
+      staleWhileRevalidate(request, RUNTIME_CACHE).catch(async () => {
+        const staticCache = await caches.open(STATIC_CACHE);
+        const fallback = await staticCache.match(request);
+        if (fallback) return fallback;
+        return new Response('', { status: 504, statusText: 'Gateway Timeout' });
+      })
+    );
+    return;
+  }
+
+  if (API_HOSTS.has(url.hostname)) {
+    event.respondWith(
+      networkFirst(request, API_CACHE, 15000).catch(
+        () => new Response('', { status: 504, statusText: 'Gateway Timeout' })
+      )
+    );
+    return;
+  }
+
+  if (EXTERNAL_ASSET_HOSTS.has(url.hostname) || ['script', 'style', 'image', 'font'].includes(request.destination)) {
+    event.respondWith(
+      staleWhileRevalidate(request, EXTERNAL_CACHE).catch(
+        () => new Response('', { status: 504, statusText: 'Gateway Timeout' })
+      )
+    );
+  }
+});
