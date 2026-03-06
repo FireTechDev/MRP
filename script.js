@@ -32,7 +32,7 @@ const FIRE_BUILDING_INTERVENTIONS = new Set([
 const VICTIME_TYPES = ["UA", "UR", "DCD", "incarcerees", "intoxiquees", "indemnes", "impliques"];
 
 const MOYENS_POMPIERS_IDS = ["VSAV", "FPT", "FPTSR", "VSR", "EPA", "CCF", "CCFS", "CCGC", "VID", "chefGroupe", "SMUR", "ISP", "vehiculeSpecifique"];
-const MOYENS_DEPART_IDS = ["VSAVDepart", "FPTDepart", "FPTSRDepart", "VSRDepart", "EPADepart", "VIDDepart", "chefGroupeDepart", "SMURDepart", "ISPDepart", "vehiculeSpecifiqueDepart"];
+const MOYENS_DEPART_IDS = ["VSAVDepart", "FPTDepart", "FPTSRDepart", "VSRDepart", "EPADepart", "CCFDepart", "CCFSDepart", "CCGCDepart", "VIDDepart", "chefGroupeDepart", "SMURDepart", "ISPDepart", "vehiculeSpecifiqueDepart"];
 
 const VICTIME_CARD_LABELS = {
   UA: "Victime UA",
@@ -45,7 +45,11 @@ const VICTIME_CARD_LABELS = {
 };
 
 const victimCardState = {};
+const MESSAGE_HISTORY_STORAGE_KEY = "mrp-message-history";
+const MESSAGE_HISTORY_LIMIT = 30;
 let viewportMetricsFrame = null;
+let messagePhotoFile = null;
+let messagePhotoPreviewUrl = "";
 
 function updateViewportMetrics() {
   const viewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
@@ -240,6 +244,256 @@ function getVictimeDetailedSummary(typeId, index) {
 
 function formatVictimeTitleSummaryItem(summaryItem) {
   return summaryItem.replace(/\bVictimes?\b\s*/g, "").replace(/\s{2,}/g, " ").trim();
+}
+
+function getFieldValue(id) {
+  const element = document.getElementById(id);
+  return element?.value || "";
+}
+
+function splitNonEmptyLines(value) {
+  return String(value || "")
+    .split("\n")
+    .map(line => line.trim())
+    .filter(Boolean);
+}
+
+function formatBulletLines(items) {
+  return items
+    .map(item => String(item || "").trim())
+    .filter(Boolean)
+    .map(item => `• ${item}`);
+}
+
+function getCurrentInterventionNature() {
+  const natureBtn = document.querySelector(".nature-toggle.selected");
+  const autreNature = normalizeInterventionValue(getFieldValue("autreTypeIntervention"));
+
+  if (natureBtn && natureBtn.dataset.value === "Autre") {
+    return autreNature;
+  }
+
+  return normalizeInterventionValue(natureBtn?.dataset.value || autreNature || getFieldValue("motifDepart"));
+}
+
+function getCurrentInterventionMeta() {
+  return {
+    interventionNumber: getFieldValue("interventionNumber").trim(),
+    motif: getCurrentInterventionNature() || normalizeInterventionValue(getFieldValue("motifDepart").trim()),
+    commune: getFieldValue("commune").trim(),
+    address: getFieldValue("adresseConfirmee").trim() || getFieldValue("adresse").trim(),
+  };
+}
+
+function buildAdditionalInfoBlock() {
+  const additionalInfoLines = formatBulletLines(splitNonEmptyLines(getFieldValue("additionalInfo")));
+
+  if (additionalInfoLines.length === 0) {
+    return "";
+  }
+
+  return `\n\n[ COMPLÉMENT ]\n${additionalInfoLines.join("\n")}`;
+}
+
+function buildFinalMessageText(baseMessage = null) {
+  const messageSource = typeof baseMessage === "string"
+    ? baseMessage
+    : document.getElementById("message")?.value || "";
+
+  return `${String(messageSource || "").trimEnd()}${buildAdditionalInfoBlock()}`.trim();
+}
+
+function syncMessageOutput(baseMessage = null) {
+  const messageTextarea = document.getElementById("message");
+  const messagePreview = document.getElementById("messagePreview");
+  const rawMessage = typeof baseMessage === "string"
+    ? baseMessage
+    : messageTextarea?.value || "";
+
+  if (messageTextarea) {
+    messageTextarea.value = rawMessage;
+  }
+
+  if (messagePreview) {
+    messagePreview.textContent = buildFinalMessageText(rawMessage) || "Le message généré apparaîtra ici dès que les premières informations seront renseignées.";
+  }
+}
+
+function refreshMessageComposerPreview() {
+  syncMessageOutput();
+}
+
+function loadMessageHistory() {
+  try {
+    const rawHistory = localStorage.getItem(MESSAGE_HISTORY_STORAGE_KEY);
+    const parsedHistory = rawHistory ? JSON.parse(rawHistory) : [];
+    return Array.isArray(parsedHistory) ? parsedHistory : [];
+  } catch (error) {
+    console.error("Impossible de lire l'historique des messages :", error);
+    return [];
+  }
+}
+
+function persistMessageHistory(entries) {
+  try {
+    localStorage.setItem(MESSAGE_HISTORY_STORAGE_KEY, JSON.stringify(entries));
+  } catch (error) {
+    console.error("Impossible d'enregistrer l'historique des messages :", error);
+  }
+}
+
+function formatHistoryTimestamp(timestamp) {
+  try {
+    return new Intl.DateTimeFormat("fr-FR", {
+      dateStyle: "short",
+      timeStyle: "short",
+    }).format(new Date(timestamp));
+  } catch (_) {
+    return "";
+  }
+}
+
+function buildMessageHistoryEntry(messageText, options = {}) {
+  const { interventionNumber, motif, commune, address } = getCurrentInterventionMeta();
+
+  return {
+    id: options.id || `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    timestamp: options.timestamp || new Date().toISOString(),
+    interventionNumber,
+    motif,
+    commune,
+    address,
+    hasPhoto: Boolean(options.hasPhoto),
+    messageText,
+  };
+}
+
+function upsertMessageHistoryEntry(entry) {
+  const historyEntries = loadMessageHistory();
+  const duplicateIndex = historyEntries.findIndex(item => (
+    item.messageText === entry.messageText &&
+    item.interventionNumber === entry.interventionNumber
+  ));
+
+  if (duplicateIndex !== -1) {
+    entry.id = historyEntries[duplicateIndex].id;
+    historyEntries.splice(duplicateIndex, 1);
+  }
+
+  historyEntries.unshift(entry);
+  const trimmedEntries = historyEntries.slice(0, MESSAGE_HISTORY_LIMIT);
+  persistMessageHistory(trimmedEntries);
+  renderMessageHistory();
+  return entry;
+}
+
+function recordCurrentMessageHistory(options = {}) {
+  const messageText = buildFinalMessageText();
+
+  if (!messageText) {
+    return null;
+  }
+
+  return upsertMessageHistoryEntry(buildMessageHistoryEntry(messageText, options));
+}
+
+function buildHistoryEntryTitle(entry) {
+  if (entry.interventionNumber) {
+    return `Intervention #${entry.interventionNumber}`;
+  }
+
+  return entry.motif || "Message sans numéro";
+}
+
+function buildHistoryEntryMeta(entry) {
+  return [
+    formatHistoryTimestamp(entry.timestamp),
+    entry.motif,
+    entry.commune,
+    entry.address,
+    entry.hasPhoto ? "Photo jointe au partage" : "",
+  ].filter(Boolean).join(" • ");
+}
+
+function createInlineHistoryButton(icon, label, className, handler) {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = className;
+  button.addEventListener("click", handler);
+
+  const iconElement = document.createElement("span");
+  iconElement.className = "material-icons";
+  iconElement.textContent = icon;
+  button.appendChild(iconElement);
+
+  const textElement = document.createElement("span");
+  textElement.textContent = label;
+  button.appendChild(textElement);
+
+  return button;
+}
+
+function renderMessageHistory() {
+  const list = document.getElementById("messageHistoryList");
+  const emptyState = document.getElementById("historyEmptyState");
+
+  if (!list || !emptyState) {
+    return;
+  }
+
+  const entries = loadMessageHistory();
+  list.innerHTML = "";
+  emptyState.classList.toggle("hidden", entries.length > 0);
+
+  entries.forEach(entry => {
+    const card = document.createElement("article");
+    card.className = "history-card";
+
+    const header = document.createElement("div");
+    header.className = "history-card-header";
+
+    const heading = document.createElement("div");
+    heading.className = "history-card-heading";
+
+    const title = document.createElement("h3");
+    title.className = "history-card-title";
+    title.textContent = buildHistoryEntryTitle(entry);
+    heading.appendChild(title);
+
+    const meta = document.createElement("p");
+    meta.className = "history-card-meta";
+    meta.textContent = buildHistoryEntryMeta(entry);
+    heading.appendChild(meta);
+
+    header.appendChild(heading);
+    card.appendChild(header);
+
+    const preview = document.createElement("pre");
+    preview.className = "history-card-preview";
+    preview.textContent = entry.messageText;
+    card.appendChild(preview);
+
+    const actions = document.createElement("div");
+    actions.className = "history-card-actions";
+    actions.appendChild(
+      createInlineHistoryButton("content_copy", "Copier", "secondary-btn inline-action-btn", () => {
+        copyHistoryEntry(entry.id);
+      })
+    );
+    actions.appendChild(
+      createInlineHistoryButton("ios_share", "Partager", "secondary-btn inline-action-btn", () => {
+        shareHistoryEntry(entry.id);
+      })
+    );
+    actions.appendChild(
+      createInlineHistoryButton("delete", "Supprimer", "secondary-btn inline-action-btn danger-outline-btn", () => {
+        deleteHistoryEntry(entry.id);
+      })
+    );
+
+    card.appendChild(actions);
+    list.appendChild(card);
+  });
 }
 
 function collectVictimeSummaryData() {
@@ -801,6 +1055,9 @@ if (value > 0) {
   if (vehicleContainer && counter.closest('#moyensPompiers')) {
     vehicleContainer.classList.toggle('moyen-pompier-active', value > 0);
   }
+  if (vehicleContainer && counter.closest('#moyensDepart')) {
+    vehicleContainer.classList.toggle('moyen-depart-active', value > 0);
+  }
   
   // Ajouter/mettre à jour les champs de sexe et âge pour les victimes
   if (VICTIME_TYPES.includes(id)) {
@@ -1084,6 +1341,9 @@ vehiculeSpecifiqueTag.classList.remove('hidden');
 'FPTSR': 'FPTSRDepart',
 'VSR': 'VSRDepart',
 'EPA': 'EPADepart',
+'CCF': 'CCFDepart',
+'CCFS': 'CCFSDepart',
+'CCGC': 'CCGCDepart',
 'VID': 'VIDDepart',
 'chefGroupe': 'chefGroupeDepart',
 'SMUR': 'SMURDepart',
@@ -1309,37 +1569,20 @@ msg += "\n";
 
   // Générer le message pour les victimes
   if (totalVictimes > 0) {
-// Cas spécial : une seule victime
-if (totalVictimes === 1) {
-  // Si la victime a des détails, afficher directement les détails
-  if (detailMessages.length > 0) {
-    msg += detailMessages[0] + "\n";
-  } else {
-    // Sinon, afficher le type de victime
-    if (countMessages.length > 0) {
-      msg += countMessages[0] + "\n";
-    } else {
-      msg += `1 Victime\n`;
-    }
-  }
-} else {
-  // Plusieurs victimes : afficher le total avec "au total, dont"
-  msg += `${totalVictimes} Victimes au total`;
+const victimeBulletLines = [`${totalVictimes} ${totalVictimes > 1 ? "victimes" : "victime"} au total`];
+const allMessages = [...detailMessages, ...countMessages];
 
-  // Combiner les détails individuels et les compteurs groupés
-  const allMessages = [...countMessages, ...detailMessages];
-  if (allMessages.length > 0) {
-    msg += `, dont ${allMessages.join(", ")}`;
-  }
-      
-  msg += "\n";
+if (allMessages.length > 0) {
+  victimeBulletLines.push(...allMessages);
 }
+
+msg += `${formatBulletLines(victimeBulletLines).join("\n")}\n`;
   }
 
   // Ajouter les précisions sur les victimes si présentes
   let precisionVictimes = getVal("precisionVictimes");
   if (precisionVictimes) {
-msg += `Précisions sur les victimes: ${precisionVictimes}\n`;
+msg += `${formatBulletLines([`Précisions sur les victimes: ${precisionVictimes}`]).join("\n")}\n`;
   }
   
   // Toujours ajouter un saut de ligne avant "[ JE FAIS ]" pour l'espacement
@@ -1416,22 +1659,24 @@ document.querySelectorAll(`#${containerId} .toggle-btn.selected`).forEach(btn =>
 "CCFS": "CCFS",
 "CCGC": "CCGC",
 "chefGroupe": "Chef de groupe",
+"SMUR": "SMUR",
 "ISP": "ISP",
 "vehiculeSpecifique": "Véhicule spécifique"
   };
 
+  const demandedMeansLines = [];
   Object.entries(moyensTypes).forEach(([id, label]) => {
 const count = parseInt(document.getElementById(id)?.textContent || "0");
 if (count > 0) {
   if (id === "vehiculeSpecifique") {
     const details = document.getElementById("vehiculeSpecifiqueText");
     if (details && details.value) {
-      msg += `${count} ${details.value}\n`;
+      demandedMeansLines.push(`${count} ${details.value}`);
     } else {
-      msg += `${count} ${label}\n`;
+      demandedMeansLines.push(`${count} ${label}`);
     }
   } else {
-    msg += `${count} ${label}\n`;
+    demandedMeansLines.push(`${count} ${label}`);
   }
 }
   });
@@ -1440,8 +1685,12 @@ if (count > 0) {
   document.querySelectorAll('#autresServices .toggle-btn.selected').forEach(btn => {
 // Extraire uniquement le texte principal du bouton, sans les tags de suggestion
 const buttonText = btn.textContent.replace(/Suggéré/g, '').trim();
-msg += `${buttonText}\n`;
+demandedMeansLines.push(buttonText);
   });
+
+  if (demandedMeansLines.length > 0) {
+msg += `${formatBulletLines(demandedMeansLines).join("\n")}\n`;
+  }
 
   msg += "\n[ FIN DE MESSAGE, COMMENT REÇU PARLEZ. ]";
   
@@ -1449,17 +1698,18 @@ msg += `${buttonText}\n`;
   return msg;
 }
 
-function copyMessage() {
-  let msg = document.getElementById("message").value;
-  // Convertir le texte brut en texte brut
-  msg = msg.replace(/\n/g, '\n')
-       .replace(/<br>/g, '\n')
-       .replace(/<b>/g, '')
-       .replace(/<\/b>/g, '')
-       .replace(/<i>/g, '')
-       .replace(/<\/i>/g, '');
-  navigator.clipboard.writeText(msg);
-  alert("Message copié !");
+async function copyMessage() {
+  const messageText = buildFinalMessageText();
+
+  if (!messageText) {
+    return;
+  }
+
+  await copyMessageToClipboard(messageText, {
+    saveToHistory: true,
+    hasPhoto: Boolean(messagePhotoFile),
+    successMessage: "Message copié dans le presse-papier",
+  });
 }
 
 function shareApplication() {
@@ -1566,62 +1816,196 @@ function fallbackCopyToClipboard(text) {
   try {
 document.execCommand('copy');
 alert('Message copié dans le presse papier');
+return true;
   } catch (error) {
 console.error('Erreur lors de la copie:', error);
 alert('Impossible de copier le message. Voici le contenu : ' + text);
+return false;
+  } finally {
+document.body.removeChild(textArea);
   }
-  document.body.removeChild(textArea);
 }
 
-function shareMessage() {
-  let msg = document.getElementById("message").value;
-  // Ajouter les informations supplémentaires si présentes
-  const additionalInfo = document.getElementById("additionalInfo")?.value || "";
-  if (additionalInfo.trim()) {
-msg += "\n\n" + additionalInfo;
-  }
-  
-  // Convertir le texte brut en texte brut
-  msg = msg.replace(/\n/g, '\n')
-       .replace(/<br>/g, '\n')
-       .replace(/<b>/g, '')
-       .replace(/<\/b>/g, '')
-       .replace(/<i>/g, '')
-       .replace(/<\/i>/g, '');
-  
-  const title = 'Message Radio Pompier';
-  const numeroIntervention = document.getElementById('interventionNumber')?.value || '';
-  const text = numeroIntervention ? `Intervention #${numeroIntervention}\n\n${msg}` : msg;
+function updateMessagePhotoUI() {
+  const emptyState = document.getElementById("messagePhotoEmptyState");
+  const preview = document.getElementById("messagePhotoPreview");
+  const image = document.getElementById("messagePhotoImage");
 
-  // Utiliser l'API Web Share si disponible (iOS/Android)
+  if (!emptyState || !preview || !image) {
+    return;
+  }
+
+  const hasPhoto = Boolean(messagePhotoFile && messagePhotoPreviewUrl);
+  emptyState.classList.toggle("hidden", hasPhoto);
+  preview.classList.toggle("hidden", !hasPhoto);
+
+  if (hasPhoto) {
+    image.src = messagePhotoPreviewUrl;
+    image.alt = messagePhotoFile?.name || "Photo d'intervention";
+  } else {
+    image.removeAttribute("src");
+    image.alt = "Photo d'intervention";
+  }
+}
+
+function openMessagePhotoPicker() {
+  document.getElementById("messagePhotoInput")?.click();
+}
+
+function clearMessagePhoto(resetInput = true) {
+  if (messagePhotoPreviewUrl) {
+    URL.revokeObjectURL(messagePhotoPreviewUrl);
+  }
+
+  messagePhotoFile = null;
+  messagePhotoPreviewUrl = "";
+
+  if (resetInput) {
+    const photoInput = document.getElementById("messagePhotoInput");
+    if (photoInput) {
+      photoInput.value = "";
+    }
+  }
+
+  updateMessagePhotoUI();
+}
+
+function handleMessagePhotoChange(event) {
+  const [file] = event?.target?.files || [];
+
+  if (!file) {
+    clearMessagePhoto(false);
+    return;
+  }
+
+  clearMessagePhoto(false);
+  messagePhotoFile = file;
+  messagePhotoPreviewUrl = URL.createObjectURL(file);
+  updateMessagePhotoUI();
+}
+
+async function shareMessage() {
+  const text = buildFinalMessageText();
+
+  if (!text) {
+    return;
+  }
+
+  const title = "Message Radio Pompier";
+  const shareData = { title, text };
+  const hasPhoto = Boolean(messagePhotoFile);
+  const canShareWithPhoto = Boolean(
+    hasPhoto &&
+    navigator.canShare &&
+    navigator.canShare({ files: [messagePhotoFile] })
+  );
+
+  if (hasPhoto && canShareWithPhoto) {
+    shareData.files = [messagePhotoFile];
+  }
+
   if (navigator.share) {
-navigator.share({
-  title: title,
-  text: text
-}).then(() => {
-  console.log('Message partagé avec succès');
-}).catch((error) => {
-  console.log('Erreur lors du partage:', error);
-  // Fallback : copier dans le presse-papier
-  copyMessageToClipboard(msg);
-});
-  } else {
-// Fallback : copier dans le presse-papier
-copyMessageToClipboard(msg);
+    try {
+      await navigator.share(shareData);
+      recordCurrentMessageHistory({ hasPhoto });
+
+      if (hasPhoto && !canShareWithPhoto) {
+        alert("Le message a été partagé sans la photo, car cet appareil ne permet pas encore de joindre une image depuis la PWA.");
+      }
+
+      console.log("Message partagé avec succès");
+      return;
+    } catch (error) {
+      if (error?.name === "AbortError") {
+        return;
+      }
+
+      console.log("Erreur lors du partage:", error);
+    }
   }
+
+  await copyMessageToClipboard(text, {
+    saveToHistory: true,
+    hasPhoto,
+    successMessage: hasPhoto
+      ? "Message copié dans le presse-papier. La photo n'a pas pu être jointe sur cet appareil."
+      : "Message copié dans le presse-papier",
+  });
 }
 
-function copyMessageToClipboard(text) {
+async function copyMessageToClipboard(text, options = {}) {
+  const {
+    saveToHistory = false,
+    hasPhoto = false,
+    successMessage = "Message copié dans le presse-papier",
+  } = options;
+
   if (navigator.clipboard && navigator.clipboard.writeText) {
-navigator.clipboard.writeText(text).then(() => {
-  alert('Message copié dans le presse-papier');
-}).catch((error) => {
-  console.error('Erreur lors de la copie:', error);
-  fallbackCopyToClipboard(text);
-});
-  } else {
-fallbackCopyToClipboard(text);
+    try {
+      await navigator.clipboard.writeText(text);
+      if (saveToHistory) {
+        recordCurrentMessageHistory({ hasPhoto });
+      }
+      alert(successMessage);
+      return true;
+    } catch (error) {
+      console.error("Erreur lors de la copie:", error);
+    }
   }
+
+  const fallbackSucceeded = fallbackCopyToClipboard(text);
+
+  if (fallbackSucceeded && saveToHistory) {
+    recordCurrentMessageHistory({ hasPhoto });
+  }
+
+  return fallbackSucceeded;
+}
+
+async function copyHistoryEntry(entryId) {
+  const entry = loadMessageHistory().find(item => item.id === entryId);
+
+  if (!entry) {
+    return;
+  }
+
+  await copyMessageToClipboard(entry.messageText, {
+    successMessage: "Message de l'historique copié dans le presse-papier",
+  });
+}
+
+async function shareHistoryEntry(entryId) {
+  const entry = loadMessageHistory().find(item => item.id === entryId);
+
+  if (!entry) {
+    return;
+  }
+
+  if (navigator.share) {
+    try {
+      await navigator.share({
+        title: "Message Radio Pompier",
+        text: entry.messageText,
+      });
+      return;
+    } catch (error) {
+      if (error?.name === "AbortError") {
+        return;
+      }
+
+      console.log("Erreur lors du partage de l'historique:", error);
+    }
+  }
+
+  await copyMessageToClipboard(entry.messageText, {
+    successMessage: "Message de l'historique copié dans le presse-papier",
+  });
+}
+
+function deleteHistoryEntry(entryId) {
+  const remainingEntries = loadMessageHistory().filter(entry => entry.id !== entryId);
+  persistMessageHistory(remainingEntries);
+  renderMessageHistory();
 }
 
 function confirmResetForm() {
@@ -1677,7 +2061,7 @@ updateVehicleDetails(id);
   updateVictimesTotalCounter();
 
   // Réinitialiser les champs de précisions des véhicules
-  ['vehiculeLegerPrecisions', 'poidsLourdPrecisions', 'deuxRouesPrecisions', 'busPrecisions', 'vehiculeSpecifiqueText'].forEach(id => {
+  ['vehiculeLegerPrecisions', 'poidsLourdPrecisions', 'deuxRouesPrecisions', 'busPrecisions', 'vehiculeSpecifiqueText', 'vehiculeSpecifiqueDepartText'].forEach(id => {
 let input = document.getElementById(id);
 if (input) input.value = '';
   });
@@ -1703,6 +2087,10 @@ btn.classList.remove('active');
   // Réinitialiser les variables globales
   selectedNature = "";
   selectedBatiment = "";
+
+  clearMessagePhoto();
+  syncMessageOutput("");
+  updateMessagePhotoUI();
   victimsSelected = false;
 
   // Retourner à l'étape 0
@@ -1964,7 +2352,7 @@ function toggleMoyensDepart() {
 
 // Version de l'application
 const APP_VERSION = '1.0.22';
-const APP_BUILD = '07/03/2026 - 00h06';
+const APP_BUILD = '07/03/2026 - 00h36';
 const PWA_VERSION_ENDPOINT = './version.json';
 const PWA_SW_URL = `./sw.js?v=${encodeURIComponent(`${APP_VERSION}-${APP_BUILD}`)}`;
 const PWA_VERSION_CHECK_INTERVAL_MS = 10 * 60 * 1000;
@@ -2529,12 +2917,7 @@ function updateMessage() {
   const messageTextarea = document.getElementById('message');
   if (messageTextarea) {
 const msg = generateMessage();
-messageTextarea.value = msg;
-// Ajuster la hauteur du textarea
-setTimeout(() => {
-  messageTextarea.style.height = "auto";
-  messageTextarea.style.height = messageTextarea.scrollHeight + "px";
-}, 0);
+syncMessageOutput(msg);
   }
 }
 
@@ -2864,15 +3247,7 @@ if (index === 6) {
   updateProgress();
   
   // Mettre à jour le textarea avec le message
-  const messageTextarea = document.getElementById("message");
-  if (messageTextarea) {
-messageTextarea.value = msg;
-// Ajuster la hauteur du textarea
-setTimeout(() => {
-  messageTextarea.style.height = "auto";
-  messageTextarea.style.height = messageTextarea.scrollHeight + "px";
-}, 0);
-  }
+  syncMessageOutput(msg);
   
   // Faire défiler vers le haut de la page
   window.scrollTo({
@@ -2918,6 +3293,18 @@ if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', applySavedTheme);
 } else {
   applySavedTheme();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    renderMessageHistory();
+    updateMessagePhotoUI();
+    syncMessageOutput(document.getElementById('message')?.value || '');
+  });
+} else {
+  renderMessageHistory();
+  updateMessagePhotoUI();
+  syncMessageOutput(document.getElementById('message')?.value || '');
 }
 
 // Fonctions pour gérer le menu burger
@@ -2966,17 +3353,24 @@ document.addEventListener('keydown', function(event) {
 });
 
 // Navigation entre les pages
+function getStandalonePages() {
+  return [
+    document.getElementById('termsPage'),
+    document.getElementById('settingsPage'),
+    document.getElementById('sharePage'),
+    document.getElementById('historyPage'),
+  ].filter(Boolean);
+}
+
+function hideStandalonePages() {
+  getStandalonePages().forEach(page => page.classList.add('hidden'));
+}
+
 function showHomePage() {
-  const termsPage = document.getElementById('termsPage');
-  const settingsPage = document.getElementById('settingsPage');
-  const sharePage = document.getElementById('sharePage');
   const container = document.querySelector('.container');
   
   if (container) {
-    // Cacher toutes les pages
-    if (termsPage) termsPage.classList.add('hidden');
-    if (settingsPage) settingsPage.classList.add('hidden');
-    if (sharePage) sharePage.classList.add('hidden');
+    hideStandalonePages();
     // Afficher le container principal
     container.style.display = 'block';
     // Fermer le menu
@@ -2986,34 +3380,23 @@ function showHomePage() {
 
 function showTermsPage() {
   const termsPage = document.getElementById('termsPage');
-  const settingsPage = document.getElementById('settingsPage');
-  const sharePage = document.getElementById('sharePage');
   const container = document.querySelector('.container');
   
   if (termsPage && container) {
-    // Cacher le container principal et les autres pages
     container.style.display = 'none';
-    if (settingsPage) settingsPage.classList.add('hidden');
-    if (sharePage) sharePage.classList.add('hidden');
-    // Afficher la page Conditions d'utilisation
+    hideStandalonePages();
     termsPage.classList.remove('hidden');
-    // Fermer le menu
     closeMenu();
   }
 }
 
 function showSettingsPage() {
   const settingsPage = document.getElementById('settingsPage');
-  const termsPage = document.getElementById('termsPage');
-  const sharePage = document.getElementById('sharePage');
   const container = document.querySelector('.container');
   
   if (settingsPage && container) {
-    // Cacher le container principal et les autres pages
     container.style.display = 'none';
-    if (termsPage) termsPage.classList.add('hidden');
-    if (sharePage) sharePage.classList.add('hidden');
-    // Afficher la page Réglages
+    hideStandalonePages();
     settingsPage.classList.remove('hidden');
     // Mettre à jour le sélecteur avec la valeur sauvegardée
     const savedTheme = localStorage.getItem('mrp-theme') || 'light';
@@ -3036,30 +3419,36 @@ function showSettingsPage() {
         btn.classList.add('selected');
       }
     });
-    // Fermer le menu
     closeMenu();
   }
 }
 
 function showSharePage() {
   const sharePage = document.getElementById('sharePage');
-  const termsPage = document.getElementById('termsPage');
-  const settingsPage = document.getElementById('settingsPage');
   const container = document.querySelector('.container');
   
   if (sharePage && container) {
-    // Cacher le container principal et les autres pages
     container.style.display = 'none';
-    if (termsPage) termsPage.classList.add('hidden');
-    if (settingsPage) settingsPage.classList.add('hidden');
-    // Afficher la page Partager l'application
+    hideStandalonePages();
     sharePage.classList.remove('hidden');
     // Réinitialiser le message de statut
     const copyStatus = document.getElementById('copyStatus');
     if (copyStatus) {
       copyStatus.style.display = 'none';
     }
-    // Fermer le menu
+    closeMenu();
+  }
+}
+
+function showHistoryPage() {
+  const historyPage = document.getElementById('historyPage');
+  const container = document.querySelector('.container');
+
+  if (historyPage && container) {
+    container.style.display = 'none';
+    hideStandalonePages();
+    historyPage.classList.remove('hidden');
+    renderMessageHistory();
     closeMenu();
   }
 }

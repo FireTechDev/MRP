@@ -54,6 +54,10 @@
           <span class="material-icons">description</span>
           <span>Conditions d'utilisation</span>
         </a>
+        <a href="#" class="side-menu-item" onclick="showHistoryPage(); return false;">
+          <span class="material-icons">history</span>
+          <span>Historique messages</span>
+        </a>
         <a href="#" class="side-menu-item" onclick="showSharePage(); return false;">
           <span class="material-icons">ios_share</span>
           <span>Partager l'application</span>
@@ -70,7 +74,7 @@
           <div class="app-info">
             <img src="icons/192.png" alt="MRP Icon" class="app-icon">
             <p class="app-name">MRP</p>
-            <p id="appVersionInfo" class="version-info">Version 1.0.22 • Build 07/03/2026 - 00h06</p>
+            <p id="appVersionInfo" class="version-info">Version 1.0.22 • Build 07/03/2026 - 00h36</p>
           </div>
           <p class="copyright">Créé par <a href="https://www.linkedin.com/in/taelpinault/" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: underline;">Tael PINAULT</a> 2026</p>
         </div>
@@ -176,6 +180,42 @@
                 <button type="button" class="counter-btn minus" onclick="decrementVehicle('EPADepart')" id="EPADepartMinus">−</button>
                 <span class="counter-value" id="EPADepart">0</span>
                 <button type="button" class="counter-btn plus" onclick="incrementVehicle('EPADepart')">+</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- CCF -->
+          <div class="vehicle-count">
+            <div class="vehicle-count-header">
+              <label>CCF</label>
+              <div class="counter-container">
+                <button type="button" class="counter-btn minus" onclick="decrementVehicle('CCFDepart')" id="CCFDepartMinus">−</button>
+                <span class="counter-value" id="CCFDepart">0</span>
+                <button type="button" class="counter-btn plus" onclick="incrementVehicle('CCFDepart')">+</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- CCFS -->
+          <div class="vehicle-count">
+            <div class="vehicle-count-header">
+              <label>CCFS</label>
+              <div class="counter-container">
+                <button type="button" class="counter-btn minus" onclick="decrementVehicle('CCFSDepart')" id="CCFSDepartMinus">−</button>
+                <span class="counter-value" id="CCFSDepart">0</span>
+                <button type="button" class="counter-btn plus" onclick="incrementVehicle('CCFSDepart')">+</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- CCGC -->
+          <div class="vehicle-count">
+            <div class="vehicle-count-header">
+              <label>CCGC</label>
+              <div class="counter-container">
+                <button type="button" class="counter-btn minus" onclick="decrementVehicle('CCGCDepart')" id="CCGCDepartMinus">−</button>
+                <span class="counter-value" id="CCGCDepart">0</span>
+                <button type="button" class="counter-btn plus" onclick="incrementVehicle('CCGCDepart')">+</button>
               </div>
             </div>
           </div>
@@ -1238,13 +1278,62 @@
     <!-- Étape 6 : Message généré -->
     <div id="step6" class="step hidden">
       <h2 class="page-title"><span class="material-icons">phone_android</span>Message</h2>
-      <div class="form-group">
-        <label for="groupeHoraireAuto">Groupe horaire</label>
-        <input type="time" id="groupeHoraireAuto" name="groupeHoraireAuto" onchange="updateMessage()">
-        <button type="button" class="secondary-btn" onclick="setCurrentTime()">Actualiser l'heure</button>
+      <div class="message-composer-layout">
+        <div class="message-composer-card message-meta-card">
+          <div class="form-group">
+            <label for="groupeHoraireAuto">Groupe horaire</label>
+            <input type="time" id="groupeHoraireAuto" name="groupeHoraireAuto" onchange="updateMessage()">
+            <button type="button" class="secondary-btn" onclick="setCurrentTime()">Actualiser l'heure</button>
+          </div>
+        </div>
+
+        <div class="message-composer-card message-output-card">
+          <div class="message-output-header">
+            <div>
+              <h3>Aperçu du message</h3>
+              <p>Version prête à partager, avec mise en forme plus lisible pour les victimes et les moyens.</p>
+            </div>
+            <button type="button" class="secondary-btn inline-action-btn" onclick="copyMessage()">
+              <span class="material-icons">content_copy</span>
+              <span>Copier</span>
+            </button>
+          </div>
+          <pre id="messagePreview" class="message-preview" aria-live="polite"></pre>
+          <textarea id="message" class="result hidden-message-source" readonly></textarea>
+        </div>
+
+        <div class="message-composer-grid">
+          <div class="message-composer-card message-note-card">
+            <label for="additionalInfo">Complément libre</label>
+            <textarea id="additionalInfo" class="message-note-input" placeholder="Ajouter une information utile : moyens suffisants, difficultés rencontrées, présence de renforts, délai prévisible..." oninput="refreshMessageComposerPreview()"></textarea>
+          </div>
+
+          <div class="message-composer-card message-photo-card">
+            <div class="message-photo-header">
+              <div>
+                <h3>Photo terrain</h3>
+                <p>Optionnelle. Elle sera jointe au partage si l'appareil l'autorise.</p>
+              </div>
+              <input type="file" id="messagePhotoInput" class="hidden-message-source" accept="image/*" capture="environment" onchange="handleMessagePhotoChange(event)">
+              <button type="button" class="secondary-btn inline-action-btn" onclick="openMessagePhotoPicker()">
+                <span class="material-icons">photo_camera</span>
+                <span>Prendre / ajouter</span>
+              </button>
+            </div>
+            <div id="messagePhotoEmptyState" class="message-photo-empty">
+              <span class="material-icons">add_a_photo</span>
+              <span>Aucune photo ajoutée pour ce message.</span>
+            </div>
+            <div id="messagePhotoPreview" class="message-photo-preview hidden">
+              <img id="messagePhotoImage" class="message-photo-image" alt="Photo d'intervention">
+              <button type="button" class="secondary-btn inline-action-btn danger-outline-btn" onclick="clearMessagePhoto()">
+                <span class="material-icons">delete</span>
+                <span>Retirer la photo</span>
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
-      <textarea id="message" class="result" readonly contenteditable="true"></textarea>
-      <textarea id="additionalInfo" placeholder="Ajouter une information supplémentaire (présence de moyens sur les lieux, secours suffisants, durée d'intervention, difficultées rencontrées..)" style="width: 100%; margin-top: 10px; padding: 10px; min-height: 100px;"></textarea>
       <div class="navigation-buttons">
         <button type="button" onclick="shareMessage()"><span class="material-icons" style="font-size: 18px; vertical-align: middle; margin-right: 4px;">ios_share</span>Partager le message</button>
         <button type="button" class="reset-btn" onclick="confirmResetForm()"><span class="material-icons" style="font-size: 18px; vertical-align: middle; margin-right: 4px;">delete</span>Recommencer le message</button>
@@ -1330,6 +1419,23 @@
         
         <p id="copyStatus" style="margin-top: 12px; color: #4caf50; font-size: 14px; display: none;"></p>
       </div>
+    </div>
+  </div>
+
+  <!-- Page Historique -->
+  <div id="historyPage" class="page hidden">
+    <div class="page-content">
+      <button class="back-button" onclick="goBack()">
+        <span class="material-icons">arrow_back</span>
+        <span>Retour</span>
+      </button>
+      <h1>Historique des messages</h1>
+      <p class="history-page-intro">Historique local des messages partagés ou copiés, classés avec le numéro d'intervention quand il est renseigné.</p>
+      <div id="historyEmptyState" class="empty-state-card">
+        <span class="material-icons">history</span>
+        <p>Aucun message enregistré pour le moment. Le premier partage ou la première copie alimentera cet historique.</p>
+      </div>
+      <div id="messageHistoryList" class="history-list"></div>
     </div>
   </div>
 

@@ -68,6 +68,7 @@
 
     :root {
       --primary-color: #007BFF;
+      --primary-color-soft: rgba(0, 123, 255, 0.08);
       --secondary-color: #6c757d;
       --background-color: #f8f9fa;
       --text-color: #333;
@@ -96,9 +97,12 @@
       --interactive-item-min-height: 56px;
       --interactive-item-padding-y: 14px;
       --interactive-item-padding-x: 16px;
-      --interactive-item-radius: 12px;
+      --interactive-item-radius: 14px;
       --interactive-item-gap: 12px;
       --interactive-item-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      --card-surface-radius: 16px;
+      --card-surface-border: 1px solid #e3e8ef;
+      --card-surface-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
     }
 
     /* Base styles */
@@ -507,9 +511,18 @@
       margin: 0 0 16px 0;
       box-sizing: border-box;
       font-size: var(--font-size);
-      border-radius: 8px;
+      border-radius: var(--interactive-item-radius);
       font-family: var(--font-family);
       border: 1px solid var(--border-color);
+      min-height: var(--interactive-item-min-height);
+      background: rgba(255, 255, 255, 0.92);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.12);
     }
 
     button, .toggle-btn {
@@ -843,10 +856,10 @@
     .step-card {
       margin: 0 0 18px 0;
       padding: 16px;
-      border: 1px solid #e3e8ef;
-      border-radius: 14px;
+      border: var(--card-surface-border);
+      border-radius: var(--card-surface-radius);
       background: #ffffff;
-      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+      box-shadow: var(--card-surface-shadow);
     }
 
     .victimes-summary-card {
@@ -1054,14 +1067,11 @@
     }
 
     .result {
-      background: #e9ecef;
-      padding: 10px;
-      margin: 10px 0;
-      border-radius: 5px;
-      font-size: 14px;
-      line-height: 1.4;
-      white-space: pre-line;
-      margin-top: 15px;
+      margin: 0;
+      border: none;
+      background: transparent;
+      padding: 0;
+      min-height: 0;
       white-space: pre-wrap;
       font-family: var(--font-family);
       font-size: var(--font-size);
@@ -1518,11 +1528,6 @@
       background-color: var(--danger-color);
     }
 
-    .dark-mode .result {
-      background: #2d2d2d;
-      color: #e0e0e0;
-    }
-
     .dark-mode .info-text {
       background: #2d2d2d;
       color: #e0e0e0;
@@ -1554,15 +1559,83 @@
       box-shadow: none !important;
     }
 
-    .dark-mode #moyensPompiers {
+    .dark-mode #moyensPompiers,
+    .dark-mode #moyensDepart {
       background: transparent !important;
       box-shadow: none !important;
     }
 
-    .dark-mode :is(#victimsFields, #moyensPompiers) .vehicle-count {
+    .dark-mode :is(#victimsFields, #moyensPompiers, #moyensDepart) .vehicle-count {
       background: #202833;
       border-color: #334155;
       box-shadow: none;
+    }
+
+    .dark-mode :is(#victimsFields, #moyensPompiers, #moyensDepart) .vehicle-count label,
+    .dark-mode :is(#victimsFields, #moyensPompiers, #moyensDepart) .counter-value {
+      color: #93c5fd;
+    }
+
+    .dark-mode :is(#moyensPompiers, #moyensDepart) .vehicle-count:is(.moyen-pompier-active, .moyen-depart-active) {
+      background: #0b63ce;
+      border-color: #0b63ce;
+      box-shadow: none;
+    }
+
+    .dark-mode .message-composer-card,
+    .dark-mode .history-card,
+    .dark-mode .empty-state-card,
+    .dark-mode .step-card {
+      background: #202833;
+      border-color: #334155;
+      box-shadow: none;
+    }
+
+    .dark-mode .message-output-header h3,
+    .dark-mode .message-photo-header h3,
+    .dark-mode .history-card-title {
+      color: #e2e8f0;
+    }
+
+    .dark-mode .message-output-header p,
+    .dark-mode .message-photo-header p,
+    .dark-mode .history-page-intro,
+    .dark-mode .history-card-meta,
+    .dark-mode .empty-state-card {
+      color: #94a3b8;
+    }
+
+    .dark-mode .message-preview,
+    .dark-mode .history-card-preview {
+      color: #e2e8f0;
+    }
+
+    .dark-mode .message-photo-empty {
+      background: rgba(30, 41, 59, 0.7);
+      border-color: #334155;
+      color: #cbd5e1;
+    }
+
+    .dark-mode .message-photo-image {
+      border-color: #334155;
+      background: #0f172a;
+    }
+
+    .dark-mode .secondary-btn,
+    .dark-mode .gps-btn {
+      background: rgba(0, 123, 255, 0.12);
+      color: #93c5fd;
+      border-color: #3b82f6;
+    }
+
+    .dark-mode .danger-outline-btn {
+      background: rgba(239, 68, 68, 0.12);
+      color: #fca5a5;
+      border-color: #ef4444;
+    }
+
+    .dark-mode .history-card-preview::after {
+      background: linear-gradient(180deg, rgba(32, 40, 51, 0), #202833);
     }
 
     .dark-mode :is(#victimsFields, #moyensPompiers) .vehicle-count label,
@@ -2214,7 +2287,8 @@
     }
 
     /* Style partagé pour les listes à compteur */
-    #moyensPompiers {
+    #moyensPompiers,
+    #moyensDepart {
       background-color: transparent;
       padding: 0;
       border-radius: 0;
@@ -2222,7 +2296,7 @@
       margin-bottom: 20px;
     }
 
-    :is(#victimsFields, #moyensPompiers) .vehicle-count {
+    :is(#victimsFields, #moyensPompiers, #moyensDepart) .vehicle-count {
       min-height: 0;
       margin-bottom: var(--interactive-item-gap);
       padding: 0;
@@ -2233,30 +2307,30 @@
       overflow: hidden;
     }
 
-    :is(#victimsFields, #moyensPompiers) .vehicle-count:last-child {
+    :is(#victimsFields, #moyensPompiers, #moyensDepart) .vehicle-count:last-child {
       margin-bottom: 0;
     }
 
-    :is(#victimsFields, #moyensPompiers) .vehicle-count-header {
+    :is(#victimsFields, #moyensPompiers, #moyensDepart) .vehicle-count-header {
       min-height: var(--interactive-item-min-height);
       padding: var(--interactive-item-padding-y) var(--interactive-item-padding-x);
       margin-bottom: 0;
       box-sizing: border-box;
     }
 
-    :is(#victimsFields, #moyensPompiers) .vehicle-count label {
+    :is(#victimsFields, #moyensPompiers, #moyensDepart) .vehicle-count label {
       font-weight: 400;
       font-size: var(--font-size);
       line-height: 1.2;
       color: var(--primary-color);
     }
 
-    :is(#victimsFields, #moyensPompiers) .counter-container {
+    :is(#victimsFields, #moyensPompiers, #moyensDepart) .counter-container {
       gap: 8px;
       height: 30px;
     }
 
-    :is(#victimsFields, #moyensPompiers) .counter-btn {
+    :is(#victimsFields, #moyensPompiers, #moyensDepart) .counter-btn {
       width: 30px;
       height: 30px;
       min-width: 30px;
@@ -2270,29 +2344,29 @@
       transition: all 0.2s ease;
     }
 
-    :is(#victimsFields, #moyensPompiers) .counter-btn.minus {
+    :is(#victimsFields, #moyensPompiers, #moyensDepart) .counter-btn.minus {
       border-color: #d6dbe6;
       color: #6b7280;
       background: #f5f7fb;
     }
 
-    :is(#victimsFields, #moyensPompiers) .counter-btn.minus:disabled {
+    :is(#victimsFields, #moyensPompiers, #moyensDepart) .counter-btn.minus:disabled {
       border-color: #e5e7eb;
       color: #cbd5e1;
       opacity: 1;
     }
 
-    :is(#victimsFields, #moyensPompiers) .counter-btn.plus {
+    :is(#victimsFields, #moyensPompiers, #moyensDepart) .counter-btn.plus {
       border-color: var(--primary-color);
       color: var(--primary-color);
       background: transparent;
     }
 
-    :is(#victimsFields, #moyensPompiers) .counter-btn:hover:not(:disabled) {
+    :is(#victimsFields, #moyensPompiers, #moyensDepart) .counter-btn:hover:not(:disabled) {
       background: rgba(0, 123, 255, 0.08);
     }
 
-    :is(#victimsFields, #moyensPompiers) .counter-value {
+    :is(#victimsFields, #moyensPompiers, #moyensDepart) .counter-value {
       font-size: var(--font-size);
       font-weight: 700;
       color: var(--primary-color);
@@ -2301,31 +2375,244 @@
       line-height: 1;
     }
 
-    :is(#victimsFields, #moyensPompiers) .vehicle-count-details {
+    :is(#victimsFields, #moyensPompiers, #moyensDepart) .vehicle-count-details {
       padding: 0 var(--interactive-item-padding-x) var(--interactive-item-padding-y);
       margin-top: 0;
       box-sizing: border-box;
     }
 
-    #moyensPompiers .vehicle-count.moyen-pompier-active {
+    :is(#moyensPompiers, #moyensDepart) .vehicle-count:is(.moyen-pompier-active, .moyen-depart-active) {
       border-color: var(--primary-color);
       background: var(--primary-color);
       box-shadow: 0 4px 10px rgba(0, 123, 255, 0.18);
     }
 
-    #moyensPompiers .vehicle-count.moyen-pompier-active label,
-    #moyensPompiers .vehicle-count.moyen-pompier-active .counter-value {
+    :is(#moyensPompiers, #moyensDepart) .vehicle-count:is(.moyen-pompier-active, .moyen-depart-active) label,
+    :is(#moyensPompiers, #moyensDepart) .vehicle-count:is(.moyen-pompier-active, .moyen-depart-active) .counter-value {
       color: #ffffff;
     }
 
-    #moyensPompiers .vehicle-count.moyen-pompier-active .counter-btn {
+    :is(#moyensPompiers, #moyensDepart) .vehicle-count:is(.moyen-pompier-active, .moyen-depart-active) .counter-btn {
       border-color: #ffffff;
       color: #ffffff;
       background: transparent;
     }
 
-    #moyensPompiers .vehicle-count.moyen-pompier-active .counter-btn:hover:not(:disabled) {
+    :is(#moyensPompiers, #moyensDepart) .vehicle-count:is(.moyen-pompier-active, .moyen-depart-active) .counter-btn:hover:not(:disabled) {
       background: rgba(255, 255, 255, 0.12);
+    }
+
+    .message-composer-layout {
+      display: grid;
+      gap: 16px;
+    }
+
+    .message-composer-grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .message-composer-card,
+    .history-card,
+    .empty-state-card {
+      background: #ffffff;
+      border: var(--card-surface-border);
+      border-radius: var(--card-surface-radius);
+      box-shadow: var(--card-surface-shadow);
+    }
+
+    .message-composer-card {
+      padding: 16px;
+    }
+
+    .message-output-header,
+    .message-photo-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .message-output-header h3,
+    .message-photo-header h3,
+    .history-card-title {
+      margin: 0;
+      padding: 0;
+      border: none;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--text-color);
+    }
+
+    .message-output-header p,
+    .message-photo-header p,
+    .history-page-intro,
+    .history-card-meta {
+      margin: 4px 0 0;
+      color: #64748b;
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+
+    .message-preview,
+    .history-card-preview {
+      margin: 0;
+      white-space: pre-wrap;
+      font-family: var(--font-family);
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--text-color);
+    }
+
+    .message-preview {
+      min-height: 220px;
+    }
+
+    .message-note-input {
+      min-height: 160px;
+      resize: vertical;
+    }
+
+    .message-photo-empty {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 18px;
+      border-radius: var(--interactive-item-radius);
+      background: #f8fbff;
+      color: #64748b;
+      border: 1px dashed #bfdbfe;
+    }
+
+    .message-photo-preview {
+      display: grid;
+      gap: 12px;
+    }
+
+    .message-photo-image {
+      width: 100%;
+      max-height: 280px;
+      object-fit: cover;
+      border-radius: var(--interactive-item-radius);
+      border: 1px solid #dbe5ef;
+      background: #f8fafc;
+    }
+
+    .hidden-message-source {
+      position: absolute !important;
+      width: 1px !important;
+      height: 1px !important;
+      padding: 0 !important;
+      margin: -1px !important;
+      overflow: hidden !important;
+      clip: rect(0, 0, 0, 0) !important;
+      white-space: nowrap !important;
+      border: 0 !important;
+      min-height: 0 !important;
+    }
+
+    .inline-action-btn {
+      width: auto;
+      min-width: fit-content;
+      margin: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+
+    .danger-outline-btn {
+      border-color: #ef4444;
+      color: #ef4444;
+      background: rgba(239, 68, 68, 0.04);
+    }
+
+    .danger-outline-btn:hover {
+      background: rgba(239, 68, 68, 0.1);
+    }
+
+    .primary-btn,
+    .secondary-btn,
+    .gps-btn,
+    .navigation-buttons button {
+      min-height: var(--interactive-item-min-height);
+      border-radius: var(--interactive-item-radius);
+      padding: var(--interactive-item-padding-y) var(--interactive-item-padding-x);
+    }
+
+    .primary-btn {
+      background: var(--primary-color);
+      color: #ffffff;
+      border: 1px solid var(--primary-color);
+    }
+
+    .primary-btn:hover {
+      background: #006ae0;
+    }
+
+    .secondary-btn,
+    .gps-btn {
+      background: var(--primary-color-soft);
+      border-color: var(--primary-color);
+    }
+
+    .history-list {
+      display: grid;
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .history-card {
+      padding: 16px;
+    }
+
+    .history-card-header {
+      margin-bottom: 12px;
+    }
+
+    .history-card-preview {
+      max-height: 10.5em;
+      overflow: hidden;
+      position: relative;
+      padding-bottom: 4px;
+    }
+
+    .history-card-preview::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 32px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0), #ffffff);
+      pointer-events: none;
+    }
+
+    .history-card-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .empty-state-card {
+      padding: 24px 18px;
+      text-align: center;
+      color: #64748b;
+    }
+
+    .empty-state-card .material-icons {
+      font-size: 36px;
+      color: var(--primary-color);
+      margin-bottom: 10px;
+    }
+
+    @media (min-width: 768px) {
+      .message-composer-grid {
+        grid-template-columns: minmax(0, 1.25fr) minmax(260px, 0.75fr);
+      }
     }
 
     .app-info {
