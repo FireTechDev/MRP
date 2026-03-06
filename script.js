@@ -46,9 +46,6 @@ const VICTIME_CARD_LABELS = {
 
 const victimCardState = {};
 let viewportMetricsFrame = null;
-let maxReachedStep = 0;
-let workflowProgressFrame = null;
-let workflowProgressObserver = null;
 
 function updateViewportMetrics() {
   const viewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
@@ -64,169 +61,6 @@ function queueViewportMetricsUpdate() {
     viewportMetricsFrame = null;
     updateViewportMetrics();
   });
-}
-
-function queueWorkflowProgressUpdate() {
-  if (workflowProgressFrame !== null) {
-    cancelAnimationFrame(workflowProgressFrame);
-  }
-
-  workflowProgressFrame = requestAnimationFrame(() => {
-    workflowProgressFrame = null;
-    updateWorkflowProgress();
-  });
-}
-
-function isElementVisible(element) {
-  return Boolean(element) && !element.closest('.hidden') && getComputedStyle(element).display !== 'none';
-}
-
-function getInputValue(id) {
-  const element = document.getElementById(id);
-  if (!element || typeof element.value !== 'string') {
-    return '';
-  }
-  return element.value.trim();
-}
-
-function hasSelectChoice(id) {
-  const element = document.getElementById(id);
-  return Boolean(element) && element.tagName === 'SELECT' && element.selectedIndex > 0 && element.value !== '';
-}
-
-function getCounterValue(id) {
-  return parseInt(document.getElementById(id)?.textContent || '0', 10);
-}
-
-function hasVisibleFilledField(rootElement) {
-  if (!rootElement) {
-    return false;
-  }
-
-  const fields = rootElement.querySelectorAll('input:not([type="hidden"]):not([readonly]), select, textarea');
-  return Array.from(fields).some(field => {
-    if (!isElementVisible(field)) {
-      return false;
-    }
-
-    if (field.tagName === 'SELECT') {
-      return field.selectedIndex > 0 && field.value !== '';
-    }
-
-    return field.value.trim() !== '';
-  });
-}
-
-function hasVisibleSelectedButtons(rootElement, selector = '.toggle-btn.selected, .secondary-btn.selected') {
-  if (!rootElement) {
-    return false;
-  }
-
-  return Array.from(rootElement.querySelectorAll(selector)).some(button => isElementVisible(button));
-}
-
-function hasVisibleCounterValue(rootElement) {
-  if (!rootElement) {
-    return false;
-  }
-
-  return Array.from(rootElement.querySelectorAll('.counter-value')).some(counter => isElementVisible(counter) && parseInt(counter.textContent || '0', 10) > 0);
-}
-
-function isStepReviewed(stepIndex) {
-  return maxReachedStep > stepIndex || currentStep > stepIndex;
-}
-
-function hasStep2Details() {
-  const step = document.getElementById('step2');
-  if (!step) {
-    return false;
-  }
-
-  if (hasVisibleCounterValue(step)) {
-    return true;
-  }
-
-  const selectedToggles = Array.from(step.querySelectorAll('.toggle-btn.selected')).filter(button => !button.classList.contains('nature-toggle'));
-  if (selectedToggles.some(button => isElementVisible(button))) {
-    return true;
-  }
-
-  return hasVisibleFilledField(step);
-}
-
-function getWorkflowCompletionScores() {
-  const step0 = (hasSelectChoice('motifDepart') ? 0.6 : 0) + (getInputValue('interventionNumber') ? 0.4 : 0);
-  const step1 = (getInputValue('adresse') ? 0.5 : 0) + (getInputValue('commune') ? 0.5 : 0);
-
-  let step2 = 0;
-  const selectedNatureButton = document.querySelector('#natureInterventionContainer .nature-toggle.selected');
-  const hasNature = Boolean(selectedNatureButton) || hasSelectChoice('autreTypeIntervention');
-  if (hasNature) {
-    step2 = 0.5;
-    if (hasStep2Details()) {
-      step2 = 1;
-    }
-  }
-
-  const totalVictimes = VICTIME_TYPES.reduce((sum, type) => sum + getCounterValue(type), 0);
-  const step3 = (totalVictimes > 0 || getInputValue('precisionVictimes')) ? 1 : (isStepReviewed(3) ? 1 : 0);
-
-  const step4Root = document.getElementById('step4');
-  const step4HasData = hasVisibleSelectedButtons(step4Root, '.toggle-btn.selected') || hasVisibleFilledField(step4Root);
-  const step4 = step4HasData ? 1 : (isStepReviewed(4) ? 1 : 0);
-
-  const step5Root = document.getElementById('step5');
-  const step5HasData = MOYENS_POMPIERS_IDS.some(id => getCounterValue(id) > 0)
-    || hasVisibleSelectedButtons(document.getElementById('autresServices'), '.toggle-btn.selected')
-    || getInputValue('vehiculeSpecifiqueText');
-  const step5 = step5HasData ? 1 : (isStepReviewed(5) ? 1 : 0);
-
-  const step6 = getInputValue('message') ? 1 : 0;
-
-  return [step0, step1, step2, step3, step4, step5, step6];
-}
-
-function updateWorkflowProgress() {
-  const fill = document.getElementById('workflowProgressFill');
-  if (!fill) {
-    return;
-  }
-
-  const scores = getWorkflowCompletionScores();
-  const total = scores.length;
-  const completed = scores.reduce((sum, score) => sum + score, 0);
-  const ratio = total > 0 ? Math.max(0, Math.min(1, completed / total)) : 0;
-
-  fill.style.width = `${Math.round(ratio * 100)}%`;
-}
-
-function initWorkflowProgress() {
-  if (workflowProgressObserver) {
-    return;
-  }
-
-  const container = document.querySelector('.container');
-  if (!container) {
-    return;
-  }
-
-  container.addEventListener('input', queueWorkflowProgressUpdate, true);
-  container.addEventListener('change', queueWorkflowProgressUpdate, true);
-
-  workflowProgressObserver = new MutationObserver(() => {
-    queueWorkflowProgressUpdate();
-  });
-
-  workflowProgressObserver.observe(container, {
-    subtree: true,
-    childList: true,
-    characterData: true,
-    attributes: true,
-    attributeFilter: ['class']
-  });
-
-  queueWorkflowProgressUpdate();
 }
 
 function normalizeInterventionValue(value) {
@@ -676,16 +510,13 @@ if (messageTextarea) {
     messageTextarea.style.height = messageTextarea.scrollHeight + "px";
   }, 0);
 }
-queueWorkflowProgressUpdate();
   }
 }
 
 function updateProgress() {
-  maxReachedStep = Math.max(maxReachedStep, currentStep);
   document.querySelectorAll(".progress-step").forEach((el, index) => {
 el.classList.toggle("active", index === currentStep);
   });
-  queueWorkflowProgressUpdate();
 }
 
 function setCurrentTime() {
@@ -1876,7 +1707,6 @@ btn.classList.remove('active');
 
   // Retourner à l'étape 0
   currentStep = 0;
-  maxReachedStep = 0;
   document.querySelectorAll(".step").forEach(e => e.classList.add("hidden"));
   document.getElementById("step0").classList.replace("hidden", "active");
   updateProgress();
@@ -2134,7 +1964,7 @@ function toggleMoyensDepart() {
 
 // Version de l'application
 const APP_VERSION = '1.0.22';
-const APP_BUILD = '06/03/2026 - 23h13';
+const APP_BUILD = '06/03/2026 - 23h54';
 const PWA_VERSION_ENDPOINT = './version.json';
 const PWA_SW_URL = `./sw.js?v=${encodeURIComponent(`${APP_VERSION}-${APP_BUILD}`)}`;
 const PWA_VERSION_CHECK_INTERVAL_MS = 10 * 60 * 1000;
@@ -2706,7 +2536,6 @@ setTimeout(() => {
   messageTextarea.style.height = messageTextarea.scrollHeight + "px";
 }, 0);
   }
-  queueWorkflowProgressUpdate();
 }
 
 function updateMinusButtonState(type) {
@@ -3044,7 +2873,6 @@ setTimeout(() => {
   messageTextarea.style.height = messageTextarea.scrollHeight + "px";
 }, 0);
   }
-  queueWorkflowProgressUpdate();
   
   // Faire défiler vers le haut de la page
   window.scrollTo({
@@ -3086,13 +2914,6 @@ if (document.readyState === 'loading') {
   updateViewportMetrics();
 }
 
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initWorkflowProgress);
-} else {
-  initWorkflowProgress();
-}
-
-// Appliquer le thème sauvegardé au chargement
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', applySavedTheme);
 } else {
