@@ -5,6 +5,21 @@ Toutes les modifications notables de ce projet seront documentées dans ce fichi
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.0.22] - 2026-03-06
+
+### 🔧 Corrections
+- **Compatibilite iOS legacy** : ajout d'un bridge dans le service worker pour permettre aux PWA iOS deja installees d'adopter la nouvelle mecanique de mise a jour sans desinstallation
+- **Activation immediate** : reintroduction de `skipWaiting()` dans la release de transition pour debloquer les anciens clients qui faisaient deja `registration.update()`
+
+### 📝 Documentation
+- Ajout de `PWA_UPDATES.md` pour documenter la procedure critique de mise a jour PWA et les precautions a prendre pour les clients iOS deja installes
+
+## [1.0.21] - 2026-03-06
+
+### 🚀 Refactorisation majeure
+- **PWA** : refonte complete du service worker avec caches versionnes, `version.json`, manifest relatif et flux de mise a jour plus robuste inspire de SunApp
+- **Versioning** : affichage de `Version • Build` dans l'interface pour suivre clairement les mises a jour deployees
+
 ## [1.0.20] - 2025-01-12
 
 ### ✨ Nouvelles fonctionnalités
