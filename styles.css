@@ -2222,9 +2222,9 @@
     }
 
     :is(#victimsFields, #moyensPompiers) .vehicle-count {
-      min-height: var(--interactive-item-min-height);
+      min-height: 0;
       margin-bottom: var(--interactive-item-gap);
-      padding: var(--interactive-item-padding-y) var(--interactive-item-padding-x);
+      padding: 10px var(--interactive-item-padding-x);
       border: 1px solid var(--primary-color);
       border-radius: var(--interactive-item-radius);
       background: #ffffff;
@@ -2248,15 +2248,15 @@
 
     :is(#victimsFields, #moyensPompiers) .counter-container {
       gap: 8px;
-      height: 30px;
+      height: 28px;
     }
 
     :is(#victimsFields, #moyensPompiers) .counter-btn {
-      width: 30px;
-      height: 30px;
-      min-width: 30px;
-      min-height: 30px;
-      font-size: 16px;
+      width: 28px;
+      height: 28px;
+      min-width: 28px;
+      min-height: 28px;
+      font-size: 15px;
       border: 2px solid var(--primary-color);
       background: transparent;
       color: var(--primary-color);
@@ -2292,7 +2292,7 @@
       font-weight: 700;
       color: var(--primary-color);
       min-width: 20px;
-      height: 30px;
+      height: 28px;
       line-height: 1;
     }
 
