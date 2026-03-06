@@ -19,7 +19,6 @@
   <link rel="apple-touch-icon" sizes="512x512" href="icons/512.png">
   <link rel="manifest" href="manifest.json">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -71,7 +70,7 @@
           <div class="app-info">
             <img src="icons/192.png" alt="MRP Icon" class="app-icon">
             <p class="app-name">MRP</p>
-            <p id="appVersionInfo" class="version-info">Version 1.0.22 • Build 06/03/2026 - 23h03</p>
+            <p id="appVersionInfo" class="version-info">Version 1.0.22 • Build 06/03/2026 - 23h13</p>
           </div>
           <p class="copyright">Créé par <a href="https://www.linkedin.com/in/taelpinault/" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: underline;">Tael PINAULT</a> 2026</p>
         </div>
@@ -82,6 +81,9 @@
   <div class="container">
     <!-- Barre de progression -->
     <div class="progress-bar">
+      <div class="workflow-progress" aria-hidden="true">
+        <span id="workflowProgressFill" class="workflow-progress-fill"></span>
+      </div>
       <div class="progress-step active" data-step="inter" onclick="goToStep(0)">inter</div>
       <div class="progress-step" data-step="je-suis" onclick="goToStep(1)">je suis</div>
       <div class="progress-step" data-step="je-vois" onclick="goToStep(2)">je vois</div>
@@ -248,7 +250,6 @@
       </div>
 
       <div class="navigation-buttons">
-        <button type="button" class="prev-btn" onclick="goToStep(0)">← Précédent</button>
         <button type="button" onclick="goToStep(1)">Suivant →</button>
       </div>
     </div>
@@ -315,7 +316,6 @@
       </div>
 
       <div class="navigation-buttons">
-        <button type="button" class="prev-btn" onclick="goToStep(0)">← Précédent</button>
         <button type="button" onclick="goToStep(2)">Suivant →</button>
       </div>
     </div>
@@ -779,7 +779,6 @@
       </div>
 
       <div class="navigation-buttons">
-        <button type="button" class="prev-btn" onclick="goToStep(1)">← Précédent</button>
         <button type="button" onclick="goToStep(3)">Suivant →</button>
       </div>
     </div>
@@ -891,7 +890,6 @@
         </div>
       </div>
       <div class="navigation-buttons">
-        <button type="button" class="prev-btn" onclick="goToStep(2)">← Précédent</button>
         <button type="button" onclick="goToStep(4)">Suivant →</button>
       </div>
     </div>
@@ -1054,7 +1052,6 @@
       <p class="function-notice" style="margin-top: 20px; margin-bottom: 15px;">Rappel "je fais" est facultatif pour le message d'ambiance, en dehors des réactions immédiates</p>
 
       <div class="navigation-buttons">
-        <button type="button" class="prev-btn" onclick="goToStep(3)">← Précédent</button>
         <button type="button" onclick="goToStep(5)">Suivant →</button>
       </div>
     </div>
@@ -1237,7 +1234,6 @@
       </div>
 
       <div class="navigation-buttons">
-        <button type="button" class="prev-btn" onclick="goToStep(4)">← Précédent</button>
         <button type="button" onclick="displayGeneratedMessage()">Suivant →</button>
       </div>
     </div>
@@ -1253,7 +1249,6 @@
       <textarea id="message" class="result" readonly contenteditable="true"></textarea>
       <textarea id="additionalInfo" placeholder="Ajouter une information supplémentaire (présence de moyens sur les lieux, secours suffisants, durée d'intervention, difficultées rencontrées..)" style="width: 100%; margin-top: 10px; padding: 10px; min-height: 100px;"></textarea>
       <div class="navigation-buttons">
-        <button type="button" class="prev-btn" onclick="goToStep(5)">← Précédent</button>
         <button type="button" onclick="shareMessage()"><span class="material-icons" style="font-size: 18px; vertical-align: middle; margin-right: 4px;">ios_share</span>Partager le message</button>
         <button type="button" class="reset-btn" onclick="confirmResetForm()"><span class="material-icons" style="font-size: 18px; vertical-align: middle; margin-right: 4px;">delete</span>Recommencer le message</button>
       </div>

@@ -566,13 +566,7 @@
       box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
 
-    .prev-btn { background-color: grey; }
     .reset-btn { background-color: var(--danger-color); }
-    
-    /* Masquer le bouton Précédent sur l'étape INTER */
-    #step0 .prev-btn {
-      display: none;
-    }
     
     /* Progress bar - Menu flottant en bas */
     .progress-bar {
@@ -597,6 +591,26 @@
       -webkit-transform: translateZ(0);
       -webkit-backface-visibility: hidden;
       backface-visibility: hidden;
+      overflow: hidden;
+    }
+
+    .workflow-progress {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: rgba(0, 123, 255, 0.12);
+      pointer-events: none;
+    }
+
+    .workflow-progress-fill {
+      display: block;
+      width: 0;
+      height: 100%;
+      background: var(--primary-color);
+      border-radius: 0 999px 999px 0;
+      transition: width 0.24s ease;
     }
 
     .progress-step {
@@ -1508,12 +1522,12 @@
       color: #fff;
     }
 
-    .dark-mode .prev-btn {
-      background-color: #555;
-    }
-
     .dark-mode .reset-btn {
       background-color: var(--danger-color);
+    }
+
+    .dark-mode .workflow-progress {
+      background: rgba(0, 123, 255, 0.22);
     }
 
     .dark-mode .result {
