@@ -1769,7 +1769,8 @@
     }
 
     #victimsFields .vehicle-count.victime-type-active .victime-info-container {
-      margin-bottom: 0;
+      margin: 0;
+      padding: 0 var(--interactive-item-padding-x) var(--interactive-item-padding-y);
     }
 
     .victime-info {
@@ -2224,11 +2225,12 @@
     :is(#victimsFields, #moyensPompiers) .vehicle-count {
       min-height: 0;
       margin-bottom: var(--interactive-item-gap);
-      padding: 10px var(--interactive-item-padding-x);
+      padding: 0;
       border: 1px solid var(--primary-color);
       border-radius: var(--interactive-item-radius);
       background: #ffffff;
       box-shadow: var(--interactive-item-shadow);
+      overflow: hidden;
     }
 
     :is(#victimsFields, #moyensPompiers) .vehicle-count:last-child {
@@ -2236,7 +2238,10 @@
     }
 
     :is(#victimsFields, #moyensPompiers) .vehicle-count-header {
+      min-height: var(--interactive-item-min-height);
+      padding: var(--interactive-item-padding-y) var(--interactive-item-padding-x);
       margin-bottom: 0;
+      box-sizing: border-box;
     }
 
     :is(#victimsFields, #moyensPompiers) .vehicle-count label {
@@ -2248,15 +2253,15 @@
 
     :is(#victimsFields, #moyensPompiers) .counter-container {
       gap: 8px;
-      height: 28px;
+      height: 30px;
     }
 
     :is(#victimsFields, #moyensPompiers) .counter-btn {
-      width: 28px;
-      height: 28px;
-      min-width: 28px;
-      min-height: 28px;
-      font-size: 15px;
+      width: 30px;
+      height: 30px;
+      min-width: 30px;
+      min-height: 30px;
+      font-size: 16px;
       border: 2px solid var(--primary-color);
       background: transparent;
       color: var(--primary-color);
@@ -2292,8 +2297,14 @@
       font-weight: 700;
       color: var(--primary-color);
       min-width: 20px;
-      height: 28px;
+      height: 30px;
       line-height: 1;
+    }
+
+    :is(#victimsFields, #moyensPompiers) .vehicle-count-details {
+      padding: 0 var(--interactive-item-padding-x) var(--interactive-item-padding-y);
+      margin-top: 0;
+      box-sizing: border-box;
     }
 
     #moyensPompiers .vehicle-count.moyen-pompier-active {
