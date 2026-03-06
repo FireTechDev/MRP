@@ -2,7 +2,7 @@
 // registration.update() to move to a newer worker. Keep these constants here so
 // already-installed iOS PWAs can detect the transition build and adopt it.
 const APP_VERSION = '1.0.22';
-const APP_BUILD = '06/03/2026 - 22h56';
+const APP_BUILD = '06/03/2026 - 23h03';
 const SW_VERSION = new URL(self.location.href).searchParams.get('v') || `${APP_VERSION}-${APP_BUILD}`;
 const CACHE_PREFIX = 'mrp-';
 const STATIC_CACHE = `${CACHE_PREFIX}static-${SW_VERSION}`;

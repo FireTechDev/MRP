@@ -688,19 +688,13 @@
 
     .step.active { display: block; }
 
-    #step0.active,
-    #step1.active,
-    #step2.active,
-    #step3.active {
+    .step.short-step.active {
       display: flex;
       flex-direction: column;
       min-height: var(--step-viewport-height);
     }
 
-    #step0.active .navigation-buttons,
-    #step1.active .navigation-buttons,
-    #step2.active .navigation-buttons,
-    #step3.active .navigation-buttons {
+    .step.short-step.active .navigation-buttons {
       margin-top: auto;
     }
 
@@ -2408,10 +2402,6 @@
       height: 1px;
       background-color: #e0e0e0; /* Gris clair */
       margin: 16px 0;
-    }
-
-    .next-button {
-      margin-top: 32px !important; /* Ajout d'espace au-dessus des boutons Suivant uniquement */
     }
 
     .navigation-buttons {

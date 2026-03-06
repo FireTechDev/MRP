@@ -1839,12 +1839,6 @@ window.onload = function() {
   initializeRouteEventListeners();
   initializeMinusButtons();
   
-  // Masquer le bouton Précédent sur l'étape INTER au chargement
-  const prevButton = document.querySelector('#step0 .prev-btn');
-  if (prevButton) {
-prevButton.style.display = 'none';
-  }
-  
   // Restaurer ou sélectionner CATE par défaut au chargement
   try {
     const savedFonction = localStorage.getItem('mrp-fonction') || 'CATE';
@@ -1976,7 +1970,7 @@ function toggleMoyensDepart() {
 
 // Version de l'application
 const APP_VERSION = '1.0.22';
-const APP_BUILD = '06/03/2026 - 22h56';
+const APP_BUILD = '06/03/2026 - 23h03';
 const PWA_VERSION_ENDPOINT = './version.json';
 const PWA_SW_URL = `./sw.js?v=${encodeURIComponent(`${APP_VERSION}-${APP_BUILD}`)}`;
 const PWA_VERSION_CHECK_INTERVAL_MS = 10 * 60 * 1000;
