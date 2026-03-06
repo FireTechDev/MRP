@@ -45,6 +45,23 @@ const VICTIME_CARD_LABELS = {
 };
 
 const victimCardState = {};
+let viewportMetricsFrame = null;
+
+function updateViewportMetrics() {
+  const viewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+  document.documentElement.style.setProperty("--app-height", `${Math.round(viewportHeight)}px`);
+}
+
+function queueViewportMetricsUpdate() {
+  if (viewportMetricsFrame !== null) {
+    cancelAnimationFrame(viewportMetricsFrame);
+  }
+
+  viewportMetricsFrame = requestAnimationFrame(() => {
+    viewportMetricsFrame = null;
+    updateViewportMetrics();
+  });
+}
 
 function normalizeInterventionValue(value) {
   return OTHER_INTERVENTION_LEGACY_MAP[value] || value;
@@ -1815,6 +1832,7 @@ motifDepart.addEventListener('change', function(e) {
 
 // Modifier window.onload pour inclure l'initialisation des écouteurs de route
 window.onload = function() {
+  updateViewportMetrics();
   setCurrentTime(); // Collect time zone at app launch
   setupGPSInfoReset();
   updateRouteFields();
@@ -1857,6 +1875,17 @@ prevButton.style.display = 'none';
   } catch (error) {
     console.error('Erreur lors de l\'initialisation de la fonction:', error);
   }
+}
+
+window.addEventListener("resize", queueViewportMetricsUpdate, { passive: true });
+window.addEventListener("orientationchange", () => {
+  setTimeout(updateViewportMetrics, 120);
+});
+window.addEventListener("pageshow", updateViewportMetrics);
+
+if (window.visualViewport) {
+  window.visualViewport.addEventListener("resize", queueViewportMetricsUpdate);
+  window.visualViewport.addEventListener("scroll", queueViewportMetricsUpdate);
 }
 
 function toggleLigneDetails() {
@@ -1947,7 +1976,7 @@ function toggleMoyensDepart() {
 
 // Version de l'application
 const APP_VERSION = '1.0.22';
-const APP_BUILD = '06/03/2026 - 22h45';
+const APP_BUILD = '06/03/2026 - 22h56';
 const PWA_VERSION_ENDPOINT = './version.json';
 const PWA_SW_URL = `./sw.js?v=${encodeURIComponent(`${APP_VERSION}-${APP_BUILD}`)}`;
 const PWA_VERSION_CHECK_INTERVAL_MS = 10 * 60 * 1000;
@@ -2890,6 +2919,12 @@ window.addEventListener('load', () => {
     checkForUpdates(true);
   });
 });
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', updateViewportMetrics);
+} else {
+  updateViewportMetrics();
+}
 
 // Initialisation des gestes de swipe
 if (document.readyState === 'loading') {
