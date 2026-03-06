@@ -93,6 +93,12 @@
       --content-bottom-padding: calc(var(--bottom-nav-height) + 16px);
       --content-viewport-height: calc(var(--app-height) - var(--app-header-height));
       --step-viewport-height: calc(var(--content-viewport-height) - var(--content-top-spacing) - var(--content-bottom-padding));
+      --interactive-item-min-height: 56px;
+      --interactive-item-padding-y: 14px;
+      --interactive-item-padding-x: 16px;
+      --interactive-item-radius: 12px;
+      --interactive-item-gap: 12px;
+      --interactive-item-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
     /* Base styles */
@@ -768,7 +774,11 @@
     }
 
     #natureInterventionContainer .toggle-btn {
-      margin-bottom: 12px;
+      min-height: var(--interactive-item-min-height);
+      margin-bottom: var(--interactive-item-gap);
+      padding: var(--interactive-item-padding-y) var(--interactive-item-padding-x);
+      border-radius: var(--interactive-item-radius);
+      box-shadow: var(--interactive-item-shadow);
     }
 
     #natureInterventionContainer .toggle-btn:last-child {
@@ -1241,9 +1251,11 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 14px 16px;
-      border-radius: 12px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      min-height: var(--interactive-item-min-height);
+      padding: var(--interactive-item-padding-y) var(--interactive-item-padding-x);
+      margin-bottom: var(--interactive-item-gap);
+      border-radius: var(--interactive-item-radius);
+      box-shadow: var(--interactive-item-shadow);
       transition: all 0.3s ease;
     }
 
@@ -1753,7 +1765,7 @@
     }
 
     #victimsFields .vehicle-count.victime-type-active .vehicle-count-header {
-      margin-bottom: 10px;
+      margin-bottom: var(--interactive-item-gap);
     }
 
     #victimsFields .vehicle-count.victime-type-active .victime-info-container {
@@ -1964,8 +1976,10 @@
     .vehicle-count {
       display: flex;
       flex-direction: column;
-      margin-bottom: 10px;
-      padding: 5px 0;
+      justify-content: center;
+      min-height: var(--interactive-item-min-height);
+      margin-bottom: var(--interactive-item-gap);
+      padding: 8px 0;
       border-bottom: 1px solid #eee;
     }
 
@@ -2208,12 +2222,13 @@
     }
 
     :is(#victimsFields, #moyensPompiers) .vehicle-count {
-      margin-bottom: 12px;
-      padding: 10px 16px;
+      min-height: var(--interactive-item-min-height);
+      margin-bottom: var(--interactive-item-gap);
+      padding: var(--interactive-item-padding-y) var(--interactive-item-padding-x);
       border: 1px solid var(--primary-color);
-      border-radius: 12px;
+      border-radius: var(--interactive-item-radius);
       background: #ffffff;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      box-shadow: var(--interactive-item-shadow);
     }
 
     :is(#victimsFields, #moyensPompiers) .vehicle-count:last-child {
