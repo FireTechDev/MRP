@@ -2303,6 +2303,16 @@ async function copyMessageToClipboard(text, options = {}) {
   return fallbackSucceeded;
 }
 
+function archiveCurrentMessage() {
+  const entry = recordCurrentMessageHistory();
+
+  if (!entry) {
+    return;
+  }
+
+  alert("Message archivé dans l'historique.");
+}
+
 async function copyHistoryEntry(entryId) {
   const entry = loadMessageHistory().find(item => item.id === entryId);
 
@@ -2703,7 +2713,7 @@ function toggleMoyensDepart() {
 
 // Version de l'application
 const APP_VERSION = '1.0.22';
-const APP_BUILD = '09/03/2026 - 17h03';
+const APP_BUILD = '09/03/2026 - 17h17';
 const PWA_VERSION_ENDPOINT = './version.json';
 const PWA_SW_URL = `./sw.js?v=${encodeURIComponent(`${APP_VERSION}-${APP_BUILD}`)}`;
 const PWA_VERSION_CHECK_INTERVAL_MS = 10 * 60 * 1000;

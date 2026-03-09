@@ -1865,6 +1865,17 @@
       background: #0f172a;
     }
 
+    .dark-mode .success-btn {
+      background: #15803d;
+      border-color: #15803d;
+      color: #ffffff;
+    }
+
+    .dark-mode .success-btn:hover {
+      background: #166534;
+      border-color: #166534;
+    }
+
     .dark-mode .secondary-btn,
     .dark-mode .gps-btn {
       background: rgba(0, 123, 255, 0.12);
@@ -2786,10 +2797,13 @@
     .message-composer-layout {
       display: grid;
       gap: 16px;
+      min-width: 0;
+      overflow-x: clip;
     }
 
     .message-screen-layout {
       gap: 12px;
+      max-width: 100%;
     }
 
     .message-composer-grid {
@@ -2804,6 +2818,8 @@
       border: var(--card-surface-border);
       border-radius: var(--card-surface-radius);
       box-shadow: var(--card-surface-shadow);
+      min-width: 0;
+      box-sizing: border-box;
     }
 
     .message-composer-card {
@@ -2815,6 +2831,7 @@
       border: 2px solid var(--primary-color);
       border-radius: 0;
       box-shadow: none;
+      overflow-x: hidden;
     }
 
     .message-output-header,
@@ -2851,6 +2868,8 @@
     .history-card-preview {
       margin: 0;
       white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      word-break: break-word;
       font-family: var(--font-family);
       line-height: 1.6;
       color: var(--text-color);
@@ -2859,6 +2878,7 @@
     .message-preview {
       font-size: 18px;
       line-height: 1.7;
+      max-width: 100%;
     }
 
     .history-card-preview {
@@ -2876,18 +2896,30 @@
 
     .message-photo-empty {
       display: flex;
+      flex-direction: column;
       align-items: center;
-      gap: 12px;
+      justify-content: center;
+      gap: 10px;
       padding: 18px;
       border-radius: var(--interactive-item-radius);
       background: #f8fbff;
       color: #64748b;
       border: 1px dashed #bfdbfe;
+      text-align: center;
     }
 
     .message-photo-preview {
       display: grid;
       gap: 12px;
+    }
+
+    .message-photo-trigger-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      margin: 0 0 14px 0;
     }
 
     .message-photo-image {
@@ -2897,6 +2929,17 @@
       border-radius: var(--interactive-item-radius);
       border: 1px solid #dbe5ef;
       background: #f8fafc;
+    }
+
+    .success-btn {
+      background: #16a34a;
+      border: 1px solid #16a34a;
+      color: #ffffff;
+    }
+
+    .success-btn:hover {
+      background: #15803d;
+      border-color: #15803d;
     }
 
     .hidden-message-source {

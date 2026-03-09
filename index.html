@@ -74,7 +74,7 @@
           <div class="app-info">
             <img src="icons/192.png" alt="MRP Icon" class="app-icon">
             <p class="app-name">MRP</p>
-            <p id="appVersionInfo" class="version-info">Version 1.0.22 • Build 09/03/2026 - 17h03</p>
+            <p id="appVersionInfo" class="version-info">Version 1.0.22 • Build 09/03/2026 - 17h17</p>
           </div>
           <p class="copyright">Créé par <a href="https://www.linkedin.com/in/taelpinault/" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: underline;">Tael PINAULT</a> 2026</p>
         </div>
@@ -1356,22 +1356,22 @@
 
         <div class="message-composer-grid">
           <div class="message-composer-card message-note-card">
-            <label for="additionalInfo">Complément libre</label>
+            <label for="additionalInfo">Ajouter un complément de message</label>
             <textarea id="additionalInfo" class="message-note-input" placeholder="Ajouter une information utile : moyens suffisants, difficultés rencontrées, présence de renforts, délai prévisible..." oninput="refreshMessageComposerPreview()"></textarea>
           </div>
 
           <div class="message-composer-card message-photo-card">
             <div class="message-photo-header">
               <div>
-                <h3>Photo terrain</h3>
+                <h3>Photo de l'intervention</h3>
                 <p>Optionnelle. Elle sera jointe au partage si l'appareil l'autorise.</p>
               </div>
-              <input type="file" id="messagePhotoInput" class="hidden-message-source" accept="image/*" capture="environment" onchange="handleMessagePhotoChange(event)">
-              <button type="button" class="secondary-btn inline-action-btn" onclick="openMessagePhotoPicker()">
-                <span class="material-icons">photo_camera</span>
-                <span>Prendre / ajouter</span>
-              </button>
             </div>
+            <input type="file" id="messagePhotoInput" class="hidden-message-source" accept="image/*" capture="environment" onchange="handleMessagePhotoChange(event)">
+            <button type="button" class="secondary-btn message-photo-trigger-btn" onclick="openMessagePhotoPicker()">
+              <span class="material-icons">photo_camera</span>
+              <span>Prendre une photo</span>
+            </button>
             <div id="messagePhotoEmptyState" class="message-photo-empty">
               <span class="material-icons">add_a_photo</span>
               <span>Aucune photo ajoutée pour ce message.</span>
@@ -1389,6 +1389,7 @@
       <div class="navigation-buttons">
         <button type="button" class="secondary-btn" onclick="copyMessage()"><span class="material-icons" style="font-size: 18px; vertical-align: middle; margin-right: 4px;">content_copy</span>Copier le message</button>
         <button type="button" onclick="shareMessage()"><span class="material-icons" style="font-size: 18px; vertical-align: middle; margin-right: 4px;">ios_share</span>Partager le message</button>
+        <button type="button" class="success-btn" onclick="archiveCurrentMessage()"><span class="material-icons" style="font-size: 18px; vertical-align: middle; margin-right: 4px;">inventory_2</span>Archiver le message</button>
         <button type="button" class="reset-btn" onclick="confirmResetForm()"><span class="material-icons" style="font-size: 18px; vertical-align: middle; margin-right: 4px;">delete</span>Recommencer le message</button>
       </div>
     </div>
