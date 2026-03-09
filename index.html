@@ -74,7 +74,7 @@
           <div class="app-info">
             <img src="icons/192.png" alt="MRP Icon" class="app-icon">
             <p class="app-name">MRP</p>
-            <p id="appVersionInfo" class="version-info">Version 1.0.22 • Build 09/03/2026 - 15h45</p>
+            <p id="appVersionInfo" class="version-info">Version 1.0.22 • Build 09/03/2026 - 16h08</p>
           </div>
           <p class="copyright">Créé par <a href="https://www.linkedin.com/in/taelpinault/" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: underline;">Tael PINAULT</a> 2026</p>
         </div>
@@ -1283,8 +1283,11 @@
           <span>Message</span>
         </div>
         <div class="message-inline-meta">
-          <label for="groupeHoraireAuto" class="message-inline-label">Groupe horaire :</label>
-          <input type="time" id="groupeHoraireAuto" name="groupeHoraireAuto" class="message-inline-time" onchange="updateMessage()">
+          <button type="button" class="message-inline-time-display" onclick="openMessageTimePicker()">
+            <span class="message-inline-label">Groupe horaire :</span>
+            <span id="groupeHoraireDisplay" class="message-inline-value">--h--</span>
+          </button>
+          <input type="time" id="groupeHoraireAuto" name="groupeHoraireAuto" class="hidden-message-source" onchange="handleGroupeHoraireChange()">
           <button type="button" class="message-inline-refresh" onclick="setCurrentTime()" aria-label="Actualiser l'heure">
             <span class="material-icons">autorenew</span>
           </button>

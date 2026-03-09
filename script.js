@@ -795,7 +795,56 @@ function setCurrentTime() {
   const hours = now.getHours().toString().padStart(2, '0');
   const minutes = now.getMinutes().toString().padStart(2, '0');
   document.getElementById('groupeHoraireAuto').value = `${hours}:${minutes}`;
+  syncGroupHourDisplay();
   updateMessage();
+}
+
+function formatGroupHourDisplay(value) {
+  return value ? value.replace(":", "h") : "--h--";
+}
+
+function syncGroupHourDisplay() {
+  const display = document.getElementById("groupeHoraireDisplay");
+  const input = document.getElementById("groupeHoraireAuto");
+
+  if (!display || !input) {
+    return;
+  }
+
+  display.textContent = formatGroupHourDisplay(input.value || "");
+}
+
+function handleGroupeHoraireChange() {
+  syncGroupHourDisplay();
+  updateMessage();
+}
+
+function openMessageTimePicker() {
+  const input = document.getElementById("groupeHoraireAuto");
+
+  if (!input) {
+    return;
+  }
+
+  if (typeof input.showPicker === "function") {
+    input.showPicker();
+    return;
+  }
+
+  const manualValue = window.prompt("Groupe horaire (HH:MM)", input.value || "");
+
+  if (manualValue === null) {
+    return;
+  }
+
+  const normalizedValue = manualValue.trim();
+
+  if (!/^\d{2}:\d{2}$/.test(normalizedValue)) {
+    return;
+  }
+
+  input.value = normalizedValue;
+  handleGroupeHoraireChange();
 }
 
 function geolocalise() {
@@ -2142,6 +2191,7 @@ btn.classList.remove('active');
 
   clearMessagePhoto();
   syncMessageOutput("");
+  syncGroupHourDisplay();
   updateMessagePhotoUI();
   victimsSelected = false;
 
@@ -2268,6 +2318,7 @@ motifDepart.addEventListener('change', function(e) {
 window.onload = function() {
   updateViewportMetrics();
   setCurrentTime(); // Collect time zone at app launch
+  syncGroupHourDisplay();
   setupGPSInfoReset();
   updateRouteFields();
   initializeMessageRefreshListeners();
@@ -2408,7 +2459,7 @@ function toggleMoyensDepart() {
 
 // Version de l'application
 const APP_VERSION = '1.0.22';
-const APP_BUILD = '09/03/2026 - 15h45';
+const APP_BUILD = '09/03/2026 - 16h08';
 const PWA_VERSION_ENDPOINT = './version.json';
 const PWA_SW_URL = `./sw.js?v=${encodeURIComponent(`${APP_VERSION}-${APP_BUILD}`)}`;
 const PWA_VERSION_CHECK_INTERVAL_MS = 10 * 60 * 1000;
@@ -3370,11 +3421,13 @@ if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
     renderMessageHistory();
     updateMessagePhotoUI();
+    syncGroupHourDisplay();
     syncMessageOutput(document.getElementById('message')?.value || '');
   });
 } else {
   renderMessageHistory();
   updateMessagePhotoUI();
+  syncGroupHourDisplay();
   syncMessageOutput(document.getElementById('message')?.value || '');
 }
 
