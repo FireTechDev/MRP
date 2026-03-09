@@ -723,6 +723,82 @@
       gap: 16px;
     }
 
+    .page-title-message {
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .page-title-message-main {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      min-width: 0;
+    }
+
+    .message-inline-meta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: auto;
+      min-width: 0;
+      color: var(--text-color);
+    }
+
+    .message-inline-label {
+      display: inline-flex;
+      align-items: center;
+      margin: 0;
+      font-size: 0.96rem;
+      font-weight: 500;
+      color: var(--text-color);
+      white-space: nowrap;
+    }
+
+    .page-title-message #groupeHoraireAuto,
+    .message-inline-time {
+      width: auto !important;
+      min-width: 84px;
+      max-width: none;
+      min-height: 38px;
+      margin: 0;
+      padding: 6px 10px;
+      border-radius: 10px;
+      border: 1px solid #d5dde8;
+      box-shadow: none;
+      background: #ffffff;
+      font-size: 1rem;
+      text-align: center;
+    }
+
+    .message-inline-refresh {
+      width: 38px;
+      min-width: 38px;
+      min-height: 38px;
+      height: 38px;
+      padding: 0;
+      border-radius: 10px;
+      border: 1px solid #5abf62;
+      background: #5abf62;
+      color: #ffffff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: none;
+      flex-shrink: 0;
+    }
+
+    .message-inline-refresh .material-icons {
+      font-size: 20px;
+    }
+
+    .message-inline-refresh:hover {
+      background: #49ae51;
+      border-color: #49ae51;
+    }
+
     .step h3 {
       font-size: var(--font-size);
       font-weight: 600;
@@ -1610,6 +1686,28 @@
       color: #e2e8f0;
     }
 
+    .dark-mode .message-inline-meta,
+    .dark-mode .message-inline-label {
+      color: #e2e8f0;
+    }
+
+    .dark-mode .page-title-message #groupeHoraireAuto,
+    .dark-mode .message-inline-time {
+      background: #202833;
+      border-color: #475569;
+      color: #e2e8f0;
+    }
+
+    .dark-mode .message-inline-refresh {
+      background: #3fae58;
+      border-color: #3fae58;
+    }
+
+    .dark-mode .message-inline-refresh:hover {
+      background: #34944a;
+      border-color: #34944a;
+    }
+
     .dark-mode .message-photo-empty {
       background: rgba(30, 41, 59, 0.7);
       border-color: #334155;
@@ -2407,6 +2505,10 @@
       gap: 16px;
     }
 
+    .message-screen-layout {
+      gap: 12px;
+    }
+
     .message-composer-grid {
       display: grid;
       gap: 16px;
@@ -2466,7 +2568,7 @@
     }
 
     .message-preview {
-      min-height: 220px;
+      min-height: 320px;
     }
 
     .message-note-input {
@@ -2612,6 +2714,27 @@
     @media (min-width: 768px) {
       .message-composer-grid {
         grid-template-columns: minmax(0, 1.25fr) minmax(260px, 0.75fr);
+      }
+    }
+
+    @media (max-width: 520px) {
+      .page-title-message {
+        align-items: flex-start;
+      }
+
+      .message-inline-meta {
+        gap: 6px;
+        font-size: 0.94rem;
+      }
+
+      .message-inline-label {
+        font-size: 0.94rem;
+      }
+
+      .page-title-message #groupeHoraireAuto,
+      .message-inline-time {
+        min-width: 76px;
+        padding: 6px 8px;
       }
     }
 
