@@ -323,6 +323,24 @@ function refreshMessageComposerPreview() {
   syncMessageOutput();
 }
 
+function initializeMessageRefreshListeners() {
+  const fields = document.querySelectorAll('input:not([type="hidden"]):not([type="file"]), select, textarea');
+
+  fields.forEach(field => {
+    if (field.id === "message" || field.id === "additionalInfo") {
+      return;
+    }
+
+    if (field.dataset.messageRefreshBound === "true") {
+      return;
+    }
+
+    field.dataset.messageRefreshBound = "true";
+    field.addEventListener("input", updateMessage);
+    field.addEventListener("change", updateMessage);
+  });
+}
+
 function loadMessageHistory() {
   try {
     const rawHistory = localStorage.getItem(MESSAGE_HISTORY_STORAGE_KEY);
@@ -752,13 +770,12 @@ victimsSelected = true;
   
   if (step === 5) updateSuggestions();
   
-  // Si on clique directement sur l'étape "message" (step 6), générer le message
+  // Si on clique directement sur l'étape "message" (step 6), générer et synchroniser le message
 if (step === 6) {
-// Générer le message avant d'afficher l'étape
 const messageTextarea = document.getElementById("message");
+const msg = generateMessage();
+syncMessageOutput(msg);
 if (messageTextarea) {
-  messageTextarea.value = generateMessage();
-  // Ajuster la hauteur du textarea
   setTimeout(() => {
     messageTextarea.style.height = "auto";
     messageTextarea.style.height = messageTextarea.scrollHeight + "px";
@@ -833,6 +850,7 @@ navigator.geolocation.getCurrentPosition(pos => {
         // Afficher les informations GPS
         document.getElementById("gpsInfo").classList.remove("hidden");
         document.getElementById("gpsInfoCommune").classList.remove("hidden");
+        updateMessage();
       }
     })
     .catch(error => {
@@ -841,6 +859,7 @@ navigator.geolocation.getCurrentPosition(pos => {
       // Afficher les informations GPS même en cas d'erreur de géocodage
       document.getElementById("gpsInfo").classList.remove("hidden");
       document.getElementById("gpsInfoCommune").classList.remove("hidden");
+      updateMessage();
     });
 });
   }
@@ -880,6 +899,7 @@ document.getElementById("infoFuiteGaz").classList.add("hidden");
 // Réinitialiser les champs du formulaire
 resetFields();
 updateSuggestions(); // Mettre à jour les suggestions quand on désélectionne
+updateMessage();
 return;
   }
 
@@ -913,6 +933,8 @@ document.getElementById("autreTypeBox").classList.remove("hidden");
 // Suppression de la ligne suivante
 // document.getElementById("selectedNatureTitle").classList.remove("hidden");
   }
+
+  updateMessage();
 }
 
 function handleAutreIntervention(value) {
@@ -926,6 +948,7 @@ function handleAutreIntervention(value) {
   if (!normalizedValue) {
 resetFields();
 document.getElementById("selectedNatureTitle").classList.add("hidden");
+updateMessage();
 return;
   }
 
@@ -955,6 +978,8 @@ configureBuildingFieldsForIntervention(normalizedValue);
 document.getElementById("batimentFields").classList.remove("hidden");
 configureBuildingFieldsForIntervention(normalizedValue);
   }
+
+  updateMessage();
 }
 
 function updateMinusButtonState(id) {
@@ -1013,6 +1038,7 @@ try {
     collapseCompletedVictimeCards(victimeId);
     focusVictimeCard(victimeId);
   }
+  updateMessage();
 } catch (error) {
   console.error('Error incrementing vehicle:', error);
 }
@@ -1032,6 +1058,7 @@ try {
     updateVehicleDetails(id);
     updateMinusButtonState(id);
     updateVictimesTotalCounter();
+    updateMessage();
   }
 } catch (error) {
   console.error('Error decrementing vehicle:', error);
@@ -1091,6 +1118,7 @@ function toggleDetailsSupplementaires() {
   details.classList.toggle("hidden");
   btn.classList.toggle("active");
   icon.classList.toggle("rotated");
+  updateMessage();
 }
 
 function selectTypeLigne(type) {
@@ -1113,6 +1141,8 @@ info.innerText = "Rappel des périmètres : zone exclusion = 10m, zone contrôl�
 rteBtn.style.display = type === "HTB" ? "block" : "none";
 if (type !== "HTB") rteBtn.classList.remove("selected");
   }
+
+  updateMessage();
 }
 
 function selectToggle(fieldId, btn) {
@@ -1157,6 +1187,7 @@ function selectBatimentType(btn) {
 btn.classList.remove("selected");
 selectedBatiment = "";
 document.getElementById("etagesFields").classList.add("hidden");
+updateMessage();
 return;
   }
 
@@ -1168,9 +1199,17 @@ return;
 
   // Réinitialiser les champs d'étages si on passe à "Plain pied"
   if (selectedBatiment === "Plain pied") {
-document.getElementById("etagesRPlus").value = "";
-document.getElementById("etagesRMoins").value = "";
+const rPlusCounter = document.getElementById("RPlus");
+const rMoinsCounter = document.getElementById("RMoins");
+const niveauSinistreCounter = document.getElementById("niveauSinistre");
+if (rPlusCounter) rPlusCounter.textContent = "0";
+if (rMoinsCounter) rMoinsCounter.textContent = "0";
+if (niveauSinistreCounter) niveauSinistreCounter.textContent = "0";
+updateMinusButtonState("RPlus");
+updateMinusButtonState("RMoins");
   }
+
+  updateMessage();
 }
 
 function selectVictimsToggle(show, btn) {
@@ -1191,6 +1230,8 @@ if (details) {
   details.classList.toggle("hidden");
 }
   }
+
+  updateMessage();
 }
 
 function updateExtinctionFields() {
@@ -1388,12 +1429,7 @@ function generateMessage() {
 
   // Situation info
   msg += "[ JE VOIS ]\n";
-  
-  // Get selected nature
-  let natureBtn = document.querySelector(".nature-toggle.selected");
-  let autreNature = normalizeInterventionValue(getVal("autreTypeIntervention"));
-  // Si "Autre" est sélectionné, utiliser la valeur de autreTypeIntervention
-  let nature = normalizeInterventionValue((natureBtn && natureBtn.dataset.value === "Autre") ? autreNature : (natureBtn ? natureBtn.dataset.value : autreNature));
+  let nature = getCurrentInterventionNature();
   
   if (nature) {
 msg += `${formatNatureLine(nature)}\n`;
@@ -1401,13 +1437,28 @@ msg += `${formatNatureLine(nature)}\n`;
 // AVP specific fields
 if (nature === "AVP") {
   msg += "Impliquant:\n";
+  const vehiculeLabels = {
+    vehiculeLeger: "véhicule léger",
+    poidsLourd: "poids lourd",
+    deuxRoues: "deux roues",
+    bus: "bus"
+  };
+  const vehiculeDetailFields = {
+    vehiculeLeger: "vehiculeLegerEnergie",
+    poidsLourd: "poidsLourdPrecisions",
+    deuxRoues: "deuxRouesPrecisions",
+    bus: "busPrecisions"
+  };
   let vehicules = ["vehiculeLeger", "poidsLourd", "deuxRoues", "bus"];
   vehicules.forEach(v => {
     let count = document.getElementById(v)?.textContent || "0";
     if (count !== "0") {
-      msg += `- ${count} ${v.replace(/([A-Z])/g, ' $1').toLowerCase()}\n`;
-      let precisions = getVal(v + "Precisions");
-      if (precisions) msg += `  Précisions: ${precisions}\n`;
+      msg += `- ${count} ${vehiculeLabels[v] || v.replace(/([A-Z])/g, ' $1').toLowerCase()}\n`;
+      let precisions = getVal(vehiculeDetailFields[v]);
+      if (precisions) {
+        const prefix = v === "vehiculeLeger" ? "Énergie" : "Précisions";
+        msg += `  ${prefix}: ${precisions}\n`;
+      }
     }
   });
 
@@ -1658,6 +1709,7 @@ document.querySelectorAll(`#${containerId} .toggle-btn.selected`).forEach(btn =>
 "CCF": "CCF",
 "CCFS": "CCFS",
 "CCGC": "CCGC",
+"VID": "VID",
 "chefGroupe": "Chef de groupe",
 "SMUR": "SMUR",
 "ISP": "ISP",
@@ -2218,6 +2270,7 @@ window.onload = function() {
   setCurrentTime(); // Collect time zone at app launch
   setupGPSInfoReset();
   updateRouteFields();
+  initializeMessageRefreshListeners();
   initializeRouteEventListeners();
   initializeMinusButtons();
   
@@ -2272,6 +2325,7 @@ function toggleLigneDetails() {
   detailsFields.classList.toggle('hidden');
   btn.classList.toggle('active');
   icon.classList.toggle('rotated');
+  updateMessage();
 }
 
 function resetFields() {
@@ -2329,6 +2383,8 @@ if (details) {
   details.classList.toggle("hidden");
 }
   }
+
+  updateMessage();
 }
 
 function toggleMoyensDepart() {
@@ -2352,7 +2408,7 @@ function toggleMoyensDepart() {
 
 // Version de l'application
 const APP_VERSION = '1.0.22';
-const APP_BUILD = '09/03/2026 - 15h09';
+const APP_BUILD = '09/03/2026 - 15h26';
 const PWA_VERSION_ENDPOINT = './version.json';
 const PWA_SW_URL = `./sw.js?v=${encodeURIComponent(`${APP_VERSION}-${APP_BUILD}`)}`;
 const PWA_VERSION_CHECK_INTERVAL_MS = 10 * 60 * 1000;
@@ -2711,9 +2767,12 @@ function handleEtatCirculation(value) {
   const circulationDetails = document.getElementById('circulationDetails');
   if (value === 'Non altérée') {
 circulationDetails.classList.add('hidden');
+document.getElementById('voiesImpactees').value = '';
+document.getElementById('sensCirculation').value = '';
   } else {
 circulationDetails.classList.remove('hidden');
   }
+  updateMessage();
 }
 
 function toggleAutreVehicule() {
@@ -2724,6 +2783,7 @@ function toggleAutreVehicule() {
   autreVehiculeDetails.classList.toggle('hidden');
   btn.classList.toggle('active');
   icon.classList.toggle('rotated');
+  updateMessage();
 }
 
 function togglePrecisionVictimes() {
@@ -2734,6 +2794,7 @@ function togglePrecisionVictimes() {
   container.classList.toggle("hidden");
   btn.classList.toggle("active");
   icon.classList.toggle("rotated");
+  updateMessage();
 }
 
 function toggleButtonWithField(button, field, value) {
@@ -2755,6 +2816,8 @@ if (btn === button) {
   btn.classList.remove('selected');
 }
   });
+
+  updateMessage();
 }
 
 function selectSurface(value) {
@@ -2774,6 +2837,7 @@ btn.classList.remove('selected');
   document.getElementById('customSurfaceInput').classList.add('hidden');
   document.getElementById('toggleCustomSurfaceBtn').classList.remove('active');
   document.getElementById('toggleCustomSurfaceBtn').querySelector('.toggle-icon').classList.remove('rotated');
+  updateMessage();
 }
 
 function toggleCustomSurface() {
@@ -2793,6 +2857,8 @@ firstSurfaceSection.querySelectorAll('.surface-btn').forEach(btn => {
 });
 document.getElementById('surfaceTotale').value = '';
   }
+
+  updateMessage();
 }
 
 function updateCustomSurface() {
@@ -2800,6 +2866,7 @@ function updateCustomSurface() {
   if (value) {
 document.getElementById('surfaceTotale').value = value;
   }
+  updateMessage();
 }
 
 function selectSurfaceSinistree(value) {
@@ -2819,6 +2886,7 @@ btn.classList.remove('selected');
   document.getElementById('customSurfaceSinistreeInput').classList.add('hidden');
   document.getElementById('toggleCustomSurfaceSinistreeBtn').classList.remove('active');
   document.getElementById('toggleCustomSurfaceSinistreeBtn').querySelector('.toggle-icon').classList.remove('rotated');
+  updateMessage();
 }
 
 function toggleCustomSurfaceSinistree() {
@@ -2838,6 +2906,8 @@ secondSurfaceSection.querySelectorAll('.surface-btn').forEach(btn => {
 });
 document.getElementById('surfaceSinistree').value = '';
   }
+
+  updateMessage();
 }
 
 function updateCustomSurfaceSinistree() {
@@ -2845,6 +2915,7 @@ function updateCustomSurfaceSinistree() {
   if (value) {
 document.getElementById('surfaceSinistree').value = value;
   }
+  updateMessage();
 }
 
 function selectFonction(btn, value) {
