@@ -2238,8 +2238,9 @@
 
     .victime-age-keypad {
       position: fixed;
-      left: 12px;
-      right: 12px;
+      left: 50%;
+      width: min(calc(100% - 40px), 340px);
+      transform: translateX(-50%);
       bottom: calc(var(--bottom-nav-height) + 10px);
       z-index: 1105;
     }

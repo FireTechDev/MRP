@@ -922,7 +922,7 @@ function setVictimeAgeValue(inputId, value) {
     return;
   }
 
-  const sanitizedValue = String(value || "").replace(/[^0-9]/g, "").slice(0, 3);
+  const sanitizedValue = String(value || "").replace(/[^0-9]/g, "").slice(0, 2);
   input.value = sanitizedValue;
 
   const victimeId = inputId.replace(/-age$/, "");
@@ -2682,7 +2682,7 @@ function toggleMoyensDepart() {
 
 // Version de l'application
 const APP_VERSION = '1.0.22';
-const APP_BUILD = '09/03/2026 - 16h44';
+const APP_BUILD = '09/03/2026 - 16h57';
 const PWA_VERSION_ENDPOINT = './version.json';
 const PWA_SW_URL = `./sw.js?v=${encodeURIComponent(`${APP_VERSION}-${APP_BUILD}`)}`;
 const PWA_VERSION_CHECK_INTERVAL_MS = 10 * 60 * 1000;
