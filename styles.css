@@ -67,22 +67,6 @@
     }
 
     :root {
-      --space-1: 4px;
-      --space-2: 8px;
-      --space-3: 12px;
-      --space-4: 16px;
-      --space-5: 20px;
-      --space-6: 24px;
-      --space-7: 32px;
-      --space-8: 40px;
-      --space-9: 48px;
-      --radius-sm: 10px;
-      --radius-md: 14px;
-      --radius-lg: 16px;
-      --text-caption: 13px;
-      --text-body: 18px;
-      --text-title: 24px;
-      --text-display: 26px;
       --primary-color: #007BFF;
       --primary-color-soft: rgba(0, 123, 255, 0.08);
       --secondary-color: #6c757d;
@@ -92,31 +76,31 @@
       --danger-color: red;
       --container-bg: #fff;
       --box-shadow: 0 0 8px rgba(0,0,0,0.2);
-      --border-radius: var(--radius-sm);
+      --border-radius: 8px;
       --font-family: Arial, sans-serif;
-      --font-size: var(--text-body);
-      --padding: var(--space-4);
-      --margin: var(--space-3);
+      --font-size: 18px;
+      --padding: 16px;
+      --margin: 10px;
       --app-height: 100vh;
       --safe-area-top: env(safe-area-inset-top, 0px);
       --safe-area-bottom: env(safe-area-inset-bottom, 0px);
       --app-header-base-height: 64px;
       --app-header-height: calc(var(--app-header-base-height) + var(--safe-area-top));
       --bottom-nav-base-height: 49px;
-      --bottom-nav-padding-y: var(--space-3);
+      --bottom-nav-padding-y: 12px;
       --bottom-nav-inner-height: calc(var(--bottom-nav-base-height) + (var(--bottom-nav-padding-y) * 2));
       --bottom-nav-height: calc(var(--bottom-nav-base-height) + (var(--bottom-nav-padding-y) * 2) + var(--safe-area-bottom));
-      --content-top-spacing: var(--space-3);
-      --content-bottom-padding: calc(var(--bottom-nav-height) + var(--space-4));
+      --content-top-spacing: 12px;
+      --content-bottom-padding: calc(var(--bottom-nav-height) + 16px);
       --content-viewport-height: calc(var(--app-height) - var(--app-header-height));
       --step-viewport-height: calc(var(--content-viewport-height) - var(--content-top-spacing) - var(--content-bottom-padding));
       --interactive-item-min-height: 56px;
-      --interactive-item-padding-y: var(--space-3);
-      --interactive-item-padding-x: var(--space-4);
-      --interactive-item-radius: var(--radius-md);
-      --interactive-item-gap: var(--space-3);
+      --interactive-item-padding-y: 14px;
+      --interactive-item-padding-x: 16px;
+      --interactive-item-radius: 14px;
+      --interactive-item-gap: 12px;
       --interactive-item-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      --card-surface-radius: var(--radius-lg);
+      --card-surface-radius: 16px;
       --card-surface-border: 1px solid #e3e8ef;
       --card-surface-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
     }
@@ -465,15 +449,15 @@
 
     /* Titres des pages du menu (Conditions, Réglages, Partager) */
     .page-content h1 {
-      font-size: var(--text-title);
+      font-size: 24px;
       font-weight: 600;
-      margin: 0 0 var(--space-6) 0;
-      padding: 0 0 var(--space-3) 0;
+      margin: 0 0 24px 0;
+      padding: 0 0 12px 0;
       color: var(--text-color);
       border-bottom: 2px solid var(--primary-color);
       display: flex;
       align-items: center;
-      gap: var(--space-4);
+      gap: 16px;
     }
 
     h3 {
@@ -489,8 +473,8 @@
     .page-content h3 {
       font-size: 1.1rem;
       font-weight: 600;
-      margin-top: var(--space-6);
-      margin-bottom: var(--space-3);
+      margin-top: 24px;
+      margin-bottom: 12px;
       color: #333;
     }
 
@@ -506,8 +490,8 @@
     /* Form elements - Standards mobiles */
     label {
       display: block;
-      margin-top: var(--space-6);
-      margin-bottom: var(--space-2);
+      margin-top: 24px;
+      margin-bottom: 8px;
       font-weight: 600;
       color: var(--text-color);
       font-size: var(--font-size);
@@ -543,11 +527,11 @@
 
     button, .toggle-btn {
       width: 100%;
-      padding: var(--interactive-item-padding-y) var(--interactive-item-padding-x);
-      margin: 0 0 var(--interactive-item-gap) 0;
+      padding: 14px 16px;
+      margin: 0 0 12px 0;
       box-sizing: border-box;
       font-size: var(--font-size);
-      border-radius: var(--interactive-item-radius);
+      border-radius: 8px;
       font-family: var(--font-family);
     }
 
@@ -728,26 +712,26 @@
     }
 
     .page-title {
-      font-size: var(--text-title);
+      font-size: 24px;
       font-weight: 600;
-      margin: 0 0 var(--space-6) 0;
-      padding: 0 0 var(--space-3) 0;
+      margin: 0 0 24px 0;
+      padding: 0 0 12px 0;
       color: var(--text-color);
       border-bottom: 2px solid var(--primary-color);
       display: flex;
       align-items: center;
-      gap: var(--space-4);
+      gap: 16px;
     }
 
     .step h3 {
       font-size: var(--font-size);
       font-weight: 600;
-      margin-top: var(--space-7);
-      margin-bottom: var(--space-4);
+      margin-top: 32px;
+      margin-bottom: 16px;
       margin-left: 0;
       margin-right: 0;
       color: #333;
-      padding-top: var(--space-6);
+      padding-top: 24px;
       border-top: 1px solid #e0e0e0;
     }
 
@@ -758,8 +742,8 @@
     }
 
     .function-notice {
-      margin-top: var(--space-2);
-      margin-bottom: var(--space-4);
+      margin-top: 8px;
+      margin-bottom: 16px;
       font-size: 0.9rem;
       color: #666;
       line-height: 1.5;
@@ -1654,6 +1638,62 @@
       background: linear-gradient(180deg, rgba(32, 40, 51, 0), #202833);
     }
 
+    .dark-mode :is(#victimsFields, #moyensPompiers) .vehicle-count label,
+    .dark-mode :is(#victimsFields, #moyensPompiers) .counter-value {
+      color: #e5e7eb;
+    }
+
+    .dark-mode :is(#victimsFields, #moyensPompiers) .counter-btn {
+      border-color: #4c6ea8;
+      color: #b9d4ff;
+      background: transparent;
+    }
+
+    .dark-mode :is(#victimsFields, #moyensPompiers) .counter-btn.minus {
+      border-color: #3b4659;
+      color: #cbd2df;
+      background: #263142;
+    }
+
+    .dark-mode :is(#victimsFields, #moyensPompiers) .counter-btn.minus:disabled {
+      border-color: #2d3544;
+      color: #556070;
+    }
+
+    .dark-mode :is(#victimsFields, #moyensPompiers) .counter-btn.plus {
+      border-color: #4c6ea8;
+      color: #b9d4ff;
+    }
+
+    .dark-mode :is(#victimsFields, #moyensPompiers) .counter-btn:hover:not(:disabled) {
+      background: rgba(76, 110, 168, 0.12);
+    }
+
+    .dark-mode #moyensPompiers .vehicle-count.moyen-pompier-active {
+      background: #4c6ea8;
+      border-color: #4c6ea8;
+    }
+
+    .dark-mode #moyensPompiers .vehicle-count.moyen-pompier-active label,
+    .dark-mode #moyensPompiers .vehicle-count.moyen-pompier-active .counter-value {
+      color: #ffffff;
+    }
+
+    .dark-mode #moyensPompiers .vehicle-count.moyen-pompier-active .counter-btn {
+      border-color: #ffffff;
+      color: #ffffff;
+    }
+
+    .dark-mode #moyensPompiers .vehicle-count.moyen-pompier-active .counter-btn:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .dark-mode .step-card {
+      background: #202833;
+      border-color: #334155;
+      box-shadow: none;
+    }
+
     .dark-mode .surface-btn {
       background: rgba(255, 255, 255, 0.05);
       color: #e0e0e0;
@@ -2011,43 +2051,33 @@
       display: flex;
       flex-direction: column;
       justify-content: center;
-      min-height: 0;
+      min-height: var(--interactive-item-min-height);
       margin-bottom: var(--interactive-item-gap);
-      padding: 0;
-      border: var(--card-surface-border);
-      border-radius: var(--interactive-item-radius);
-      background: #ffffff;
-      box-shadow: var(--interactive-item-shadow);
-      overflow: hidden;
+      padding: 8px 0;
+      border-bottom: 1px solid #eee;
     }
 
     .vehicle-count-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: var(--space-3);
       width: 100%;
-      min-height: var(--interactive-item-min-height);
-      padding: var(--interactive-item-padding-y) var(--interactive-item-padding-x);
-      margin-bottom: 0;
-      box-sizing: border-box;
+      margin-bottom: 8px;
     }
 
     .vehicle-count label {
       margin: 0;
-      color: var(--text-color);
-      font-size: var(--font-size);
-      font-weight: 500;
+      color: #333;
+      font-size: 16px;
+      font-weight: normal;
       flex: 1;
-      line-height: 1.2;
     }
 
     .vehicle-count .counter-container {
       display: flex;
       align-items: center;
       gap: 8px;
-      height: 32px;
-      flex-shrink: 0;
+      height: 32px; /* Hauteur fixe pour le conteneur */
     }
 
     .vehicle-count .counter-btn {
@@ -2057,10 +2087,10 @@
       min-height: 32px;
       max-width: 32px;
       max-height: 32px;
-      border: 1.5px solid var(--primary-color);
-      background: var(--primary-color-soft);
-      color: var(--primary-color);
-      font-size: 18px;
+      border: none;
+      background: #007BFF;
+      color: white;
+      font-size: 20px;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -2075,45 +2105,39 @@
     }
 
     .vehicle-count .counter-btn:hover {
-      background: rgba(0, 123, 255, 0.14);
+      background: #0056b3;
     }
 
     .vehicle-count .counter-btn.minus {
-      border-color: #cbd5e1;
-      color: #64748b;
-      background: #f5f7fb;
+      background-color: #007BFF;
     }
 
     .vehicle-count .counter-btn.minus:disabled {
-      border-color: #e2e8f0;
-      color: #94a3b8;
-      background: #eef2f7;
-      opacity: 1;
+      opacity: 0.5;
+      cursor: not-allowed;
     }
 
     .vehicle-count .counter-btn.minus.always-active {
-      background: var(--primary-color-soft);
-      border-color: var(--primary-color);
-      color: var(--primary-color);
+      background-color: #007BFF;
+      color: white;
       cursor: pointer;
     }
 
     .vehicle-count .counter-btn.minus.always-active:disabled {
       opacity: 1;
       cursor: pointer;
-      background: var(--primary-color-soft);
-      border-color: var(--primary-color);
-      color: var(--primary-color);
+      background-color: #007BFF;
+      color: white;
     }
 
     .vehicle-count .counter-btn.plus {
-      background: transparent;
+      background-color: #007BFF;
     }
 
     .vehicle-count .counter-value {
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--text-color);
+      font-size: 24px;
+      font-weight: bold;
+      color: #333;
       border: none;
       background: transparent;
       width: auto;
@@ -2129,24 +2153,22 @@
     }
 
     .vehicle-count .counter-btn:disabled {
+      background: #ccc;
       cursor: not-allowed;
       opacity: 0.7;
     }
 
     .vehicle-count-details {
       width: 100%;
-      margin-top: 0;
-      padding: 0 var(--interactive-item-padding-x) var(--interactive-item-padding-y);
-      box-sizing: border-box;
+      margin-top: 8px;
     }
 
     .vehicle-count-details select {
       width: 100%;
-      min-height: 44px;
-      padding: 10px 12px;
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-sm);
-      font-size: 15px;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 14px;
     }
 
     #vehiculeLegerDetails,
@@ -2682,12 +2704,12 @@
     .divider {
       height: 1px;
       background-color: #e0e0e0; /* Gris clair */
-      margin: var(--space-4) 0;
+      margin: 16px 0;
     }
 
     .navigation-buttons {
-      margin-top: var(--space-8);
-      padding-top: var(--space-6);
+      margin-top: 48px;
+      padding-top: 24px;
       border-top: 1px solid #e0e0e0;
     }
 
