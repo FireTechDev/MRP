@@ -2852,9 +2852,17 @@
       margin: 0;
       white-space: pre-wrap;
       font-family: var(--font-family);
-      font-size: 16px;
       line-height: 1.6;
       color: var(--text-color);
+    }
+
+    .message-preview {
+      font-size: 18px;
+      line-height: 1.7;
+    }
+
+    .history-card-preview {
+      font-size: 16px;
     }
 
     .message-preview {

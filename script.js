@@ -271,6 +271,22 @@ function formatBulletLines(items) {
     .map(item => `• ${item}`);
 }
 
+function formatStructuredBulletBlocks(blocks) {
+  return blocks
+    .map(block => Array.isArray(block) ? block : [block])
+    .map(lines => lines.map(line => String(line || "").trim()).filter(Boolean))
+    .filter(lines => lines.length > 0)
+    .map(([firstLine, ...otherLines]) => {
+      const formattedLines = [`• ${firstLine}`];
+
+      if (otherLines.length > 0) {
+        formattedLines.push(...otherLines.map(line => `  ${line}`));
+      }
+
+      return formattedLines.join("\n");
+    });
+}
+
 function getCurrentInterventionNature() {
   const natureBtn = document.querySelector(".nature-toggle.selected");
   const autreNature = normalizeInterventionValue(getFieldValue("autreTypeIntervention"));
@@ -1909,7 +1925,8 @@ msg += `${formatBulletLines([`Précisions sur les victimes: ${precisionVictimes}
 
   // Actions info
   msg += "[ JE FAIS ]\n";
-  
+  const actionEntries = [];
+
   // Récupérer toutes les actions sélectionnées de tous les conteneurs
   const actionContainers = ['actionsContainer', 'incendieContainer', 'secoursRoutierContainer'];
   actionContainers.forEach(containerId => {
@@ -1917,54 +1934,58 @@ document.querySelectorAll(`#${containerId} .toggle-btn.selected`).forEach(btn =>
   // Nettoyer le texte de l'action pour supprimer les tags "suggéré"
   const action = btn.textContent.replace(/Suggéré/g, '').trim();
   const target = btn.getAttribute('data-target');
+  const actionLines = [action];
       
   // Si l'action a des détails
   if (target) {
     const details = document.getElementById(target);
     if (details) {
-      msg += `${action}\n`;
-          
       // Pour l'extinction, inclure tous les détails spécifiques
       if (target === 'extinction') {
         const precisions = getVal('preciserExtinction');
-        if (precisions) msg += `Précisions: ${precisions}\n`;
+        if (precisions) actionLines.push(`Précisions: ${precisions}`);
         const nbLDV = getVal('nombreLDV');
-        if (nbLDV) msg += `${nbLDV} LDV\n`;
-        if (getVal('debit')) msg += `Débit: ${getVal('debit')}\n`;
-        if (getVal('fourgonAlimente')) msg += `Fourgon alimenté: ${getVal('fourgonAlimente')}\n`;
+        if (nbLDV) actionLines.push(`${nbLDV} LDV`);
+        if (getVal('debit')) actionLines.push(`Débit: ${getVal('debit')}`);
+        if (getVal('fourgonAlimente')) actionLines.push(`Fourgon alimenté: ${getVal('fourgonAlimente')}`);
       }
       // Pour la mise en sécurité
       else if (target === 'miseEnSecurite') {
         const precisions = getVal('preciserMiseEnSecurite');
-        if (precisions) msg += `Précisions: ${precisions}\n`;
+        if (precisions) actionLines.push(`Précisions: ${precisions}`);
         const nbPersonnes = getVal('nombrePersonnesMiseEnSecurite');
-        if (nbPersonnes) msg += `${nbPersonnes} personnes\n`;
+        if (nbPersonnes) actionLines.push(`${nbPersonnes} personnes`);
         const pointRassemblement = getVal('pointRassemblement');
-        if (pointRassemblement) msg += `Point de rassemblement: ${pointRassemblement}\n`;
+        if (pointRassemblement) actionLines.push(`Point de rassemblement: ${pointRassemblement}`);
       }
       // Pour la prise en charge des victimes
       else if (target === 'priseEnCharge') {
         const precisions = getVal('preciserPriseEnCharge');
-        if (precisions) msg += `Précisions: ${precisions}\n`;
+        if (precisions) actionLines.push(`Précisions: ${precisions}`);
         const nbVictimes = getVal('nombreVictimesPriseEnCharge');
-        if (nbVictimes) msg += `${nbVictimes} victimes\n`;
+        if (nbVictimes) actionLines.push(`${nbVictimes} victimes`);
         const parEquipage = getVal('parEquipage');
-        if (parEquipage) msg += `Par équipage: ${parEquipage}\n`;
+        if (parEquipage) actionLines.push(`Par équipage: ${parEquipage}`);
       }
       // Pour les autres actions avec précisions
       else {
         const precisionInput = details.querySelector('input[type="text"]');
         if (precisionInput && precisionInput.value) {
-          msg += `Précisions: ${precisionInput.value}\n`;
+          actionLines.push(`Précisions: ${precisionInput.value}`);
         }
       }
     }
-  } else {
-    // Actions sans détails (comme Désenfumage, Ventilation, etc.)
-    msg += `${action}\n`;
   }
+
+  actionEntries.push(actionLines);
 });
   });
+
+  if (actionEntries.length > 1) {
+msg += `${formatStructuredBulletBlocks(actionEntries).join("\n")}\n`;
+  } else if (actionEntries.length === 1) {
+msg += `${actionEntries[0].join("\n")}\n`;
+  }
 
   // Ajouter les moyens demandés
   msg += "\n[ JE DEMANDE ]\n";
@@ -2682,7 +2703,7 @@ function toggleMoyensDepart() {
 
 // Version de l'application
 const APP_VERSION = '1.0.22';
-const APP_BUILD = '09/03/2026 - 16h57';
+const APP_BUILD = '09/03/2026 - 17h03';
 const PWA_VERSION_ENDPOINT = './version.json';
 const PWA_SW_URL = `./sw.js?v=${encodeURIComponent(`${APP_VERSION}-${APP_BUILD}`)}`;
 const PWA_VERSION_CHECK_INTERVAL_MS = 10 * 60 * 1000;
