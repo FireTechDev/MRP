@@ -666,6 +666,10 @@ function toggleVictimeCard(victimeId) {
 }
 
 function goToStep(step) {
+  if (step !== 0) {
+    closeInterventionKeypad();
+  }
+
   document.querySelector(`.step.active`).classList.replace("active", "hidden");
   document.querySelector(`#step${step}`).classList.replace("hidden", "active");
   
@@ -797,6 +801,96 @@ function setCurrentTime() {
   document.getElementById('groupeHoraireAuto').value = `${hours}:${minutes}`;
   syncGroupHourDisplay();
   updateMessage();
+}
+
+function sanitizeInterventionNumber(value) {
+  return String(value || "").replace(/[^0-9]/g, "");
+}
+
+function setInterventionNumberValue(value) {
+  const input = document.getElementById("interventionNumber");
+
+  if (!input) {
+    return;
+  }
+
+  input.value = sanitizeInterventionNumber(value);
+  updateMessage();
+}
+
+function openInterventionKeypad() {
+  const field = document.getElementById("interventionNumberField");
+  const keypad = document.getElementById("interventionNumberKeypad");
+
+  if (!field || !keypad) {
+    return;
+  }
+
+  field.classList.add("is-open");
+  keypad.classList.remove("hidden");
+}
+
+function closeInterventionKeypad() {
+  const field = document.getElementById("interventionNumberField");
+  const keypad = document.getElementById("interventionNumberKeypad");
+
+  if (field) {
+    field.classList.remove("is-open");
+  }
+
+  if (keypad) {
+    keypad.classList.add("hidden");
+  }
+}
+
+function toggleInterventionKeypad() {
+  const keypad = document.getElementById("interventionNumberKeypad");
+
+  if (!keypad || keypad.classList.contains("hidden")) {
+    openInterventionKeypad();
+    return;
+  }
+
+  closeInterventionKeypad();
+}
+
+function appendInterventionDigit(digit) {
+  const input = document.getElementById("interventionNumber");
+
+  if (!input) {
+    return;
+  }
+
+  setInterventionNumberValue(`${input.value || ""}${sanitizeInterventionNumber(digit)}`);
+}
+
+function backspaceInterventionNumber() {
+  const input = document.getElementById("interventionNumber");
+
+  if (!input) {
+    return;
+  }
+
+  setInterventionNumberValue((input.value || "").slice(0, -1));
+}
+
+function clearInterventionNumber() {
+  setInterventionNumberValue("");
+}
+
+function initializeInterventionKeypad() {
+  if (document.body?.dataset.interventionKeypadReady === "true") {
+    return;
+  }
+
+  document.body.dataset.interventionKeypadReady = "true";
+  document.addEventListener("click", (event) => {
+    const field = document.getElementById("interventionNumberField");
+
+    if (field && !field.contains(event.target)) {
+      closeInterventionKeypad();
+    }
+  });
 }
 
 function formatGroupHourDisplay(value) {
@@ -2190,6 +2284,7 @@ btn.classList.remove('active');
   selectedBatiment = "";
 
   clearMessagePhoto();
+  closeInterventionKeypad();
   syncMessageOutput("");
   syncGroupHourDisplay();
   updateMessagePhotoUI();
@@ -2319,6 +2414,7 @@ window.onload = function() {
   updateViewportMetrics();
   setCurrentTime(); // Collect time zone at app launch
   syncGroupHourDisplay();
+  initializeInterventionKeypad();
   setupGPSInfoReset();
   updateRouteFields();
   initializeMessageRefreshListeners();
@@ -2459,7 +2555,7 @@ function toggleMoyensDepart() {
 
 // Version de l'application
 const APP_VERSION = '1.0.22';
-const APP_BUILD = '09/03/2026 - 16h08';
+const APP_BUILD = '09/03/2026 - 16h32';
 const PWA_VERSION_ENDPOINT = './version.json';
 const PWA_SW_URL = `./sw.js?v=${encodeURIComponent(`${APP_VERSION}-${APP_BUILD}`)}`;
 const PWA_VERSION_CHECK_INTERVAL_MS = 10 * 60 * 1000;

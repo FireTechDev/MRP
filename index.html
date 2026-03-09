@@ -74,7 +74,7 @@
           <div class="app-info">
             <img src="icons/192.png" alt="MRP Icon" class="app-icon">
             <p class="app-name">MRP</p>
-            <p id="appVersionInfo" class="version-info">Version 1.0.22 • Build 09/03/2026 - 16h08</p>
+            <p id="appVersionInfo" class="version-info">Version 1.0.22 • Build 09/03/2026 - 16h32</p>
           </div>
           <p class="copyright">Créé par <a href="https://www.linkedin.com/in/taelpinault/" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: underline;">Tael PINAULT</a> 2026</p>
         </div>
@@ -99,7 +99,35 @@
       <h2 class="page-title"><span class="material-icons">description</span>Intervention</h2>
       <div class="step-card">
       <label for="interventionNumber">Numéro intervention</label>
-      <input type="number" id="interventionNumber" class="form-control" min="0" inputMode="numeric" pattern="[0-9]*" step="1" onchange="updateMessage()" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+      <div id="interventionNumberField" class="numeric-entry-field">
+        <div class="numeric-entry-shell">
+          <input type="text" id="interventionNumber" class="form-control numeric-entry-input" inputMode="numeric" pattern="[0-9]*" autocomplete="off" readonly placeholder="Touchez pour saisir" onclick="openInterventionKeypad()">
+          <button type="button" class="numeric-entry-toggle" onclick="toggleInterventionKeypad()" aria-label="Afficher le clavier numérique">
+            <span class="material-icons">dialpad</span>
+          </button>
+        </div>
+        <div id="interventionNumberKeypad" class="numeric-keypad hidden">
+          <div class="numeric-keypad-grid">
+            <button type="button" class="numeric-keypad-btn" onclick="appendInterventionDigit('1')">1</button>
+            <button type="button" class="numeric-keypad-btn" onclick="appendInterventionDigit('2')">2</button>
+            <button type="button" class="numeric-keypad-btn" onclick="appendInterventionDigit('3')">3</button>
+            <button type="button" class="numeric-keypad-btn" onclick="appendInterventionDigit('4')">4</button>
+            <button type="button" class="numeric-keypad-btn" onclick="appendInterventionDigit('5')">5</button>
+            <button type="button" class="numeric-keypad-btn" onclick="appendInterventionDigit('6')">6</button>
+            <button type="button" class="numeric-keypad-btn" onclick="appendInterventionDigit('7')">7</button>
+            <button type="button" class="numeric-keypad-btn" onclick="appendInterventionDigit('8')">8</button>
+            <button type="button" class="numeric-keypad-btn" onclick="appendInterventionDigit('9')">9</button>
+            <button type="button" class="numeric-keypad-btn numeric-keypad-btn-muted" onclick="clearInterventionNumber()">Effacer</button>
+            <button type="button" class="numeric-keypad-btn" onclick="appendInterventionDigit('0')">0</button>
+            <button type="button" class="numeric-keypad-btn numeric-keypad-btn-icon" onclick="backspaceInterventionNumber()" aria-label="Supprimer le dernier chiffre">
+              <span class="material-icons">backspace</span>
+            </button>
+          </div>
+          <div class="numeric-keypad-actions">
+            <button type="button" class="secondary-btn numeric-keypad-action-btn" onclick="closeInterventionKeypad()">Valider</button>
+          </div>
+        </div>
+      </div>
 
       <label for="motifDepart">Motif de départ</label>
       <select id="motifDepart">
