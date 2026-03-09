@@ -50,6 +50,7 @@ const MESSAGE_HISTORY_LIMIT = 30;
 let viewportMetricsFrame = null;
 let messagePhotoFile = null;
 let messagePhotoPreviewUrl = "";
+let activeVictimeAgeInputId = "";
 
 function updateViewportMetrics() {
   const viewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
@@ -206,6 +207,11 @@ function parseVictimeId(victimeId) {
     typeId: separatorIndex === -1 ? victimeId : victimeId.slice(0, separatorIndex),
     index: separatorIndex === -1 ? "" : victimeId.slice(separatorIndex + 1)
   };
+}
+
+function formatVictimeAgeTargetLabel(victimeId) {
+  const { typeId, index } = parseVictimeId(victimeId);
+  return `${getVictimeTypeLabel(typeId)} ${index}`.trim();
 }
 
 function formatVictimeCardTitle(victimeId) {
@@ -660,6 +666,10 @@ function toggleVictimeCard(victimeId) {
   setVictimeCardCollapsed(victimeId, nextCollapsed);
   updateVictimeCardUI(victimeId);
 
+  if (nextCollapsed && activeVictimeAgeInputId === `${victimeId}-age`) {
+    closeVictimeAgeKeypad();
+  }
+
   if (!nextCollapsed) {
     focusVictimeCard(victimeId, false);
   }
@@ -668,6 +678,10 @@ function toggleVictimeCard(victimeId) {
 function goToStep(step) {
   if (step !== 0) {
     closeInterventionKeypad();
+  }
+
+  if (step !== 3) {
+    closeVictimeAgeKeypad();
   }
 
   document.querySelector(`.step.active`).classList.replace("active", "hidden");
@@ -889,6 +903,117 @@ function initializeInterventionKeypad() {
 
     if (field && !field.contains(event.target)) {
       closeInterventionKeypad();
+    }
+  });
+}
+
+function highlightVictimeAgeInput(inputId, isActive) {
+  const input = document.getElementById(inputId);
+
+  if (input) {
+    input.classList.toggle("is-keypad-target", isActive);
+  }
+}
+
+function setVictimeAgeValue(inputId, value) {
+  const input = document.getElementById(inputId);
+
+  if (!input) {
+    return;
+  }
+
+  const sanitizedValue = String(value || "").replace(/[^0-9]/g, "").slice(0, 3);
+  input.value = sanitizedValue;
+
+  const victimeId = inputId.replace(/-age$/, "");
+  updateVictimeCardUI(victimeId);
+  updateMessage();
+}
+
+function openVictimeAgeKeypad(victimeId) {
+  const inputId = `${victimeId}-age`;
+  const input = document.getElementById(inputId);
+  const keypad = document.getElementById("victimeAgeKeypad");
+  const keypadLabel = document.getElementById("victimeAgeKeypadLabel");
+
+  if (!input || !keypad || !keypadLabel) {
+    return;
+  }
+
+  if (activeVictimeAgeInputId && activeVictimeAgeInputId !== inputId) {
+    highlightVictimeAgeInput(activeVictimeAgeInputId, false);
+  }
+
+  activeVictimeAgeInputId = inputId;
+  highlightVictimeAgeInput(inputId, true);
+  keypadLabel.textContent = `Âge · ${formatVictimeAgeTargetLabel(victimeId)}`;
+  keypad.classList.remove("hidden");
+}
+
+function closeVictimeAgeKeypad() {
+  if (activeVictimeAgeInputId) {
+    highlightVictimeAgeInput(activeVictimeAgeInputId, false);
+  }
+
+  activeVictimeAgeInputId = "";
+  document.getElementById("victimeAgeKeypad")?.classList.add("hidden");
+}
+
+function appendVictimeAgeDigit(digit) {
+  if (!activeVictimeAgeInputId) {
+    return;
+  }
+
+  const input = document.getElementById(activeVictimeAgeInputId);
+  if (!input) {
+    closeVictimeAgeKeypad();
+    return;
+  }
+
+  setVictimeAgeValue(activeVictimeAgeInputId, `${input.value || ""}${digit}`);
+}
+
+function backspaceVictimeAgeValue() {
+  if (!activeVictimeAgeInputId) {
+    return;
+  }
+
+  const input = document.getElementById(activeVictimeAgeInputId);
+  if (!input) {
+    closeVictimeAgeKeypad();
+    return;
+  }
+
+  setVictimeAgeValue(activeVictimeAgeInputId, (input.value || "").slice(0, -1));
+}
+
+function clearVictimeAgeValue() {
+  if (!activeVictimeAgeInputId) {
+    return;
+  }
+
+  setVictimeAgeValue(activeVictimeAgeInputId, "");
+}
+
+function initializeVictimeAgeKeypad() {
+  if (document.body?.dataset.victimeAgeKeypadReady === "true") {
+    return;
+  }
+
+  document.body.dataset.victimeAgeKeypadReady = "true";
+  document.addEventListener("click", (event) => {
+    const keypad = document.getElementById("victimeAgeKeypad");
+    const targetField = activeVictimeAgeInputId ? document.getElementById(activeVictimeAgeInputId) : null;
+
+    if (!keypad) {
+      return;
+    }
+
+    const clickedInsideKeypad = keypad.contains(event.target);
+    const clickedCurrentInput = targetField ? targetField === event.target : false;
+
+    if (!clickedInsideKeypad && !clickedCurrentInput) {
+      closeVictimeAgeKeypad();
     }
   });
 }
@@ -2285,6 +2410,7 @@ btn.classList.remove('active');
 
   clearMessagePhoto();
   closeInterventionKeypad();
+  closeVictimeAgeKeypad();
   syncMessageOutput("");
   syncGroupHourDisplay();
   updateMessagePhotoUI();
@@ -2415,6 +2541,7 @@ window.onload = function() {
   setCurrentTime(); // Collect time zone at app launch
   syncGroupHourDisplay();
   initializeInterventionKeypad();
+  initializeVictimeAgeKeypad();
   setupGPSInfoReset();
   updateRouteFields();
   initializeMessageRefreshListeners();
@@ -2555,7 +2682,7 @@ function toggleMoyensDepart() {
 
 // Version de l'application
 const APP_VERSION = '1.0.22';
-const APP_BUILD = '09/03/2026 - 16h32';
+const APP_BUILD = '09/03/2026 - 16h44';
 const PWA_VERSION_ENDPOINT = './version.json';
 const PWA_SW_URL = `./sw.js?v=${encodeURIComponent(`${APP_VERSION}-${APP_BUILD}`)}`;
 const PWA_VERSION_CHECK_INTERVAL_MS = 10 * 60 * 1000;
@@ -3271,6 +3398,9 @@ victimeContainer.appendChild(infoContainer);
   
   // Si le compteur est à 0, cacher le conteneur
   if (count <= 0) {
+if (activeVictimeAgeInputId.startsWith(`${id}-`)) {
+  closeVictimeAgeKeypad();
+}
 infoContainer.style.display = 'none';
 infoContainer.innerHTML = '';
 return;
@@ -3292,6 +3422,9 @@ existingValues[i] = {
   }
   
   // Mettre à jour le HTML du conteneur pour qu'il corresponde au nombre de victimes
+  if (activeVictimeAgeInputId.startsWith(`${id}-`)) {
+closeVictimeAgeKeypad();
+  }
   infoContainer.innerHTML = '';
   
   // Créer les champs pour chaque victime
@@ -3343,27 +3476,17 @@ hiddenSexe.value = existingValues[i]?.sexe || '';
     
 // Input pour l'âge
 const ageInput = document.createElement('input');
-ageInput.type = 'number';
+ageInput.type = 'text';
 ageInput.id = `${victimeId}-age`;
 ageInput.className = 'victime-age-input';
-ageInput.min = '0';
-ageInput.max = '120';
 ageInput.placeholder = 'Âge si connu';
-ageInput.inputMode = 'numeric';  // Affichera un clavier numérique sur mobile
-ageInput.pattern = '[0-9]*';     // Force les valeurs numériques
-ageInput.step = '1';             // Incréments de 1
-ageInput.addEventListener('change', () => {
-  updateVictimeCardUI(victimeId);
-  updateMessage();
-});
-    
-// Ajouter une validation pour n'accepter que des nombres
-ageInput.addEventListener('input', function() {
-  // Remplace tout ce qui n'est pas un nombre par une chaîne vide
-  this.value = this.value.replace(/[^0-9]/g, '');
-  updateVictimeCardUI(victimeId);
-  updateMessage();
-});
+ageInput.inputMode = 'numeric';
+ageInput.pattern = '[0-9]*';
+ageInput.autocomplete = 'off';
+ageInput.readOnly = true;
+ageInput.setAttribute('aria-label', `Âge ${getVictimeTypeLabel(id)} ${i}`);
+ageInput.addEventListener('focus', () => openVictimeAgeKeypad(victimeId));
+ageInput.addEventListener('click', () => openVictimeAgeKeypad(victimeId));
 
 const ageUnitSelect = document.createElement('select');
 ageUnitSelect.id = `${victimeId}-age-unit`;

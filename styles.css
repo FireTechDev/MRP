@@ -2206,6 +2206,15 @@
       font-size: 16px;
       text-align: center;
       box-sizing: border-box;
+      cursor: pointer;
+      caret-color: transparent;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+    }
+
+    .victime-age-input.is-keypad-target {
+      border-color: var(--primary-color);
+      background: #f7fbff;
+      box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.12);
     }
 
     .victime-age-row {
@@ -2225,6 +2234,94 @@
       font-size: 16px;
       text-align: center;
       box-sizing: border-box;
+    }
+
+    .victime-age-keypad {
+      position: fixed;
+      left: 12px;
+      right: 12px;
+      bottom: calc(var(--bottom-nav-height) + 10px);
+      z-index: 1105;
+    }
+
+    .victime-age-keypad-panel {
+      padding: 10px;
+      border: var(--card-surface-border);
+      border-radius: 16px;
+      background: #ffffff;
+      box-shadow: 0 12px 32px rgba(15, 23, 42, 0.18);
+    }
+
+    .victime-age-keypad-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .victime-age-keypad-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: #334155;
+      line-height: 1.2;
+    }
+
+    .victime-age-keypad-close {
+      width: 36px;
+      min-width: 36px;
+      height: 36px;
+      min-height: 36px;
+      margin: 0;
+      padding: 0;
+      border: 1px solid #d5dde8;
+      border-radius: 12px;
+      background: #f8fafc;
+      color: #64748b;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: none;
+    }
+
+    .victime-age-keypad-close .material-icons {
+      font-size: 18px;
+    }
+
+    .victime-age-keypad-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .victime-age-keypad-btn {
+      min-height: 46px;
+      margin: 0;
+      padding: 10px;
+      border: 1px solid #d5dde8;
+      border-radius: 12px;
+      background: #ffffff;
+      color: #1f2937;
+      font-size: 18px;
+      font-weight: 600;
+      box-shadow: none;
+    }
+
+    .victime-age-keypad-btn:hover {
+      background: rgba(0, 123, 255, 0.06);
+      border-color: var(--primary-color);
+      color: var(--primary-color);
+    }
+
+    .victime-age-keypad-btn-muted {
+      background: #f8fafc;
+      color: #64748b;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .victime-age-keypad-btn-icon .material-icons {
+      font-size: 20px;
     }
 
     .dark-mode .victime-info {
@@ -2260,10 +2357,49 @@
       border-color: #334155 !important;
     }
 
+    .dark-mode .victime-age-input.is-keypad-target {
+      background: #102033 !important;
+      border-color: #60a5fa !important;
+      box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.18) !important;
+    }
+
     .dark-mode .victime-age-unit {
       background: #0f141a !important;
       color: #f3f4f6 !important;
       border-color: #334155 !important;
+    }
+
+    .dark-mode .victime-age-keypad-panel {
+      background: #202833;
+      border-color: #334155;
+      box-shadow: none;
+    }
+
+    .dark-mode .victime-age-keypad-label {
+      color: #e2e8f0;
+    }
+
+    .dark-mode .victime-age-keypad-close {
+      background: #1e293b;
+      border-color: #475569;
+      color: #cbd5e1;
+    }
+
+    .dark-mode .victime-age-keypad-btn {
+      background: #202833;
+      border-color: #475569;
+      color: #e2e8f0;
+    }
+
+    .dark-mode .victime-age-keypad-btn:hover {
+      background: rgba(96, 165, 250, 0.12);
+      border-color: #60a5fa;
+      color: #60a5fa;
+    }
+
+    .dark-mode .victime-age-keypad-btn-muted {
+      background: #1e293b;
+      color: #94a3b8;
     }
 
     .dark-mode .sexe-masculin:not(.selected) {

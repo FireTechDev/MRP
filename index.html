@@ -74,7 +74,7 @@
           <div class="app-info">
             <img src="icons/192.png" alt="MRP Icon" class="app-icon">
             <p class="app-name">MRP</p>
-            <p id="appVersionInfo" class="version-info">Version 1.0.22 • Build 09/03/2026 - 16h32</p>
+            <p id="appVersionInfo" class="version-info">Version 1.0.22 • Build 09/03/2026 - 16h44</p>
           </div>
           <p class="copyright">Créé par <a href="https://www.linkedin.com/in/taelpinault/" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: underline;">Tael PINAULT</a> 2026</p>
         </div>
@@ -952,6 +952,33 @@
 
         <div id="precisionVictimesContainer" class="sub-container hidden">
           <textarea id="precisionVictimes" placeholder="Saisissez des précisions supplémentaires sur les victimes" style="width: 100%; min-height: 60px; margin-top: 10px; padding: 10px; border: 1px solid #ccc; border-radius: 5px;"></textarea>
+        </div>
+
+        <div id="victimeAgeKeypad" class="victime-age-keypad hidden">
+          <div class="victime-age-keypad-panel">
+            <div class="victime-age-keypad-header">
+              <span id="victimeAgeKeypadLabel" class="victime-age-keypad-label">Âge victime</span>
+              <button type="button" class="victime-age-keypad-close" onclick="closeVictimeAgeKeypad()" aria-label="Fermer le clavier âge victime">
+                <span class="material-icons">close</span>
+              </button>
+            </div>
+            <div class="victime-age-keypad-grid">
+              <button type="button" class="victime-age-keypad-btn" onclick="appendVictimeAgeDigit('1')">1</button>
+              <button type="button" class="victime-age-keypad-btn" onclick="appendVictimeAgeDigit('2')">2</button>
+              <button type="button" class="victime-age-keypad-btn" onclick="appendVictimeAgeDigit('3')">3</button>
+              <button type="button" class="victime-age-keypad-btn" onclick="appendVictimeAgeDigit('4')">4</button>
+              <button type="button" class="victime-age-keypad-btn" onclick="appendVictimeAgeDigit('5')">5</button>
+              <button type="button" class="victime-age-keypad-btn" onclick="appendVictimeAgeDigit('6')">6</button>
+              <button type="button" class="victime-age-keypad-btn" onclick="appendVictimeAgeDigit('7')">7</button>
+              <button type="button" class="victime-age-keypad-btn" onclick="appendVictimeAgeDigit('8')">8</button>
+              <button type="button" class="victime-age-keypad-btn" onclick="appendVictimeAgeDigit('9')">9</button>
+              <button type="button" class="victime-age-keypad-btn victime-age-keypad-btn-muted" onclick="clearVictimeAgeValue()">Eff.</button>
+              <button type="button" class="victime-age-keypad-btn" onclick="appendVictimeAgeDigit('0')">0</button>
+              <button type="button" class="victime-age-keypad-btn victime-age-keypad-btn-icon" onclick="backspaceVictimeAgeValue()" aria-label="Supprimer le dernier chiffre">
+                <span class="material-icons">backspace</span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
       <div class="navigation-buttons">
